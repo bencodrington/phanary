@@ -1,0 +1,2 @@
+# phanary
+Phanary is an ongoing project with a practical purpose: to allow tabletop RPG GM's to quickly and easily switch between premade and custom atmospheres, to bring that extra level of immersion to their tables.   Each atmosphere is made up of soundscapes, background music, and looping samples, which can be customized in advance. This allows GM's to transition smoothly to an entirely new sonic landscape with the click of a button. 
