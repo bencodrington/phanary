@@ -1,0 +1,28 @@
+{
+    "tracks": {
+        "Cafeteria Ambience": {
+            "filenames": ["caf-1.mp3"],
+            "loop": true
+        },
+        
+        "Heavy Rain": {
+            "filenames": ["rain-1.mp3"],
+            "loop": true
+        },
+
+        "Waterfall": {
+            "filenames": ["waterfall-1.mp3"],
+            "loop": true
+        },
+        
+        "Light Rain": {
+            "filenames": ["rain-6.mp3"],
+            "loop": true
+        },
+
+        "Water Drop": {
+            "filenames": ["water-drop-1.wav"],
+            "loop": false
+        }
+    }
+}
