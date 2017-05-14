@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    background-color: $stormGrey;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+* {
+    box-sizing: border-box;
+}

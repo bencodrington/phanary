@@ -1,0 +1,26 @@
+.search-container {
+    
+    border: 1px solid black;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: white;
+
+    &--centered {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &__search-bar {
+        border: none;
+        padding: 5px 10px;
+    }
+
+    &__addon {
+        display: inline-block;
+        margin: 0;
+        height: 100%;
+        border-left: 1px solid black;
+        padding: 0 10px;
+    }
+}

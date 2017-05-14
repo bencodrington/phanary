@@ -1,0 +1,6 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "stylelint.enable": true,
+    "css.validate": false,
+    "scss.validate": false
+}
