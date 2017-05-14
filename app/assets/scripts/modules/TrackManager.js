@@ -4,15 +4,17 @@ import DataReader from './DataReader';
 class TrackManager {
 
     constructor(trackDataURL) {
-        var track = new Track(5, 50);
-        track.greet();
+        
+        this.tracks = [];        // The master array of track objects
+        this.audio = [];         // The master list of audio sources
+
         this.dataReader = new DataReader(trackDataURL, this.onDataReadComplete.bind(this));
+
     }
 
     onDataReadComplete(trackData) {
         this.trackData = trackData;
         this.dataReader.populateSearchResults(trackData);
-
     }
 
     // Called when the 'Add Track' button is clicked,

@@ -9,8 +9,6 @@ var trackManager = new TrackManager(trackDataURL);
 new SearchBar(trackManager);
 
 // $(document).ready(function() {
-//     var tracks = [];        // The master array of track objects
-//     var audio = [];         // The master list of audio sources
 //     var glob_volume = 1;    // The global volume multiplier applied to all tracks
 //     var glob_muted = 0;     // Whether or not all tracks are currently muted
 //     var id_counter = 0;     // Used for giving each new track its own id
@@ -30,22 +28,7 @@ new SearchBar(trackManager);
         
 //     }
 
-//     function playTrack(trackId) {
-//         console.log("Playing track #" + trackId);
-//         audio[trackId].play();
-//     }
 
-//     function stopTrack(trackId) {
-//         console.log("Stopping track #" + trackId);
-//         audio[trackId].stop();
-//     }
-
-//     function deleteTrack(trackId) {
-//         console.log("Deleting track #" + trackId);
-//         $("#track"+trackId).fadeTo('slow', 0);
-//         // $("#track"+trackId).hide(900, function() { $(this).remove()});
-//         id_counter;
-//     }
 
 //     initialize();
 // });
