@@ -1,0 +1,20 @@
+.navbar {
+    background-color: $blueberry;
+    border: none;
+    height: 48px;
+    width: 100%;
+    position: relative;
+    padding: 10px;
+
+    &__brand {
+        font-size: 32px;
+        color: $phanary;
+        margin: 0;
+        font-family: 'Slabo 27px', serif;
+        font-weight: bold;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+    }
+}
