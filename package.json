@@ -26,6 +26,7 @@
     "gulp": "^3.9.1",
     "gulp-postcss": "^7.0.0",
     "gulp-watch": "^4.3.11",
+    "postcss-hexrgba": "^0.2.1",
     "postcss-import": "^10.0.0",
     "postcss-mixins": "^6.0.0",
     "postcss-nested": "^2.0.2",

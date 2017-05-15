@@ -4,8 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="Handlebars/handlebars.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700|Slabo+27px" rel="stylesheet">
   <!--<link rel="stylesheet" href="phanary.css">-->
   <link href="temp/styles/styles.css" rel="stylesheet">
   <title>Phanary</title>
@@ -13,62 +12,89 @@
 
 <body>
   <div class="navbar">
-    <div class="search-container search-container--centered">
-      <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="Search for an audio track...">
-      <div class="search-container__addon">
-        Autoplay
-        <input type="checkbox" id="autoplayCheckbox">
-      </div>
-      <div class="search-container__addon">
-        <button class="btn yellowBtn yellowBtn-simple" type="button" id="searchBarClearBtn">
-      </div>
-    </div>
-    <h2 class="navbar__brand">Phanary</h2>
-
-
-      <ul class="dropdown-menu" id="searchResults" style="display: none">
-        <!-- Search Results go here -->
-        <script id="searchResultTemplate" type="text/x-handlebars-tempate">
-          <li><a href="#" class="">{{name}}</a></li>
-        </script>
-      </ul>
-    </div>
-  </div>
-
-  <div class="container">
-    <div id="trackList" class="panel-group">
-
-      <!-- Tracks go here -->
-      <script id="trackTemplate" type="text/x-handlebars-template">
-        <div id=track{{trackId}} class="track panel panel-default">
-          <div class="panel-heading">
-            <h4>{{name}}</h4>
-            <button class="btn yellowBtn yellowBtn-simpl pull-right deleteTrackBtn" type="button" id="deleteBtn{{trackId}}">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </button>
+    <div class="wrapper">
+      <div class="search-container">
+        <div class="search-container__search-controls">
+          <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="Search for an audio track...">
+          <div id="searchBarClearBtn" class="btn search-container__addon">
+            x
           </div>
-          <div class="panel-body">
-            <p>{{filename}}</p>
-            <!-- remove me-->
-            <p>Hello, I am track #{{trackId}}.</p>
-            <div class="controls">
-              <button id="playBtn{{trackId}}" type="button" class="playTrackBtn yellowBtn btn" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-              <button id="stopBtn{{trackId}}" type="button" class="stopTrackBtn yellowBtn btn"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+          <div class="search-container__addon search-container__addon--inverted">
+            <div class="search-container__addon__inner">
+              <label class="control control--checkbox">Autoplay
+                <input type="checkbox" checked="checked" id="autoplayCheckbox">
+                <div class="control__indicator"></div>
+              </label>
+              <!--<p>
+                Autoplay
+              </p>
+              <input type="checkbox" id="autoplayCheckbox">-->
             </div>
-            <input type="range" min="0" max="9" step="1" class="volume">
           </div>
         </div>
-      </script>
+        <ul class="search-container__results" id="searchResults" style="display: none">
+          <!-- Search Results go here -->
+          <script id="searchResultTemplate" type="text/x-handlebars-tempate">
+            <li><a href="#" class="">{{name}}</a></li>
+          </script>
+        </ul>
+      </div>
+      <h2 class="navbar__brand">Phanary</h2>
+    </div>
+  </div> <!-- /.navbar -->
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="wrapper wrapper--top-margin">
+
+      <div class="atmosphere">
+      </div>
 
     </div>
-    <!-- /#trackList -->
-
-    <p id="trackCounter"></p>
-
-    <!-- TODO: remove 'Add Track' button -->
-    <button type="button" id="addTrackBtn" class="yellowBtn btn">Add Track</button>
   </div>
-  <!-- /.container -->
+  <!-- /.sidebar -->
+
+  <!-- Main Content-->
+  <div class="main-content">
+    <div class="wrapper wrapper--top-margin">
+      <div id="trackList" class="panel-group">
+
+        <!-- Tracks go here -->
+        <script id="trackTemplate" type="text/x-handlebars-template">
+          <div id=track{{trackId}} class="track">
+            <div class="track__heading">
+              <h4 class="track__heading__title">{{name}}</h4>
+              <div class="track__btn-container">
+                <button class="btn btn--track-control btn--delete-track btn--inverted" type="button" id="deleteBtn{{trackId}}">
+                    x
+                </button>
+              </div>
+            </div>
+            <div class="track__body">
+              <div class="wrapper">
+                <p>{{filename}}</p>
+                <!-- remove me-->
+                <p>Hello, I am track #{{trackId}}.</p>
+                <div class="controls">
+                  <button id="playBtn{{trackId}}" type="button" class="btn--play-track btn btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+                  <button id="stopBtn{{trackId}}" type="button" class="btn--stop-track btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+                </div>
+                <input type="range" min="0" max="9" step="1" class="volume">
+              </div>
+            </div>
+          </div>
+        </script>
+
+      </div>
+      <!-- /#trackList -->
+
+      <p id="trackCounter"></p>
+
+      <!-- TODO: remove 'Add Track' button -->
+      <button type="button" id="addTrackBtn" class="yellowBtn btn">Add Track</button>
+    </div>
+  </div>
+  <!-- /.main-content -->
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.3/howler.core.min.js"></script>
   <script src="/temp/scripts/App.js"></script>

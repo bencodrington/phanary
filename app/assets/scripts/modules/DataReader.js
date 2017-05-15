@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Handlebars from 'handlebars';
+import { g } from "./GlobalVars.js";
 
 class DataReader {
 
@@ -24,12 +25,11 @@ class DataReader {
         var compiledTemplate = Handlebars.compile(rawTemplate);
         var resultObject = {};
         var resultHTML;
-        console.log(trackData);
         $.each(trackData.tracks, function(name) {
-            console.log("name: " + name);
+            console.log("DataReader.js: populateSearchResults: name: " + name);
             resultObject['name'] = name;
             resultHTML = compiledTemplate(resultObject);
-            $(resultHTML).appendTo($('#searchResults'));
+            $(resultHTML).appendTo(g.$searchResults);
         } );
     }
 

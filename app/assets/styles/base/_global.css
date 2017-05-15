@@ -1,6 +1,7 @@
 body {
     margin: 0;
     background-color: $stormGrey;
+    font-family: 'Roboto', sans-serif;
 }
 
 img {
@@ -10,4 +11,11 @@ img {
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
 }

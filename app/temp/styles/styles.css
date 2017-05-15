@@ -452,6 +452,7 @@ template {
 body {
     margin: 0;
     background-color: #9FB1BC;
+    font-family: 'Roboto', sans-serif;
 }
 
 img {
@@ -462,28 +463,38 @@ img {
 * {
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .navbar {
+    position: fixed;
     background-color: #2E5266;
     border: none;
-    height: 48px;
     width: 100%;
-    position: relative;
-    padding: 10px;
+    padding: .5rem 0;
+    top: 0;
+    z-index: 10;
+    -webkit-box-shadow: 0 5px 10px rgba(0,0,0, 0.2);
+            box-shadow: 0 5px 10px rgba(0,0,0, 0.2);
+
 }
 
 .navbar__brand {
-        font-size: 32px;
+        display: block;
+        font-size: 2rem;
         color: #F7CE38;
         margin: 0;
         font-family: 'Slabo 27px', serif;
         font-weight: bold;
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        -webkit-transform: translateY(-50%);
-                transform: translateY(-50%);
+        float: right;
+        -webkit-box-sizing: content-box;
+                box-sizing: content-box;
     }
 
 .wrapper {
@@ -495,30 +506,320 @@ img {
     overflow: hidden;
 }
 
-.search-container {
-    
-    border: 1px solid black;
-    border-radius: 5px;
-    overflow: hidden;
-    background-color: white;
-}
-
-.search-container--centered {
-        position: absolute;
-        top: 50%;
-        -webkit-transform: translateY(-50%);
-                transform: translateY(-50%);
+.wrapper--top-margin {
+        margin-top: 4.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
     }
 
+.search-container {
+    position: absolute;
+    width: 50%;
+    top: .65rem;
+}
+
+.search-container__search-controls {
+        width: 100%;
+        height: 2rem;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        border: none;
+        border-radius: 5px;
+        overflow: hidden;
+        -webkit-box-shadow: 0 0 5px rgba(0,0,0, 0.8);
+                box-shadow: 0 0 5px rgba(0,0,0, 0.8); /* TODO: darker blueberry, and expand when textbox has focus */
+    }
+
+/*}*/
+
 .search-container__search-bar {
+        display: inline-block;
         border: none;
         padding: 5px 10px;
+        height: 100%;
+        -webkit-box-flex: 2;
+            -ms-flex: 2;
+                flex: 2;
+        background-color: #9FB1BC;
+        color: #2E5266;
+        font-weight: 500;
+        font-family: 'Roboto';
+    }
+
+/*&__search-controls::before {
+        background-color: red;
+        width: 100%;
+        height: 100%;
+        z-index: 400;
+        content: '';
+        box-shadow: 0 0 10px black;*/
+
+.search-container__search-bar::-webkit-input-placeholder {
+        text-shadow: none;
+        color: rgba(46,82,102, 0.6);
+    }
+
+.search-container__search-bar:-ms-input-placeholder {
+        text-shadow: none;
+        color: rgba(46,82,102, 0.6);
+    }
+
+.search-container__search-bar::placeholder {
+        text-shadow: none;
+        color: rgba(46,82,102, 0.6);
     }
 
 .search-container__addon {
         display: inline-block;
         margin: 0;
         height: 100%;
-        border-left: 1px solid black;
-        padding: 0 10px;
+        position: relative;
+        padding: 5px 10px;
+        float: right;
     }
+
+.search-container__addon--inverted {
+            background-color: #2E5266;
+            color: #9FB1BC;
+            font-weight: 500;
+        }
+
+.search-container__addon p {
+            margin: 0;
+            display: inline-block;
+        }
+
+.search-container__addon input {
+            margin-left: 5px;
+            display: inline-block;
+            top: 50%;
+        }
+
+.search-container__addon:last-child {
+        /*border-left: 1px solid black;*/
+    }
+
+.search-container__addon label {
+        font-weight: 300;
+    }
+
+.search-container__addon__inner {
+        position: relative;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+                transform: translateY(-50%);
+    }
+
+.search-container__results {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        overflow: hidden;
+        -webkit-box-shadow: 0 0 5px #2E5266;
+                box-shadow: 0 0 5px #2E5266;
+    }
+
+.search-container__results li {
+            background-color: #9FB1BC;
+            border-bottom: 1px rgba(46,82,102, 0.25) solid;
+            padding: 5px;
+        }
+
+.search-container__results li.selected {
+            background-color: #2E5266;
+        }
+
+/* TODO: implement this with jquery */
+
+.search-container__results li.last-result { 
+            border-bottom: none;
+        }
+
+.search-container__results li a {
+            color: #2E5266;
+        }
+
+.search-container__results li.selected a {
+            font-weight: 500;
+            color: #9FB1BC;
+        }
+
+.btn {
+    color: rgba(46,82,102, 0.6);
+    background-color: #9FB1BC;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn--track-control {
+        border: 1px solid #2E5266;
+        border-radius: 5px;
+        width: 20px;
+        height: 20px;
+    }
+
+.btn--stop-track {
+        background-color: red;
+    }
+
+.btn--play-track {
+        background-color: green;
+    }
+
+.btn--inverted {
+        background-color: #2E5266;
+        border: 1px solid #9FB1BC;
+        color: #9FB1BC;
+    }
+
+.btn:hover {
+    background-color: #AFC2CD;
+    color: #2E5266;
+}
+
+.track {
+    border: 1px solid #2E5266;
+    border-radius: 5px;
+    margin-bottom: 20px;
+
+}
+
+.track__heading {
+        background-color: #2E5266;
+        padding: 0.5rem 1rem;
+        position: relative;
+    }
+
+.track__heading__title {
+            display: inline-block;
+            margin: 0;
+            color: #9FB1BC;
+            font-family: 'Slabo 27px', serif;
+            font-weight: 100;
+            
+        }
+
+.track__btn-container {
+        padding: 2px;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 100%;
+    }
+
+.track__body {
+        padding: 1rem 0;
+    }
+
+.sidebar {
+    width: 33%;
+    height: 100vw;
+    float: left;
+    position: fixed;
+    background-color: #2E5266;
+    -webkit-box-shadow: 0 0 10px rgba(0,0,0, 0.5);
+            box-shadow: 0 0 10px rgba(0,0,0, 0.5); /* TODO: darker blueberry */
+}
+
+.main-content {
+    width: 66%;
+    float: right;
+}
+
+.control {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    padding-left: 30px;
+
+
+}
+
+.control input {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+    }
+
+.control__indicator {
+        position: absolute;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+                transform: translateY(-50%);
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: #e6e6e6;
+        border-radius: 2px;
+    }
+
+/* Hover and focus states */
+
+.control:hover input ~ .control__indicator,
+    .control input:focus ~ .control__indicator {
+        background: #ccc;
+    }
+
+/* Checked State */
+
+.control input:checked ~ .control__indicator {
+        background: #2aa1c0;
+    }
+
+/* Hover state whilst checked */
+
+.control:hover input:not([disabled]):checked ~ .control__indicator,
+    .control input:checked:focus ~ .control__indicator {
+        background: #0e647d;
+    }
+
+/* Disabled state */
+
+.control input:disabled ~ .control__indicator {
+        pointer-events: none;
+        opacity: .6;
+        background: #e6e6e6;
+    }
+
+/* Check mark */
+
+.control__indicator:after {
+        position: absolute;
+        display: none;
+        content: '';
+        top: 4px;
+        left: 8px;
+        width: 3px;
+        height: 8px;
+        -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+        border: solid white;
+        border-width: 0 2px 2px 0;
+    }
+
+/* Show check mark */
+
+.control input:checked ~ .control__indicator:after {
+        display: block;
+    }
+
+/* Disabled checkmark colour */
+
+.control input:disabled ~ .control__indicator:after {
+        border-color: #7b7b7b;
+    }
+
+.control-group {
+	display: inline-block;
+	width: 200px;
+	height: 210px;
+	margin: 10px;
+	padding: 30px;
+	text-align: left;
+	vertical-align: top;
+	background: #fff;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	        box-shadow: 0 1px 2px rgba(0,0,0,.1);
+}

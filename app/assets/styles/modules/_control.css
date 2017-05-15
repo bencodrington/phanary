@@ -1,0 +1,85 @@
+.control {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    padding-left: 30px;
+
+    & input {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+    }
+
+    &__indicator {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: #e6e6e6;
+        border-radius: 2px;
+    }
+
+    /* Hover and focus states */
+    &:hover input ~ &__indicator,
+    & input:focus ~ &__indicator {
+        background: #ccc;
+    }
+
+    /* Checked State */
+    & input:checked ~ &__indicator {
+        background: #2aa1c0;
+    }
+
+    /* Hover state whilst checked */
+    &:hover input:not([disabled]):checked ~ &__indicator,
+    & input:checked:focus ~ &__indicator {
+        background: #0e647d;
+    }
+
+    /* Disabled state */
+    & input:disabled ~ &__indicator {
+        pointer-events: none;
+        opacity: .6;
+        background: #e6e6e6;
+    }
+
+    /* Check mark */
+    &__indicator:after {
+        position: absolute;
+        display: none;
+        content: '';
+        top: 4px;
+        left: 8px;
+        width: 3px;
+        height: 8px;
+        transform: rotate(45deg);
+        border: solid white;
+        border-width: 0 2px 2px 0;
+    }
+
+    /* Show check mark */
+    & input:checked ~ &__indicator:after {
+        display: block;
+    }
+
+    /* Disabled checkmark colour */
+    & input:disabled ~ &__indicator:after {
+        border-color: #7b7b7b;
+    }
+
+
+}
+
+.control-group {
+	display: inline-block;
+	width: 200px;
+	height: 210px;
+	margin: 10px;
+	padding: 30px;
+	text-align: left;
+	vertical-align: top;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(0,0,0,.1);
+}
