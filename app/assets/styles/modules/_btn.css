@@ -1,0 +1,32 @@
+.btn {
+    color: rgba($blueberry, 0.6);
+    background-color: $stormGrey;
+    font-weight: 500;
+    cursor: pointer;
+
+    &--track-control {
+        border: 1px solid $blueberry;
+        border-radius: 5px;
+        width: 20px;
+        height: 20px;
+    }
+
+    &--stop-track {
+        background-color: red;
+    }
+
+    &--play-track {
+        background-color: green;
+    }
+
+    &--inverted {
+        background-color: $blueberry;
+        border: 1px solid $stormGrey;
+        color: $stormGrey;
+    }
+}
+
+.btn:hover {
+    background-color: $lighterGrey;
+    color: $blueberry;
+}

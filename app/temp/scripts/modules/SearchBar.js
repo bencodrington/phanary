@@ -1,19 +1,17 @@
 import $ from 'jquery'; 
-// TODO: pass in items instead of jquerying them from in this file
+import { g } from "./GlobalVars.js";
 
 class SearchBar {
 
     constructor(trackManager) {
-        this.$searchBarInput = $("#searchBarInput");
         this.events();
         this.trackManager = trackManager;
-        this.$searchResults = $("#searchResults");
     }
 
     events() {
-        this.$searchBarInput.keyup(this.keyPressInSearchBar.bind(this)); // TODO: replace with on('keyup')??
-        this.$searchBarInput.keydown(this.blockArrowKeys);
-        $("#searchBarClearBtn").click(this.clearSearchBar);
+        g.$searchBarInput.keyup(this.keyPressInSearchBar.bind(this)); // TODO: replace with on('keyup')??
+        g.$searchBarInput.keydown(this.blockArrowKeys);
+        g.$searchBarClearBtn.click(this.clearSearchBar.bind(this));
     }
 
     keyPressInSearchBar(e) {
@@ -22,15 +20,15 @@ class SearchBar {
         switch (keyCode) {
             case 13:    // 'Enter'
                 // Add selected track
-                $selected = $(".selected");
+                var $selected = $(".selected");
                 if ($selected) {
-                    trackManager.addTrack($(".selected").text());
+                    this.trackManager.addTrack($(".selected").text());
                 }
                 e.preventDefault();
                 break;
             case 38:    // Up Key
             case 40:    // Down Key
-                var $visibleResults = $searchResults.find("li:visible");
+                var $visibleResults = g.$searchResults.find("li:visible");
                 // $visibleResults.each(function(index, element) {
                 //     console.log("Element " + index + ", " + element.innerHTML);
                 // });
@@ -97,20 +95,20 @@ class SearchBar {
     }
 
     clearSearchBar() {
-        $searchBarInput.val("");
-        $searchBarInput.focus();
+        g.$searchBarInput.val("");
+        g.$searchBarInput.focus();
         this.filterResults();
     }
 
     filterResults() {
         var results, i, enabledCount;
         //console.log("filterResults: Filtering...");
-        var filter = this.$searchBarInput.val().toUpperCase();
-        if (this.$searchResults == null) {
+        var filter = g.$searchBarInput.val().toUpperCase();
+        if (g.$searchResults == null) {
             console.log('SearchBar.js: filterResults: No search results. Returning...');
             return;
         }
-        var results = this.$searchResults.children(),
+        var results = g.$searchResults.children(),
         enabledCount = 0;
 
         // Loop through all list items, and hide those who don't match the search query
@@ -128,11 +126,11 @@ class SearchBar {
         //console.log("filterResults: There are " + enabledCount + " enabled list items.");
         results.removeClass("selected");
         if (enabledCount == 0) {
-            this.$searchResults.css("display", "none");
+            g.$searchResults.css("display", "none");
         } else {
             // Select top element
-            this.$searchResults.css("display", "");
-            this.$searchResults.find("li:visible").first().addClass("selected")
+            g.$searchResults.css("display", "");
+            g.$searchResults.find("li:visible").first().addClass("selected")
         }
 
     }

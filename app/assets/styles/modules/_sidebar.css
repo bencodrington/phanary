@@ -1,0 +1,8 @@
+.sidebar {
+    width: 33%;
+    height: 100vw;
+    float: left;
+    position: fixed;
+    background-color: $blueberry;
+    box-shadow: 0 0 10px rgba(#000, 0.5); /* TODO: darker blueberry */
+}

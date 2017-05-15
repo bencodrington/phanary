@@ -1,26 +1,116 @@
 .search-container {
-    
-    border: 1px solid black;
-    border-radius: 5px;
-    overflow: hidden;
-    background-color: white;
+    position: absolute;
+    width: 50%;
+    top: .65rem;
 
-    &--centered {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+    &__search-controls {
+        width: 100%;
+        height: 2rem;
+        display: flex;
+        border: none;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 0 5px rgba(#000, 0.8) ; /* TODO: darker blueberry, and expand when textbox has focus */
     }
 
+    /*&__search-controls::before {
+        background-color: red;
+        width: 100%;
+        height: 100%;
+        z-index: 400;
+        content: '';
+        box-shadow: 0 0 10px black;*/
+    /*}*/
+
     &__search-bar {
+        display: inline-block;
         border: none;
         padding: 5px 10px;
+        height: 100%;
+        flex: 2;
+        background-color: $stormGrey;
+        color: $blueberry;
+        font-weight: 500;
+        font-family: 'Roboto';
+    }
+
+    &__search-bar::placeholder {
+        text-shadow: none;
+        color: rgba($blueberry, 0.6);
     }
 
     &__addon {
         display: inline-block;
         margin: 0;
         height: 100%;
-        border-left: 1px solid black;
-        padding: 0 10px;
+        position: relative;
+        padding: 5px 10px;
+        float: right;
+
+        &--inverted {
+            background-color: $blueberry;
+            color: $stormGrey;
+            font-weight: 500;
+        }
+
+        & p {
+            margin: 0;
+            display: inline-block;
+        }
+
+        & input {
+            margin-left: 5px;
+            display: inline-block;
+            top: 50%;
+        }
+    }
+
+    &__addon:last-child {
+        /*border-left: 1px solid black;*/
+    }
+
+    &__addon label {
+        font-weight: 300;
+    }
+
+    &__addon__inner {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &__results {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 0 5px $blueberry;
+
+        & li {
+            background-color: $stormGrey;
+            border-bottom: 1px rgba($blueberry, 0.25) solid;
+            padding: 5px;
+        }
+
+        & li.selected {
+            background-color: $blueberry;
+        }
+
+        /* TODO: implement this with jquery */
+        & li.last-result { 
+            border-bottom: none;
+        }
+
+        & li a {
+            color: $blueberry;
+        }
+
+        & li.selected a {
+            font-weight: 500;
+            color: $stormGrey;
+        }
     }
 }

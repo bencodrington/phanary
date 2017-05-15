@@ -10,30 +10,6 @@ body {
     }
 }
 
-* {
-    margin: 0;
-    padding: 0;
-}
-
-.navbar-phanary {
-    background-color: #2E5266;
-    border: none;
-}
-
-.navbar-phanary .navbar-form {
-    border: none;
-}
-
-.navbar-phanary .navbar-brand {
-    font-size: 2em;
-    color: #F7CE38;
-}
-
-.track .panel-heading h4, .navbar-phanary .navbar-brand {
-    font-family: 'Slabo 27px', serif;
-    font-weight: bold;
-}
-
 .track {
     border: none;
     background-color: #FFFFDD;

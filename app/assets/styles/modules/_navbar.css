@@ -1,20 +1,22 @@
 .navbar {
+    position: fixed;
     background-color: $blueberry;
     border: none;
-    height: 48px;
     width: 100%;
-    position: relative;
-    padding: 10px;
+    padding: .5rem 0;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 5px 10px rgba(#000, 0.2);
 
     &__brand {
-        font-size: 32px;
+        display: block;
+        font-size: 2rem;
         color: $phanary;
         margin: 0;
         font-family: 'Slabo 27px', serif;
         font-weight: bold;
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
+        float: right;
+        box-sizing: content-box;
     }
+
 }
