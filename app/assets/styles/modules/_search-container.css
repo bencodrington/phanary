@@ -36,6 +36,7 @@
 
     &__search-bar::placeholder {
         text-shadow: none;
+        font-style: italic;
         color: rgba($blueberry, 0.6);
     }
 

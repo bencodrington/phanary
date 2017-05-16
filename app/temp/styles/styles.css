@@ -449,6 +449,12 @@ template {
   display: none;
 }
 
+/* Yellows */
+
+/* Blues */
+
+/* Browns */
+
 body {
     margin: 0;
     background-color: #9FB1BC;
@@ -555,16 +561,19 @@ a {
 
 .search-container__search-bar::-webkit-input-placeholder {
         text-shadow: none;
+        font-style: italic;
         color: rgba(46,82,102, 0.6);
     }
 
 .search-container__search-bar:-ms-input-placeholder {
         text-shadow: none;
+        font-style: italic;
         color: rgba(46,82,102, 0.6);
     }
 
 .search-container__search-bar::placeholder {
         text-shadow: none;
+        font-style: italic;
         color: rgba(46,82,102, 0.6);
     }
 
@@ -653,6 +662,11 @@ a {
     cursor: pointer;
 }
 
+.btn:hover {
+        background-color: #AFC2CD;
+        color: #2E5266;
+    }
+
 .btn--track-control {
         border: 1px solid #2E5266;
         border-radius: 5px;
@@ -674,32 +688,24 @@ a {
         color: #9FB1BC;
     }
 
-.btn:hover {
-    background-color: #AFC2CD;
-    color: #2E5266;
-}
-
-.track {
-    border: 1px solid #2E5266;
-    border-radius: 5px;
-    margin-bottom: 20px;
-
-}
-
-.track__heading {
-        background-color: #2E5266;
-        padding: 0.5rem 1rem;
-        position: relative;
+.btn--yellow {
+        background-color: #F7CE38;
+        color: #995835;
     }
 
-.track__heading__title {
-            display: inline-block;
-            margin: 0;
-            color: #9FB1BC;
-            font-family: 'Slabo 27px', serif;
-            font-weight: 100;
-            
-        }
+.btn--yellow:hover {
+        background-color: #F4E2A1;
+        color: #995835;
+    }
+
+.btn--rounded {
+        border-radius: 5px;
+    }
+
+.btn--medium {
+        width: 2rem;
+        height: 2rem;
+    }
 
 .track__btn-container {
         padding: 2px;
@@ -709,10 +715,6 @@ a {
         height: 100%;
     }
 
-.track__body {
-        padding: 1rem 0;
-    }
-
 .sidebar {
     width: 33%;
     height: 100vw;
@@ -720,8 +722,50 @@ a {
     position: fixed;
     background-color: #2E5266;
     -webkit-box-shadow: 0 0 10px rgba(0,0,0, 0.5);
-            box-shadow: 0 0 10px rgba(0,0,0, 0.5); /* TODO: darker blueberry */
+            box-shadow: 0 0 10px rgba(0,0,0, 0.5);
 }
+
+/* TODO: darker blueberry */
+
+.sidebar__footer {
+        height: 4rem;
+        width: 33%;
+        position: fixed; /* TODO: give content above bottom padding to avoid overlap */
+        bottom: 0;
+        padding: 1rem 0;
+        background-color: #2E5266;
+        -webkit-box-shadow: 0 0 10px rgba(0,0,0, 0.5);
+                box-shadow: 0 0 10px rgba(0,0,0, 0.5);
+    }
+
+/*bottom: 0px;*/
+
+.sidebar__footer__controls {
+            width: 100%;
+            height: 2rem;
+            /*background-color: blue;*/
+            position: relative;
+        }
+
+/* TODO: darker blueberry */
+
+.sidebar__footer__btn-new {
+            /*background-color: red;*/
+            height: 100%;
+            display: inline-block;
+            position: relative;
+            float: right;
+            margin-right: 1rem;
+            text-align: center;
+        }
+
+.sidebar__footer__btn-new p {
+            position: absolute;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+                    transform: translateY(-50%);
+            width: 100%;
+        }
 
 .main-content {
     width: 66%;
@@ -823,3 +867,56 @@ a {
 	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
 	        box-shadow: 0 1px 2px rgba(0,0,0,.1);
 }
+
+.atmosphere {
+    background-color: blue;
+    /*height: 40px;*/
+    width: 100%;
+    position: relative;
+}
+
+.atmosphere__play {
+        position: relative;
+    }
+
+.section {
+    border: 1px solid #2E5266;
+    border-radius: 5px;
+    margin-bottom: 20px;
+
+
+
+}
+
+.section__heading {
+        background-color: #2E5266;
+        padding: 0.5rem 1rem;
+        position: relative;
+    }
+
+.section__heading__title {
+            display: inline-block;
+            margin: 0;
+            color: #9FB1BC;
+            font-family: 'Slabo 27px', serif;
+            font-weight: 100;
+            
+        }
+
+/* TODO: get nicer colours */
+
+.section--atmosphere {
+        border-color: #F7CE38;
+    }
+
+.section--atmosphere .section__heading {
+            background-color: #F7CE38;
+        }
+
+.section--atmosphere .section__heading__title {
+                color: #995835;
+            }
+
+.section__body {
+        padding: 1rem 0;
+    }

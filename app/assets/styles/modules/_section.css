@@ -1,0 +1,40 @@
+.section {
+    border: 1px solid $blueberry;
+    border-radius: 5px;
+    margin-bottom: 20px;
+
+    &__heading {
+        background-color: $blueberry;
+        padding: 0.5rem 1rem;
+        position: relative;
+
+        &__title {
+            display: inline-block;
+            margin: 0;
+            color: $stormGrey;
+            font-family: 'Slabo 27px', serif;
+            font-weight: 100;
+            
+        }
+    }
+
+    /* TODO: get nicer colours */
+    &--atmosphere {
+        border-color: $phanary;
+
+        & .section__heading {
+            background-color: $phanary;
+
+            &__title {
+                color: $coconut;
+            }
+        }
+    }
+
+    &__body {
+        padding: 1rem 0;
+    }
+
+
+
+}

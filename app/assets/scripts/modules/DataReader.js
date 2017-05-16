@@ -4,12 +4,12 @@ import { g } from "./GlobalVars.js";
 
 class DataReader {
 
-    constructor(trackDataURL, callback) {
-        this.readTrackData(trackDataURL, callback);
+    constructor(dataURL, callback) {
+        this.readData(dataURL, callback);
     }
 
-    // Parse tracks.json file to retrieve track info
-    readTrackData(file, callback){
+    // Parse JSON from file
+    readData(file, callback){
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(){
             if(xhr.readyState === 4 && xhr.status === 200){
@@ -20,14 +20,15 @@ class DataReader {
         xhr.send();
     }
 
-    populateSearchResults(trackData) {
+    populateSearchResults(data, type) {
         var rawTemplate = $("#searchResultTemplate").html();
         var compiledTemplate = Handlebars.compile(rawTemplate);
         var resultObject = {};
         var resultHTML;
-        $.each(trackData.tracks, function(name) {
+        $.each(data, function(name) {
             console.log("DataReader.js: populateSearchResults: name: " + name);
             resultObject['name'] = name;
+            resultObject['type'] = type;
             resultHTML = compiledTemplate(resultObject);
             $(resultHTML).appendTo(g.$searchResults);
         } );

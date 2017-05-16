@@ -1,0 +1,11 @@
+{
+    "atmospheres": {
+        "Rainstorm": {
+            "tracks": [
+                "Heavy Rain",
+                "Light Rain",
+                "Waterfall"
+            ]
+        }
+    }
+}

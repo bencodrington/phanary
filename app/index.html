@@ -15,7 +15,7 @@
     <div class="wrapper">
       <div class="search-container">
         <div class="search-container__search-controls">
-          <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="Search for an audio track...">
+          <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="'rain', 'oneshot', 'rain atmosphere', etc.">
           <div id="searchBarClearBtn" class="btn search-container__addon">
             x
           </div>
@@ -25,17 +25,13 @@
                 <input type="checkbox" checked="checked" id="autoplayCheckbox">
                 <div class="control__indicator"></div>
               </label>
-              <!--<p>
-                Autoplay
-              </p>
-              <input type="checkbox" id="autoplayCheckbox">-->
             </div>
           </div>
         </div>
         <ul class="search-container__results" id="searchResults" style="display: none">
           <!-- Search Results go here -->
           <script id="searchResultTemplate" type="text/x-handlebars-tempate">
-            <li><a href="#" class="">{{name}}</a></li>
+            <li class="{{type}}"><a href="#">{{name}}</a></li>
           </script>
         </ul>
       </div>
@@ -47,7 +43,47 @@
   <div class="sidebar">
     <div class="wrapper wrapper--top-margin">
 
-      <div class="atmosphere">
+      <!-- Atmospheres go here-->
+      <div id=atmosphere0 class="section section--atmosphere">
+        <div class="section__heading">
+            <h4 class="section__heading__title">{{name}}</h4>
+            <div class="track__btn-container">
+            <div class="atmosphere__rename btn btn--rounded btn--medium btn--inverted">
+              Pencil
+            </div>
+            <button class="btn btn--track-control btn--delete-track btn--inverted" type="button" id="deleteBtn{{trackId}}">
+                x
+            </button>
+            </div>
+        </div>
+        <div class="section__body">
+          <div class="wrapper">
+          <p>{{filename}}</p>
+          <!-- remove me-->
+          <p>Hello, I am track #{{trackId}}.</p>
+          <div class="controls">
+            <div class="atmosphere__play btn btn--rounded btn--medium btn--yellow">
+              X
+            </div>
+            <button id="playBtn{{trackId}}" type="button" class="btn--play-track btn btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+            <button id="stopBtn{{trackId}}" type="button" class="btn--stop-track btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+          </div>
+          <input type="range" min="0" max="9" step="1" class="volume">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sidebar__footer">
+
+      <div class="sidebar__footer__controls">
+        <div class="btn btn--yellow btn--rounded btn--medium sidebar__footer__btn-new">
+          <p>+</p>
+        </div>
+        <div class="btn btn--medium sidebar__footer__btn-new">
+          <p>+</p>
+        </div>
       </div>
 
     </div>
@@ -60,30 +96,6 @@
       <div id="trackList" class="panel-group">
 
         <!-- Tracks go here -->
-        <script id="trackTemplate" type="text/x-handlebars-template">
-          <div id=track{{trackId}} class="track">
-            <div class="track__heading">
-              <h4 class="track__heading__title">{{name}}</h4>
-              <div class="track__btn-container">
-                <button class="btn btn--track-control btn--delete-track btn--inverted" type="button" id="deleteBtn{{trackId}}">
-                    x
-                </button>
-              </div>
-            </div>
-            <div class="track__body">
-              <div class="wrapper">
-                <p>{{filename}}</p>
-                <!-- remove me-->
-                <p>Hello, I am track #{{trackId}}.</p>
-                <div class="controls">
-                  <button id="playBtn{{trackId}}" type="button" class="btn--play-track btn btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-                  <button id="stopBtn{{trackId}}" type="button" class="btn--stop-track btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
-                </div>
-                <input type="range" min="0" max="9" step="1" class="volume">
-              </div>
-            </div>
-          </div>
-        </script>
 
       </div>
       <!-- /#trackList -->
@@ -91,7 +103,7 @@
       <p id="trackCounter"></p>
 
       <!-- TODO: remove 'Add Track' button -->
-      <button type="button" id="addTrackBtn" class="yellowBtn btn">Add Track</button>
+      <button type="button" id="addTrackBtn" class="btn btn--yellow btn--rounded">Add Track</button>
     </div>
   </div>
   <!-- /.main-content -->

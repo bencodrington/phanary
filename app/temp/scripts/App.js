@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10572,11 +10572,11 @@ var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(27);
+var _helpers = __webpack_require__(28);
 
-var _decorators = __webpack_require__(25);
+var _decorators = __webpack_require__(26);
 
-var _logger = __webpack_require__(35);
+var _logger = __webpack_require__(36);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10818,6 +10818,77 @@ module.exports = exports['default'];
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _handlebars = __webpack_require__(9);
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+var _GlobalVars = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DataReader = function () {
+    function DataReader(dataURL, callback) {
+        _classCallCheck(this, DataReader);
+
+        this.readData(dataURL, callback);
+    }
+
+    // Parse JSON from file
+
+
+    _createClass(DataReader, [{
+        key: 'readData',
+        value: function readData(file, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    callback(JSON.parse(xhr.responseText));
+                }
+            };
+            xhr.open('GET', file, true);
+            xhr.send();
+        }
+    }, {
+        key: 'populateSearchResults',
+        value: function populateSearchResults(data, type) {
+            var rawTemplate = (0, _jquery2.default)("#searchResultTemplate").html();
+            var compiledTemplate = _handlebars2.default.compile(rawTemplate);
+            var resultObject = {};
+            var resultHTML;
+            _jquery2.default.each(data, function (name) {
+                console.log("DataReader.js: populateSearchResults: name: " + name);
+                resultObject['name'] = name;
+                resultObject['type'] = type;
+                resultHTML = compiledTemplate(resultObject);
+                (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
+            });
+        }
+    }]);
+
+    return DataReader;
+}();
+
+exports.default = DataReader;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 exports.__esModule = true;
 var AST = {
   // Public API used to evaluate derived attributes regarding AST nodes
@@ -10850,7 +10921,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10875,10 +10946,10 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(39)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -10887,9 +10958,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(15)['default'];
+var handlebars = __webpack_require__(16)['default'];
 
-var printer = __webpack_require__(23);
+var printer = __webpack_require__(24);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -10909,213 +10980,12 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _handlebars = __webpack_require__(8);
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
-var _Track = __webpack_require__(14);
-
-var _Track2 = _interopRequireDefault(_Track);
-
-var _DataReader = __webpack_require__(12);
-
-var _DataReader2 = _interopRequireDefault(_DataReader);
-
-var _AudioManager = __webpack_require__(11);
-
-var _AudioManager2 = _interopRequireDefault(_AudioManager);
-
-var _SearchBar = __webpack_require__(13);
-
-var _SearchBar2 = _interopRequireDefault(_SearchBar);
-
-var _GlobalVars = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var TrackManager = function () {
-    function TrackManager(trackDataURL) {
-        _classCallCheck(this, TrackManager);
-
-        this.tracks = []; // The master array of track objects
-        this.am = new _AudioManager2.default(); // Controls he master list of audio sources
-        this.id_counter = 0; // Used for giving each new track its own id
-        this.trackPrefix = "assets/audio/tracks/";
-
-        this.dataReader = new _DataReader2.default(trackDataURL, this.onDataReadComplete.bind(this));
-        this.searchBar = new _SearchBar2.default(this);
-    }
-
-    _createClass(TrackManager, [{
-        key: 'onDataReadComplete',
-        value: function onDataReadComplete(trackData) {
-            this.trackData = trackData;
-            this.dataReader.populateSearchResults(trackData);
-        }
-
-        // Called when the 'Add Track' button is clicked,
-        //  and eventually when enter is pressed in the
-        //  search bar.
-
-    }, {
-        key: 'addTrack',
-        value: function addTrack(trackKey) {
-
-            if (this.trackData == null) {
-                console.error("Track Data failed to fetch from server. Cannot add track.");
-                return;
-            }
-
-            console.log("addTrack(): trackKey: " + trackKey);
-
-            // Create new Track data object and add it to the tracklist
-            var newId = this.id_counter;
-            this.tracks.push(new _Track2.default(newId, 1));
-
-            // Generate template
-            var rawTemplate = (0, _jquery2.default)("#trackTemplate").html();
-            var compiledTemplate = _handlebars2.default.compile(rawTemplate);
-            // Convert object to HTML
-            var trackObject = this.trackData.tracks[trackKey];
-            trackObject.name = trackKey;
-            trackObject.trackId = newId;
-            var trackHTML = compiledTemplate(trackObject);
-            // Add to tracklist
-            (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast');
-
-            // Rig play and stop buttons to function
-            var $playBtn = (0, _jquery2.default)("#playBtn" + newId); // cache element for use in Howl
-            var that = this;
-            $playBtn.click(function () {
-                that.playTrack(newId);
-            });
-            (0, _jquery2.default)("#stopBtn" + newId).click(function () {
-                that.stopTrack(newId);
-            });
-            (0, _jquery2.default)("#deleteBtn" + newId).click(function () {
-                that.deleteTrack(newId);
-            });
-
-            console.log("addTrack(): Autoplay checked? " + _GlobalVars.g.$autoplayCheckbox.is(":checked"));
-
-            // Append prefix to filenames
-            var filenames = trackObject.filenames;
-            var that = this;
-            filenames = filenames.map(function (filename) {
-                return that.trackPrefix + filename;
-            });
-            console.log(filenames);
-
-            // Create new audio source
-            // TODO: if audio already contains newId, just add another source
-            this.am.audio[newId] = new Howl({
-                src: filenames,
-                buffer: true,
-                autoplay: _GlobalVars.g.$autoplayCheckbox.is(":checked"),
-                loop: trackObject.loop, // TODO: button to change
-                onload: function onload() {
-                    console.log("Loaded track #" + newId + ", " + trackKey);
-                    $playBtn.removeAttr("disabled");
-                }
-            });
-
-            this.searchBar.clearSearchBar();
-
-            this.id_counter++;
-            document.getElementById("trackCounter").innerHTML = "Tracks created: " + this.id_counter;
-        }
-    }, {
-        key: 'playTrack',
-        value: function playTrack(trackId) {
-            console.log("Playing track #" + trackId);
-            this.am.audio[trackId].play();
-        }
-    }, {
-        key: 'stopTrack',
-        value: function stopTrack(trackId) {
-            console.log("Stopping track #" + trackId);
-            this.am.audio[trackId].stop();
-        }
-    }, {
-        key: 'deleteTrack',
-        value: function deleteTrack(trackId) {
-            console.log("Deleting track #" + trackId);
-            this.stopTrack(trackId); // TODO: fade out?
-            (0, _jquery2.default)("#track" + trackId).hide('slow');
-            // $("#track"+trackId).hide(900, function() { $(this).remove()});
-            this.id_counter--;
-        }
-    }]);
-
-    return TrackManager;
-}();
-
-exports.default = TrackManager;
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _TrackManager = __webpack_require__(9);
-
-var _TrackManager2 = _interopRequireDefault(_TrackManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var trackDataURL = "https://api.myjson.com/bins/15eiip"; // var example = require('example.js');
-
-
-var trackManager = new _TrackManager2.default(trackDataURL);
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var AudioManager = function AudioManager() {
-    _classCallCheck(this, AudioManager);
-
-    this.audio = []; // The master list of audio sources
-};
-
-exports.default = AudioManager;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -11126,61 +10996,55 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _handlebars = __webpack_require__(8);
+var _DataReader = __webpack_require__(6);
 
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
-var _GlobalVars = __webpack_require__(3);
+var _DataReader2 = _interopRequireDefault(_DataReader);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var DataReader = function () {
-    function DataReader(trackDataURL, callback) {
-        _classCallCheck(this, DataReader);
+var AtmosphereManager = function () {
+    function AtmosphereManager(atmosphereDataURL, searchBar) {
+        _classCallCheck(this, AtmosphereManager);
 
-        this.readTrackData(trackDataURL, callback);
+        this.id_counter = 0;
+        this.atmospheres = [];
+        this.searchBar = searchBar;
+
+        this.dataReader = new _DataReader2.default(atmosphereDataURL, this.onDataReadComplete.bind(this));
+
+        this.events();
     }
 
-    // Parse tracks.json file to retrieve track info
-
-
-    _createClass(DataReader, [{
-        key: 'readTrackData',
-        value: function readTrackData(file, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    callback(JSON.parse(xhr.responseText));
-                }
-            };
-            xhr.open('GET', file, true);
-            xhr.send();
+    _createClass(AtmosphereManager, [{
+        key: 'events',
+        value: function events() {
+            // TODO: Rig new atmosphere button to call newAtmosphere();
         }
     }, {
-        key: 'populateSearchResults',
-        value: function populateSearchResults(trackData) {
-            var rawTemplate = (0, _jquery2.default)("#searchResultTemplate").html();
-            var compiledTemplate = _handlebars2.default.compile(rawTemplate);
-            var resultObject = {};
-            var resultHTML;
-            _jquery2.default.each(trackData.tracks, function (name) {
-                console.log("DataReader.js: populateSearchResults: name: " + name);
-                resultObject['name'] = name;
-                resultHTML = compiledTemplate(resultObject);
-                (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
-            });
+        key: 'onDataReadComplete',
+        value: function onDataReadComplete(atmosphereData) {
+            this.atmosphereData = atmosphereData;
+            console.log(atmosphereData);
+            this.dataReader.populateSearchResults(atmosphereData.atmospheres, "result--atmosphere");
+        }
+    }, {
+        key: 'addAtmosphere',
+        value: function addAtmosphere(atmosphereName) {
+            // TODO: read atmosphere template and generate a new one with the current id
+            // TODO: increment id_counter
+            console.log('AtmosphereManager: Adding atmosphere: ' + atmosphereName);
         }
     }]);
 
-    return DataReader;
+    return AtmosphereManager;
 }();
 
-exports.default = DataReader;
+exports.default = AtmosphereManager;
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11203,11 +11067,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var SearchBar = function () {
-    function SearchBar(trackManager) {
+    function SearchBar() {
         _classCallCheck(this, SearchBar);
 
         this.events();
-        this.trackManager = trackManager;
     }
 
     _createClass(SearchBar, [{
@@ -11228,7 +11091,11 @@ var SearchBar = function () {
                     // Add selected track
                     var $selected = (0, _jquery2.default)(".selected");
                     if ($selected) {
-                        this.trackManager.addTrack((0, _jquery2.default)(".selected").text());
+                        if ($selected.hasClass("result--track")) {
+                            this.trackManager.addTrack($selected.text());
+                        } else if ($selected.hasClass("result--atmosphere")) {
+                            this.atmosphereManager.addAtmosphere($selected.text());
+                        }
                     }
                     e.preventDefault();
                     break;
@@ -11351,7 +11218,227 @@ var SearchBar = function () {
 exports.default = SearchBar;
 
 /***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _handlebars = __webpack_require__(9);
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+var _Track = __webpack_require__(15);
+
+var _Track2 = _interopRequireDefault(_Track);
+
+var _DataReader = __webpack_require__(6);
+
+var _DataReader2 = _interopRequireDefault(_DataReader);
+
+var _AudioManager = __webpack_require__(14);
+
+var _AudioManager2 = _interopRequireDefault(_AudioManager);
+
+var _GlobalVars = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TrackManager = function () {
+    function TrackManager(trackDataURL, atmosphereManager, searchBar) {
+        _classCallCheck(this, TrackManager);
+
+        this.tracks = []; // The master array of track objects
+        this.am = new _AudioManager2.default(); // Controls he master list of audio sources
+        this.id_counter = 0; // Used for giving each new track its own id
+        this.trackPrefix = "assets/audio/tracks/";
+
+        this.searchBar = searchBar;
+        this.atmosphereManager = atmosphereManager;
+        this.dataReader = new _DataReader2.default(trackDataURL, this.onDataReadComplete.bind(this));
+
+        this.compileTemplate();
+    }
+
+    _createClass(TrackManager, [{
+        key: 'onDataReadComplete',
+        value: function onDataReadComplete(trackData) {
+            this.trackData = trackData;
+            this.dataReader.populateSearchResults(trackData.tracks, "result--track");
+        }
+    }, {
+        key: 'compileTemplate',
+        value: function compileTemplate() {
+            var that = this;
+            // TODO: move path to variable
+            _jquery2.default.get("assets/templates/track.html", function (rawTemplate) {
+                var template = _handlebars2.default.compile(rawTemplate);
+                that.trackTemplate = template;
+            });
+        }
+
+        // Called when the 'Add Track' button is clicked,
+        //  and when enter is pressed in the search bar.
+
+    }, {
+        key: 'addTrack',
+        value: function addTrack(trackKey) {
+            // TODO: add track to current atmosphere
+
+            if (this.trackData == null) {
+                console.error("Track Data failed to fetch from server. Cannot add track.");
+                return;
+            }
+
+            console.log("addTrack(): trackKey: " + trackKey);
+
+            // Create new Track data object and add it to the tracklist
+            var newId = this.id_counter;
+            this.tracks.push(new _Track2.default(newId, 1));
+
+            // Convert object to HTML
+            var trackObject = this.trackData.tracks[trackKey];
+            trackObject.name = trackKey;
+            trackObject.trackId = newId;
+            // TODO: check if template is compiled or not
+            var trackHTML = this.trackTemplate(trackObject);
+            // Add to tracklist
+            (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast');
+
+            // Rig play and stop buttons to function
+            var $playBtn = (0, _jquery2.default)("#playBtn" + newId); // cache element for use in Howl
+            var that = this;
+            $playBtn.click(function () {
+                that.playTrack(newId);
+            });
+            (0, _jquery2.default)("#stopBtn" + newId).click(function () {
+                that.stopTrack(newId);
+            });
+            (0, _jquery2.default)("#deleteBtn" + newId).click(function () {
+                that.deleteTrack(newId);
+            });
+
+            console.log("addTrack(): Autoplay checked? " + _GlobalVars.g.$autoplayCheckbox.is(":checked"));
+
+            // Append prefix to filenames
+            var filenames = trackObject.filenames;
+            var that = this;
+            filenames = filenames.map(function (filename) {
+                return that.trackPrefix + filename;
+            });
+            console.log(filenames);
+
+            // Create new audio source
+            // TODO: if audio already contains newId, just add another source
+            this.am.audio[newId] = new Howl({
+                src: filenames,
+                buffer: true,
+                autoplay: _GlobalVars.g.$autoplayCheckbox.is(":checked"),
+                loop: trackObject.loop, // TODO: button to change
+                onload: function onload() {
+                    console.log("Loaded track #" + newId + ", " + trackKey);
+                    $playBtn.removeAttr("disabled");
+                }
+            });
+
+            this.searchBar.clearSearchBar();
+
+            this.id_counter++;
+            document.getElementById("trackCounter").innerHTML = "Tracks created: " + this.id_counter;
+        }
+    }, {
+        key: 'playTrack',
+        value: function playTrack(trackId) {
+            console.log("Playing track #" + trackId);
+            this.am.audio[trackId].play();
+        }
+    }, {
+        key: 'stopTrack',
+        value: function stopTrack(trackId) {
+            console.log("Stopping track #" + trackId);
+            this.am.audio[trackId].stop();
+        }
+    }, {
+        key: 'deleteTrack',
+        value: function deleteTrack(trackId) {
+            console.log("Deleting track #" + trackId);
+            this.stopTrack(trackId); // TODO: fade out?
+            (0, _jquery2.default)("#track" + trackId).hide('slow');
+            // $("#track"+trackId).hide(900, function() { $(this).remove()});
+            this.id_counter--;
+        }
+    }]);
+
+    return TrackManager;
+}();
+
+exports.default = TrackManager;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _SearchBar = __webpack_require__(11);
+
+var _SearchBar2 = _interopRequireDefault(_SearchBar);
+
+var _TrackManager = __webpack_require__(12);
+
+var _TrackManager2 = _interopRequireDefault(_TrackManager);
+
+var _AtmosphereManager = __webpack_require__(10);
+
+var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var trackDataURL = "assets/data/tracks.json"; //https:api.myjson.com/bins/15eiip";
+var atmosphereDataURL = "assets/data/atmospheres.json";
+
+var searchBar = new _SearchBar2.default();
+var atmosphereManager = new _AtmosphereManager2.default(atmosphereDataURL, searchBar);
+searchBar.atmosphereManager = atmosphereManager;
+var trackManager = new _TrackManager2.default(trackDataURL, atmosphereManager, searchBar);
+searchBar.trackManager = trackManager;
+
+/***/ }),
 /* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AudioManager = function AudioManager() {
+    _classCallCheck(this, AudioManager);
+
+    this.audio = []; // The master list of audio sources
+};
+
+exports.default = AudioManager;
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11387,7 +11474,7 @@ var Track = function () {
 exports.default = Track;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11398,21 +11485,21 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(16);
+var _handlebarsRuntime = __webpack_require__(17);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
 // Compiler imports
 
-var _handlebarsCompilerAst = __webpack_require__(6);
+var _handlebarsCompilerAst = __webpack_require__(7);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(17);
+var _handlebarsCompilerBase = __webpack_require__(18);
 
-var _handlebarsCompilerCompiler = __webpack_require__(19);
+var _handlebarsCompilerCompiler = __webpack_require__(20);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(21);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(22);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -11420,7 +11507,7 @@ var _handlebarsCompilerVisitor = __webpack_require__(5);
 
 var _handlebarsCompilerVisitor2 = _interopRequireDefault(_handlebarsCompilerVisitor);
 
-var _handlebarsNoConflict = __webpack_require__(7);
+var _handlebarsNoConflict = __webpack_require__(8);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -11459,7 +11546,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11481,7 +11568,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(37);
+var _handlebarsSafeString = __webpack_require__(38);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -11493,11 +11580,11 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(36);
+var _handlebarsRuntime = __webpack_require__(37);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
-var _handlebarsNoConflict = __webpack_require__(7);
+var _handlebarsNoConflict = __webpack_require__(8);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -11532,7 +11619,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11548,15 +11635,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(22);
+var _parser = __webpack_require__(23);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(24);
+var _whitespaceControl = __webpack_require__(25);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(20);
+var _helpers = __webpack_require__(21);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -11587,7 +11674,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11760,7 +11847,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11782,7 +11869,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _ast = __webpack_require__(6);
+var _ast = __webpack_require__(7);
 
 var _ast2 = _interopRequireDefault(_ast);
 
@@ -12339,7 +12426,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12576,7 +12663,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12595,7 +12682,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(18);
+var _codeGen = __webpack_require__(19);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -13711,7 +13798,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14457,7 +14544,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14650,7 +14737,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14878,7 +14965,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14890,7 +14977,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(26);
+var _decoratorsInline = __webpack_require__(27);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -14901,7 +14988,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14937,7 +15024,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14949,31 +15036,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(28);
+var _helpersBlockHelperMissing = __webpack_require__(29);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(29);
+var _helpersEach = __webpack_require__(30);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(30);
+var _helpersHelperMissing = __webpack_require__(31);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(31);
+var _helpersIf = __webpack_require__(32);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(32);
+var _helpersLog = __webpack_require__(33);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(33);
+var _helpersLookup = __webpack_require__(34);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(34);
+var _helpersWith = __webpack_require__(35);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -14990,7 +15077,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15036,7 +15123,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15137,7 +15224,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15169,7 +15256,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15205,7 +15292,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15238,7 +15325,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15257,7 +15344,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15297,7 +15384,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15351,7 +15438,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15665,7 +15752,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15687,7 +15774,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports) {
 
 var g;
