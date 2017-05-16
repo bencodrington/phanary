@@ -3,9 +3,8 @@ import { g } from "./GlobalVars.js";
 
 class SearchBar {
 
-    constructor(trackManager) {
+    constructor() {
         this.events();
-        this.trackManager = trackManager;
     }
 
     events() {
@@ -22,7 +21,11 @@ class SearchBar {
                 // Add selected track
                 var $selected = $(".selected");
                 if ($selected) {
-                    this.trackManager.addTrack($(".selected").text());
+                    if ($selected.hasClass("result--track")) {
+                        this.trackManager.addTrack($selected.text());
+                    } else if ($selected.hasClass("result--atmosphere")) {
+                        this.atmosphereManager.addAtmosphere($selected.text());
+                    }
                 }
                 e.preventDefault();
                 break;

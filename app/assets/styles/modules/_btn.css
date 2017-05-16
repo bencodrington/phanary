@@ -4,11 +4,16 @@
     font-weight: 500;
     cursor: pointer;
 
+    &:hover {
+        background-color: $lighterGrey;
+        color: $blueberry;
+    }
+
     &--track-control {
         border: 1px solid $blueberry;
         border-radius: 5px;
-        width: 20px;
-        height: 20px;
+        width: $buttonSize;
+        height: $buttonSize;
     }
 
     &--stop-track {
@@ -24,9 +29,23 @@
         border: 1px solid $stormGrey;
         color: $stormGrey;
     }
-}
 
-.btn:hover {
-    background-color: $lighterGrey;
-    color: $blueberry;
+    &--yellow {
+        background-color: $phanary;
+        color: $coconut;
+    }
+
+    &--yellow:hover {
+        background-color: $vanilla;
+        color: $coconut;
+    }
+
+    &--rounded {
+        border-radius: 5px;
+    }
+
+    &--medium {
+        width: 2rem;
+        height: 2rem;
+    }
 }

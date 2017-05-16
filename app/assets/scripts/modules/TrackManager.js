@@ -4,32 +4,42 @@ import Handlebars from 'handlebars';
 import Track from './Track';
 import DataReader from './DataReader';
 import AudioManager from './AudioManager';
-import SearchBar from './SearchBar';
 import { g } from "./GlobalVars.js";
 
 class TrackManager {
 
-    constructor(trackDataURL) {
+    constructor(trackDataURL, atmosphereManager, searchBar) {
         
         this.tracks = [];        // The master array of track objects
         this.am = new AudioManager();         // Controls he master list of audio sources
         this.id_counter = 0;     // Used for giving each new track its own id
         this.trackPrefix = "assets/audio/tracks/"
 
+        this.searchBar = searchBar;
+        this.atmosphereManager = atmosphereManager;
         this.dataReader = new DataReader(trackDataURL, this.onDataReadComplete.bind(this));
-        this.searchBar = new SearchBar(this);
 
+        this.compileTemplate();
     }
 
     onDataReadComplete(trackData) {
         this.trackData = trackData;
-        this.dataReader.populateSearchResults(trackData);
+        this.dataReader.populateSearchResults(trackData.tracks, "result--track");
+    }
+
+    compileTemplate() {
+        var that = this;
+        // TODO: move path to variable
+        $.get("assets/templates/track.html", function(rawTemplate) {
+            var template = Handlebars.compile(rawTemplate);
+            that.trackTemplate = template;
+        });
     }
 
     // Called when the 'Add Track' button is clicked,
-    //  and eventually when enter is pressed in the
-    //  search bar.
+    //  and when enter is pressed in the search bar.
     addTrack(trackKey) {
+        // TODO: add track to current atmosphere
 
         if (this.trackData == null) {
             console.error("Track Data failed to fetch from server. Cannot add track.");
@@ -42,14 +52,12 @@ class TrackManager {
         var newId = this.id_counter;
         this.tracks.push(new Track(newId, 1));
 
-        // Generate template
-        var rawTemplate = $("#trackTemplate").html();
-        var compiledTemplate = Handlebars.compile(rawTemplate);
         // Convert object to HTML
         var trackObject = this.trackData.tracks[trackKey];
         trackObject.name = trackKey;
         trackObject.trackId = newId;
-        var trackHTML = compiledTemplate(trackObject);
+        // TODO: check if template is compiled or not
+        var trackHTML = this.trackTemplate(trackObject);
         // Add to tracklist
         $(trackHTML).hide().prependTo(g.$trackList).show('fast')
 
