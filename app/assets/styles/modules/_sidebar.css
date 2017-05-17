@@ -1,13 +1,12 @@
 .sidebar {
     width: 33%;
-    height: 100vw;
+    height: 100%;
     float: left;
     position: fixed;
     background-color: $blueberry;
     box-shadow: 0 0 10px rgba(#000, 0.5); /* TODO: darker blueberry */
 
     &__footer {
-        height: 4rem;
         width: 33%;
         position: fixed; /* TODO: give content above bottom padding to avoid overlap */
         bottom: 0;
@@ -16,22 +15,14 @@
         box-shadow: 0 0 10px rgba(#000, 0.5); /* TODO: darker blueberry */
         /*bottom: 0px;*/
 
-        &__controls {
-            width: 100%;
-            height: 2rem;
-            /*background-color: blue;*/
-            position: relative;
-        }
-
-        &__btn-new {
-            /*background-color: red;*/
+        /*&__btn-new {
             height: 100%;
             display: inline-block;
             position: relative;
             float: right;
             margin-right: 1rem;
             text-align: center;
-        }
+        }*/
 
         &__btn-new p {
             position: absolute;

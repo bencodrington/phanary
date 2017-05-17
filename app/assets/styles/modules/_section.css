@@ -24,6 +24,7 @@
 
         & .section__heading {
             background-color: $phanary;
+            cursor: pointer;
 
             &__title {
                 color: $coconut;
@@ -33,6 +34,10 @@
 
     &__body {
         padding: 1rem 0;
+    }
+
+    &__controls {
+        bakcground: red;
     }
 
 

@@ -1,0 +1,15 @@
+.volume {
+    width: 100%;
+    display: flex;
+    margin: 10px 0 5px;
+
+    & input[type=range] {
+        flex: 100;
+        margin-right: 10px;
+    }
+
+    &__mute {
+        display: inline-block;
+        float: right;
+    }
+}

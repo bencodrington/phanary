@@ -4,7 +4,8 @@
     max-width: 1236px;
     margin-left: auto;
     margin-right: auto;
-    overflow: hidden;
+    /* Took this out as it was interfering with tooltips */
+    /*overflow: hidden;*/
 
     &--top-margin {
         margin-top: 4.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
