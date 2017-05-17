@@ -3,6 +3,8 @@
     background-color: $stormGrey;
     font-weight: 500;
     cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
 
     &:hover {
         background-color: $lighterGrey;
@@ -39,6 +41,13 @@
         background-color: $vanilla;
         color: $coconut;
     }
+    
+    &--delete {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-top-right-radius: 5px;
+    }
 
     &--rounded {
         border-radius: 5px;
@@ -47,5 +56,13 @@
     &--medium {
         width: 2rem;
         height: 2rem;
+    }
+
+    &__inner {
+        width: 100%;
+        text-align: center;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
     }
 }

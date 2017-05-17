@@ -36,8 +36,7 @@ class TrackManager {
         });
     }
 
-    // Called when the 'Add Track' button is clicked,
-    //  and when enter is pressed in the search bar.
+    // Called when enter is pressed in the search bar, while a track is highlighted.
     addTrack(trackKey) {
         // TODO: add track to current atmosphere
 

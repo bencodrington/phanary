@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/bencodrington/phanary#readme",
   "dependencies": {
+    "glyphicons": "^0.2.0",
     "handlebars": "^4.0.8",
     "jquery": "^3.2.1",
     "normalize.css": "^7.0.0"

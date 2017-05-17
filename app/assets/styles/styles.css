@@ -12,3 +12,7 @@
 @import "modules/_control";
 @import "modules/_atmosphere";
 @import "modules/_section";
+@import "modules/_range";
+@import "modules/_btn-group";
+@import "modules/_volume";
+@import "modules/_tooltip";

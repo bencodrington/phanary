@@ -21,7 +21,8 @@
           </div>
           <div class="search-container__addon search-container__addon--inverted">
             <div class="search-container__addon__inner">
-              <label class="control control--checkbox">Autoplay
+              <label class="control control--checkbox">
+                <i class="fa fa-play" aria-hidden="true"></i>
                 <input type="checkbox" checked="checked" id="autoplayCheckbox">
                 <div class="control__indicator"></div>
               </label>
@@ -46,29 +47,48 @@
       <!-- Atmospheres go here-->
       <div id=atmosphere0 class="section section--atmosphere">
         <div class="section__heading">
-            <h4 class="section__heading__title">{{name}}</h4>
+            <h4 class="section__heading__title">{{name}}
+              <span class="atmosphere__rename">
+              <i class="fa fa-pencil" aria-hidden="true"></i>
+              </span>
+            </h4>
             <div class="track__btn-container">
-            <div class="atmosphere__rename btn btn--rounded btn--medium btn--inverted">
-              Pencil
+            
+            <div class="btn btn--delete btn--yellow btn--medium" id="deleteBtn{{atmosphereID}}">
+              <div class="btn__inner">
+                <i class="fa fa-close" aria-hidden="true"></i>
+              </div>
             </div>
-            <button class="btn btn--track-control btn--delete-track btn--inverted" type="button" id="deleteBtn{{trackId}}">
-                x
-            </button>
             </div>
         </div>
         <div class="section__body">
           <div class="wrapper">
-          <p>{{filename}}</p>
-          <!-- remove me-->
-          <p>Hello, I am track #{{trackId}}.</p>
-          <div class="controls">
-            <div class="atmosphere__play btn btn--rounded btn--medium btn--yellow">
-              X
+          <div class="btn-group">
+            <div class="atmosphere__replace btn btn--rounded btn--medium btn--yellow">
+              <div class="btn__inner">
+                <i class="fa fa-play" aria-hidden="true"></i>
+              </div>
             </div>
-            <button id="playBtn{{trackId}}" type="button" class="btn--play-track btn btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-            <button id="stopBtn{{trackId}}" type="button" class="btn--stop-track btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+            <div class="atmosphere__add btn btn--rounded btn--medium btn--yellow">
+              <div class="btn__inner">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div id="stopBtn{{atmosphereID}}" class="btn btn--stop-track btn--medium btn--track-control">
+              <div class="btn__inner">
+                <i class="fa fa-stop" aria-hidden="true"></i>
+              </div>
+            </div>
           </div>
-          <input type="range" min="0" max="9" step="1" class="volume">
+          <div class="volume">
+            <input type="range" min="0" max="9" step="1">
+            <label class="control control--custom control--checkbox volume__mute">
+              <input type="checkbox" id="muteBtn--atmosphere{{atmosphereID}}">
+              <div class="control__indicator control__indicator--medium"></div>
+              <div class="control--custom__on"><i class="fa fa-volume-off" aria-hidden="true"></i></div>
+              <div class="control--custom__off"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
+            </label>
+          </div>
           </div>
         </div>
       </div>
@@ -76,13 +96,28 @@
     </div>
 
     <div class="sidebar__footer">
-
-      <div class="sidebar__footer__controls">
-        <div class="btn btn--yellow btn--rounded btn--medium sidebar__footer__btn-new">
-          <p>+</p>
+      <div class="wrapper">
+        <div class="btn-group">
+          <div class="btn btn--yellow btn--rounded btn--medium sidebar__footer__btn-new tooltip">
+            <span class="tooltiptext">Create empty atmosphere</span>
+            <div class="btn__inner">
+              <p>+</p>
+            </div>
+          </div>
+          <div class="btn btn--medium sidebar__footer__btn-new">
+            <div class="btn__inner">
+              <p>+</p>
+            </div>
+          </div>
         </div>
-        <div class="btn btn--medium sidebar__footer__btn-new">
-          <p>+</p>
+        <div class="volume">
+          <input type="range" min="0" max="9" step="1">
+          <label class="control control--custom control--checkbox volume__mute">
+            <input type="checkbox" id="muteBtn--atmosphere{{atmosphereID}}">
+            <div class="control__indicator control__indicator--medium"></div>
+            <div class="control--custom__on"><i class="fa fa-volume-off" aria-hidden="true"></i></div>
+            <div class="control--custom__off"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
+          </label>
         </div>
       </div>
 
@@ -102,13 +137,12 @@
 
       <p id="trackCounter"></p>
 
-      <!-- TODO: remove 'Add Track' button -->
-      <button type="button" id="addTrackBtn" class="btn btn--yellow btn--rounded">Add Track</button>
     </div>
   </div>
   <!-- /.main-content -->
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.3/howler.core.min.js"></script>
+  <script src="https://use.fontawesome.com/075d51e5f2.js"></script>
   <script src="/temp/scripts/App.js"></script>
 </body>
 

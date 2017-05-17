@@ -17,25 +17,31 @@
         left: 0;
         width: 20px;
         height: 20px;
-        background: #e6e6e6;
+        background: $offWhite;
         border-radius: 2px;
+    }
+
+    &__indicator--medium {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 5px;
     }
 
     /* Hover and focus states */
     &:hover input ~ &__indicator,
     & input:focus ~ &__indicator {
-        background: #ccc;
+        background: $blond;
     }
 
     /* Checked State */
     & input:checked ~ &__indicator {
-        background: #2aa1c0;
+        background: $phanary;
     }
 
     /* Hover state whilst checked */
     &:hover input:not([disabled]):checked ~ &__indicator,
     & input:checked:focus ~ &__indicator {
-        background: #0e647d;
+        background: $vanilla;
     }
 
     /* Disabled state */
@@ -55,7 +61,7 @@
         width: 3px;
         height: 8px;
         transform: rotate(45deg);
-        border: solid white;
+        border: solid $coconut;
         border-width: 0 2px 2px 0;
     }
 
@@ -69,17 +75,36 @@
         border-color: #7b7b7b;
     }
 
+    &--custom {
+        position: relative;
 
-}
+        &__on, &__off {
+            position: absolute;
+            display: none;
+            color: $coconut;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-.control-group {
-	display: inline-block;
-	width: 200px;
-	height: 210px;
-	margin: 10px;
-	padding: 30px;
-	text-align: left;
-	vertical-align: top;
-	background: #fff;
-	box-shadow: 0 1px 2px rgba(0,0,0,.1);
+        &__off {
+            display: block;
+        }
+
+        /* Hide check mark */
+        & input:checked ~ .control__indicator:after {
+            display: none;
+        }
+
+        /* Show custom on icon*/
+        & input:checked ~ .control--custom__on {
+            display: block;
+        }
+
+        /* Hide custom off icon*/
+        & input:checked ~ .control--custom__off {
+            display: none;
+        }
+    }
+
 }
