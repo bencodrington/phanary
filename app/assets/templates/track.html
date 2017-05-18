@@ -1,7 +1,7 @@
 <div id=track{{trackId}} class="section">
     <div class="section__heading">
         <h4 class="section__heading__title">{{name}}</h4>
-        <div class="btn btn--delete btn--medium btn--inverted" id="deleteBtn{{trackId}}">
+        <div class="btn btn--delete btn--medium btn--inverted">
             <div class="btn__inner">
             <i class="fa fa-close" aria-hidden="true"></i>
             </div>
@@ -13,8 +13,8 @@
         <!-- remove me-->
         <p>Hello, I am track #{{trackId}}.</p>
         <div class="controls">
-            <button id="playBtn{{trackId}}" type="button" class="btn--play-track btn btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-            <button id="stopBtn{{trackId}}" type="button" class="btn--stop-track btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+            <button type="button" class="btn--play-track btn btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+            <button type="button" class="btn--stop-track btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
         </div>
         <div class="volume">
             <input type="range" min="0" max="9" step="1">
