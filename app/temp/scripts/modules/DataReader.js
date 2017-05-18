@@ -26,7 +26,7 @@ class DataReader {
         var resultObject = {};
         var resultHTML;
         $.each(data, function(name) {
-            console.log("DataReader.js: populateSearchResults: name: " + name);
+            // console.log("DataReader.js: populateSearchResults: name: " + name);
             resultObject['name'] = name;
             resultObject['type'] = type;
             resultHTML = compiledTemplate(resultObject);

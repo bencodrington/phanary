@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10530,26 +10530,102 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.g = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
+
+var _handlebars = __webpack_require__(9);
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+var _DataReader = __webpack_require__(6);
+
+var _DataReader2 = _interopRequireDefault(_DataReader);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var GlobalVars =
-// Do all jquery searches here, then other classes can import this file as g and use g.searchResults for example
+var trackDataURL = "assets/data/tracks.json"; //https:api.myjson.com/bins/15eiip";
+var atmosphereDataURL = "assets/data/atmospheres.json";
 
-function GlobalVars() {
-    _classCallCheck(this, GlobalVars);
+var GlobalVars = function () {
+    // Do all jquery searches here, then other classes can import this file as g and use g.searchResults for example
 
-    this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
-    this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
-    this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
-    this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
-    this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
-};
+    function GlobalVars() {
+        _classCallCheck(this, GlobalVars);
+
+        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
+        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
+        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
+        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
+        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
+        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
+
+        this.trackIdCounter = 0;
+        this.trackPrefix = "assets/audio/tracks/";
+
+        this.trackDataReader = new _DataReader2.default(trackDataURL, this.onTrackDataReadComplete.bind(this));
+        this.atmosphereDataReader = new _DataReader2.default(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
+
+        this.compileTemplates();
+    }
+
+    _createClass(GlobalVars, [{
+        key: 'onTrackDataReadComplete',
+        value: function onTrackDataReadComplete(trackData) {
+            this.trackData = trackData;
+            this.trackDataReader.populateSearchResults(trackData.tracks, "result--track");
+        }
+    }, {
+        key: 'onAtmosphereDataReadComplete',
+        value: function onAtmosphereDataReadComplete(atmosphereData) {
+            this.atmosphereData = atmosphereData;
+            this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres, "result--atmosphere");
+        }
+    }, {
+        key: 'compileTemplates',
+        value: function compileTemplates() {
+            var that = this;
+            var template;
+            // TODO: move paths to variable
+            _jquery2.default.get("assets/templates/track.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.trackTemplate = template;
+            });
+            _jquery2.default.get("assets/templates/atmosphere.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.atmosphereTemplate = template;
+            });
+        }
+    }, {
+        key: 'nameToTrackData',
+        value: function nameToTrackData(name) {
+            if (this.trackData == null) {
+                console.error("Track Data failed to fetch from server. Cannot add track.");
+                return;
+            }
+            var trackObject = this.trackData.tracks[name];
+            trackObject.name = name;
+            return trackObject;
+        }
+    }, {
+        key: 'nameToAtmosphereData',
+        value: function nameToAtmosphereData(name) {
+            if (this.atmosphereData == null) {
+                console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
+                return;
+            }
+            var atmosphereObject = this.atmosphereData.atmospheres[name];
+            atmosphereObject.name = name;
+            return atmosphereObject;
+        }
+    }]);
+
+    return GlobalVars;
+}();
 
 var g = exports.g = new GlobalVars();
 
@@ -10868,7 +10944,7 @@ var DataReader = function () {
             var resultObject = {};
             var resultHTML;
             _jquery2.default.each(data, function (name) {
-                console.log("DataReader.js: populateSearchResults: name: " + name);
+                // console.log("DataReader.js: populateSearchResults: name: " + name);
                 resultObject['name'] = name;
                 resultObject['type'] = type;
                 resultHTML = compiledTemplate(resultObject);
@@ -11000,19 +11076,22 @@ var _DataReader = __webpack_require__(6);
 
 var _DataReader2 = _interopRequireDefault(_DataReader);
 
+var _Atmosphere = __webpack_require__(13);
+
+var _Atmosphere2 = _interopRequireDefault(_Atmosphere);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var AtmosphereManager = function () {
-    function AtmosphereManager(atmosphereDataURL, searchBar) {
+    function AtmosphereManager() {
         _classCallCheck(this, AtmosphereManager);
 
         this.id_counter = 0;
         this.atmospheres = [];
-        this.searchBar = searchBar;
-
-        this.dataReader = new _DataReader2.default(atmosphereDataURL, this.onDataReadComplete.bind(this));
+        this.activeAtmosphere = null;
+        this.$newAtmosphereBtn = (0, _jquery2.default)('#newAtmosphereBtn');
 
         this.events();
     }
@@ -11020,21 +11099,58 @@ var AtmosphereManager = function () {
     _createClass(AtmosphereManager, [{
         key: 'events',
         value: function events() {
-            // TODO: Rig new atmosphere button to call newAtmosphere();
+            // Rig new atmosphere button to call newAtmosphere();
+            this.$newAtmosphereBtn.on('click', function () {
+                this.newAtmosphere();
+            }.bind(this));
+        }
+
+        // Called when 'Create custom atmosphere' button is clicked,
+        //  and when a track is added but no tracks exist.
+
+    }, {
+        key: 'newAtmosphere',
+        value: function newAtmosphere() {
+            var emptyAtmosphere = {
+                name: 'Custom Atmosphere',
+                tracks: [],
+                color: 'default'
+            };
+            this.addAtmosphere(emptyAtmosphere);
         }
     }, {
-        key: 'onDataReadComplete',
-        value: function onDataReadComplete(atmosphereData) {
-            this.atmosphereData = atmosphereData;
-            console.log(atmosphereData);
-            this.dataReader.populateSearchResults(atmosphereData.atmospheres, "result--atmosphere");
+        key: 'setActiveAtmosphere',
+        value: function setActiveAtmosphere(atmosphere) {
+            // TODO: set 'active' class
+            this.activeAtmosphere = atmosphere;
         }
+
+        // Called when enter is pressed in the search bar, while a track is highlighted.
+        //  Also called by this.newAtmosphere();
+
     }, {
         key: 'addAtmosphere',
-        value: function addAtmosphere(atmosphereName) {
+        value: function addAtmosphere(atmosphereData) {
             // TODO: read atmosphere template and generate a new one with the current id
             // TODO: increment id_counter
-            console.log('AtmosphereManager: Adding atmosphere: ' + atmosphereName);
+            var atmosphere = new _Atmosphere2.default(atmosphereData);
+            this.atmospheres.push(atmosphere);
+            this.setActiveAtmosphere(atmosphere);
+            console.log('AtmosphereManager: Adding atmosphere: ' + atmosphereData.name);
+        }
+
+        // Called when enter is pressed in the search bar, while a track is highlighted.
+
+    }, {
+        key: 'addTrack',
+        value: function addTrack(trackData) {
+            console.log('AtmosphereManager: Adding track "' + trackData.name + '" to current atmosphere.');
+            if (this.activeAtmosphere == null) {
+                console.log('AtmosphereManager: Current atmosphere is null. Creating new atmosphere...');
+                this.newAtmosphere();
+            }
+
+            this.activeAtmosphere.addTrack(trackData);
         }
     }]);
 
@@ -11092,10 +11208,11 @@ var SearchBar = function () {
                     var $selected = (0, _jquery2.default)(".selected");
                     if ($selected) {
                         if ($selected.hasClass("result--track")) {
-                            this.trackManager.addTrack($selected.text());
+                            this.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($selected.text()));
                         } else if ($selected.hasClass("result--atmosphere")) {
-                            this.atmosphereManager.addAtmosphere($selected.text());
+                            this.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($selected.text()));
                         }
+                        this.clearSearchBar();
                     }
                     e.preventDefault();
                     break;
@@ -11224,6 +11341,27 @@ exports.default = SearchBar;
 "use strict";
 
 
+var _SearchBar = __webpack_require__(11);
+
+var _SearchBar2 = _interopRequireDefault(_SearchBar);
+
+var _AtmosphereManager = __webpack_require__(10);
+
+var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var searchBar = new _SearchBar2.default();
+var atmosphereManager = new _AtmosphereManager2.default();
+searchBar.atmosphereManager = atmosphereManager;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -11234,17 +11372,9 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _handlebars = __webpack_require__(9);
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
 var _Track = __webpack_require__(15);
 
 var _Track2 = _interopRequireDefault(_Track);
-
-var _DataReader = __webpack_require__(6);
-
-var _DataReader2 = _interopRequireDefault(_DataReader);
 
 var _AudioManager = __webpack_require__(14);
 
@@ -11256,164 +11386,95 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var TrackManager = function () {
-    function TrackManager(trackDataURL, atmosphereManager, searchBar) {
-        _classCallCheck(this, TrackManager);
+var Atmosphere = function () {
 
-        this.tracks = []; // The master array of track objects
-        this.am = new _AudioManager2.default(); // Controls he master list of audio sources
-        this.id_counter = 0; // Used for giving each new track its own id
-        this.trackPrefix = "assets/audio/tracks/";
+    // exAtmosphereData = {
+    //     name: 'Example Atmosphere Data',
+    //     tracks: [],
+    //     color: 'default'
+    // }
 
-        this.searchBar = searchBar;
-        this.atmosphereManager = atmosphereManager;
-        this.dataReader = new _DataReader2.default(trackDataURL, this.onDataReadComplete.bind(this));
+    function Atmosphere(atmosphereData) {
+        _classCallCheck(this, Atmosphere);
 
-        this.compileTemplate();
+        this.tracks = [];
+        this.data = atmosphereData;
+        this.instantiateTracks(atmosphereData.tracks);
+        this.idCounter = 0;
+        this.am = new _AudioManager2.default(); // Controls this atmosphere's list of audio sources
+
+        this.createElement();
     }
 
-    _createClass(TrackManager, [{
-        key: 'onDataReadComplete',
-        value: function onDataReadComplete(trackData) {
-            this.trackData = trackData;
-            this.dataReader.populateSearchResults(trackData.tracks, "result--track");
-        }
-    }, {
-        key: 'compileTemplate',
-        value: function compileTemplate() {
-            var that = this;
-            // TODO: move path to variable
-            _jquery2.default.get("assets/templates/track.html", function (rawTemplate) {
-                var template = _handlebars2.default.compile(rawTemplate);
-                that.trackTemplate = template;
-            });
-        }
+    _createClass(Atmosphere, [{
+        key: 'createElement',
+        value: function createElement() {
 
-        // Called when enter is pressed in the search bar, while a track is highlighted.
-
-    }, {
-        key: 'addTrack',
-        value: function addTrack(trackKey) {
-            // TODO: add track to current atmosphere
-
-            if (this.trackData == null) {
-                console.error("Track Data failed to fetch from server. Cannot add track.");
-                return;
-            }
-
-            console.log("addTrack(): trackKey: " + trackKey);
-
-            // Create new Track data object and add it to the tracklist
-            var newId = this.id_counter;
-            this.tracks.push(new _Track2.default(newId, 1));
+            // TODO: check if template is compiled or not
 
             // Convert object to HTML
-            var trackObject = this.trackData.tracks[trackKey];
-            trackObject.name = trackKey;
-            trackObject.trackId = newId;
-            // TODO: check if template is compiled or not
-            var trackHTML = this.trackTemplate(trackObject);
+            var atmosphereHTML = _GlobalVars.g.atmosphereTemplate(this.data);
+
             // Add to tracklist
-            (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast');
+            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.$atmosphereList).show('fast'); // TODO: only add to current atmosphere tracklist
 
-            // Rig play and stop buttons to function
-            var $playBtn = (0, _jquery2.default)("#playBtn" + newId); // cache element for use in Howl
+            // // Rig play, stop, and delete buttons to function
+            // var $playBtn = $atmosphereHTML.find(".btn--play-track");
+            // var $stopBtn = $atmosphereHTML.find(".btn--stop-track");
+            // var $delBtn = $atmosphereHTML.find(".btn--delete");
+            // var that = this;
+            // $playBtn.on('click', function() {
+            //     that.play();
+            // });
+            // $stopBtn.on('click', function() {
+            //     that.stop();
+            // });
+            // $delBtn.on('click', function() {
+            //     that.delete();
+            // });
+
+            this.$atmosphereHTML = $atmosphereHTML;
+        }
+    }, {
+        key: 'instantiateTracks',
+        value: function instantiateTracks(tracks) {
+            var track;
             var that = this;
-            $playBtn.click(function () {
-                that.playTrack(newId);
-            });
-            (0, _jquery2.default)("#stopBtn" + newId).click(function () {
-                that.stopTrack(newId);
-            });
-            (0, _jquery2.default)("#deleteBtn" + newId).click(function () {
-                that.deleteTrack(newId);
-            });
+            this.tracks.forEach(function (trackData) {
+                that.addTrack(trackData);
+            }, this);
+        }
+    }, {
+        key: 'addTrack',
+        value: function addTrack(trackObject) {
 
-            console.log("addTrack(): Autoplay checked? " + _GlobalVars.g.$autoplayCheckbox.is(":checked"));
+            // Get track information
+            trackObject.id = this.idCounter;
+            this.idCounter++;
 
-            // Append prefix to filenames
-            var filenames = trackObject.filenames;
-            var that = this;
-            filenames = filenames.map(function (filename) {
-                return that.trackPrefix + filename;
-            });
-            console.log(filenames);
+            // Create track data object
+            var track;
+            track = new _Track2.default(trackObject, this);
 
-            // Create new audio source
-            // TODO: if audio already contains newId, just add another source
-            this.am.audio[newId] = new Howl({
-                src: filenames,
-                buffer: true,
-                autoplay: _GlobalVars.g.$autoplayCheckbox.is(":checked"),
-                loop: trackObject.loop, // TODO: button to change
-                onload: function onload() {
-                    console.log("Loaded track #" + newId + ", " + trackKey);
-                    $playBtn.removeAttr("disabled");
+            // Add track to array
+            this.tracks.push(track);
+        }
+    }, {
+        key: 'removeTrack',
+        value: function removeTrack(trackId) {
+            for (var i = 0; i < this.tracks.length; i++) {
+                var track = this.tracks[i].id;
+                if (track.id == trackId) {
+                    this.tracks.splice(i, 1);
                 }
-            });
-
-            this.searchBar.clearSearchBar();
-
-            this.id_counter++;
-            document.getElementById("trackCounter").innerHTML = "Tracks created: " + this.id_counter;
-        }
-    }, {
-        key: 'playTrack',
-        value: function playTrack(trackId) {
-            console.log("Playing track #" + trackId);
-            this.am.audio[trackId].play();
-        }
-    }, {
-        key: 'stopTrack',
-        value: function stopTrack(trackId) {
-            console.log("Stopping track #" + trackId);
-            this.am.audio[trackId].stop();
-        }
-    }, {
-        key: 'deleteTrack',
-        value: function deleteTrack(trackId) {
-            console.log("Deleting track #" + trackId);
-            this.stopTrack(trackId); // TODO: fade out?
-            (0, _jquery2.default)("#track" + trackId).hide('slow');
-            // $("#track"+trackId).hide(900, function() { $(this).remove()});
-            this.id_counter--;
+            }
         }
     }]);
 
-    return TrackManager;
+    return Atmosphere;
 }();
 
-exports.default = TrackManager;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _SearchBar = __webpack_require__(11);
-
-var _SearchBar2 = _interopRequireDefault(_SearchBar);
-
-var _TrackManager = __webpack_require__(12);
-
-var _TrackManager2 = _interopRequireDefault(_TrackManager);
-
-var _AtmosphereManager = __webpack_require__(10);
-
-var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var trackDataURL = "assets/data/tracks.json"; //https:api.myjson.com/bins/15eiip";
-var atmosphereDataURL = "assets/data/atmospheres.json";
-
-var searchBar = new _SearchBar2.default();
-var atmosphereManager = new _AtmosphereManager2.default(atmosphereDataURL, searchBar);
-searchBar.atmosphereManager = atmosphereManager;
-var trackManager = new _TrackManager2.default(trackDataURL, atmosphereManager, searchBar);
-searchBar.trackManager = trackManager;
+exports.default = Atmosphere;
 
 /***/ }),
 /* 14 */
@@ -11426,13 +11487,36 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var AudioManager = function AudioManager() {
-    _classCallCheck(this, AudioManager);
+var AudioManager = function () {
+    function AudioManager() {
+        _classCallCheck(this, AudioManager);
 
-    this.audio = []; // The master list of audio sources
-};
+        this.audio = []; // The master list of audio sources
+        // TODO: this.volume = 1; // The volume modifier for all of an atmosphere's tracks
+    }
+
+    _createClass(AudioManager, [{
+        key: 'playTrack',
+        value: function playTrack(trackID) {
+            console.log('AudioManager: playing track #' + trackID);
+            // TODO: fade in?
+            this.audio[trackID].play();
+        }
+    }, {
+        key: 'stopTrack',
+        value: function stopTrack(trackID) {
+            console.log('AudioManager: stopping track #' + trackID);
+            // TODO: fade out?
+            this.audio[trackID].stop();
+        }
+    }]);
+
+    return AudioManager;
+}();
 
 exports.default = AudioManager;
 
@@ -11449,21 +11533,112 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _GlobalVars = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // Track object, contains all the data associated with a given track
 var Track = function () {
-    function Track(id, volume) {
+    function Track(trackData, atmosphere) {
         _classCallCheck(this, Track);
 
-        this.id = id; // TODO: The same as this track's index in the 'tracks' array
-        this.volume = volume;
+        this.data = trackData;
+
+        this.id = trackData.id;
+        this.atmosphere = atmosphere;
+
+        this.createElement(trackData);
+        this.createAudio(trackData);
     }
 
     _createClass(Track, [{
-        key: 'greet',
-        value: function greet() {
-            console.log('hello, my id is: ' + this.id + ', and my volume is: ' + this.volume + '%.');
+        key: 'createElement',
+        value: function createElement() {
+
+            // TODO: check if template is compiled or not
+
+            // Convert object to HTML
+            var trackHTML = _GlobalVars.g.trackTemplate(this.data);
+
+            // Add to tracklist
+            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast'); // TODO: only add to current atmosphere tracklist
+
+            // Rig play, stop, and delete buttons to function
+            var $playBtn = $trackHTML.find(".btn--play-track");
+            var $stopBtn = $trackHTML.find(".btn--stop-track");
+            var $delBtn = $trackHTML.find(".btn--delete");
+            var that = this;
+            $playBtn.on('click', function () {
+                that.play();
+            });
+            $stopBtn.on('click', function () {
+                that.stop();
+            });
+            $delBtn.on('click', function () {
+                that.delete();
+            });
+
+            this.$trackHTML = $trackHTML;
+        }
+    }, {
+        key: 'createAudio',
+        value: function createAudio() {
+
+            console.log("Track:createAudio(): Autoplay checked? " + _GlobalVars.g.$autoplayCheckbox.is(":checked"));
+
+            // Append prefix to filenames
+            var filenames = this.data.filenames;
+            filenames = filenames.map(function (filename) {
+                return _GlobalVars.g.trackPrefix + filename;
+            });
+            console.log(filenames);
+
+            var $playBtn = this.$trackHTML.find(".btn--play-track");
+            // Create new audio source
+            // TODO: if audio already contains newId, just add another source
+            var that = this;
+            this.atmosphere.am.audio[this.id] = new Howl({
+                src: filenames,
+                buffer: true,
+                autoplay: false,
+                loop: that.data.loop, // TODO: button to change
+                onload: function onload() {
+                    console.log("Loaded track '" + that.data.name + "'.");
+                    $playBtn.removeAttr("disabled");
+                }
+            });
+            if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
+                this.play();
+            }
+        }
+    }, {
+        key: 'play',
+        value: function play() {
+            this.atmosphere.am.playTrack(this.id);
+            // TODO: disable/hide play button
+        }
+    }, {
+        key: 'stop',
+        value: function stop() {
+            this.atmosphere.am.stopTrack(this.id);
+            // TODO: enable/show play button=
+        }
+    }, {
+        key: 'delete',
+        value: function _delete() {
+            this.atmosphere.am.stopTrack(this.id);
+            // Remove DOM Element
+            this.$trackHTML.hide('slow', function () {
+                this.remove();
+            });
+            // Unlink data object from containing atmosphere
+            this.atmosphere.removeTrack(this.id);
         }
     }]);
 

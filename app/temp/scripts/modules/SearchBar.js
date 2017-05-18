@@ -22,10 +22,15 @@ class SearchBar {
                 var $selected = $(".selected");
                 if ($selected) {
                     if ($selected.hasClass("result--track")) {
-                        this.trackManager.addTrack($selected.text());
+                        this.atmosphereManager.addTrack(
+                            g.nameToTrackData($selected.text())
+                            );
                     } else if ($selected.hasClass("result--atmosphere")) {
-                        this.atmosphereManager.addAtmosphere($selected.text());
+                        this.atmosphereManager.addAtmosphere(
+                            g.nameToAtmosphereData($selected.text())
+                            );
                     }
+                    this.clearSearchBar();
                 }
                 e.preventDefault();
                 break;
