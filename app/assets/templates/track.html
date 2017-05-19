@@ -1,6 +1,8 @@
-<div id=track{{trackId}} class="section">
+<div id=track{{trackId}} class="section" data-atmosphere="{{atmosphereId}}">
     <div class="section__heading">
-        <h4 class="section__heading__title">{{name}}</h4>
+        <h4 class="section__heading__title tooltip">{{name}}
+            <span class="tooltiptext">Tags will go here</span>
+        </h4>
         <div class="btn btn--delete btn--medium btn--inverted">
             <div class="btn__inner">
             <i class="fa fa-close" aria-hidden="true"></i>
@@ -17,7 +19,7 @@
             <button type="button" class="btn--stop-track btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
         </div>
         <div class="volume">
-            <input type="range" min="0" max="9" step="1">
+            <input type="range" min="0" max="1" value="1" step="0.05">
             <label class="control control--checkbox control--custom volume__mute">
               <input type="checkbox" id="muteBtn--track{{trackID}}">
               <div class="control__indicator control__indicator--medium"></div>

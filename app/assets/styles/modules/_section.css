@@ -5,30 +5,68 @@
 
     &__heading {
         background-color: $blueberry;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 3rem 0.5rem 1rem;
         position: relative;
+        display: block;
+        width: 100%;
+        /*overflow: hidden;*/
 
         &__title {
-            display: inline-block;
             margin: 0;
+            padding: 0;
             color: $stormGrey;
             font-family: 'Slabo 27px', serif;
             font-weight: 100;
-            
+            /*width: 100%;*/
+            white-space: nowrap;
+            display: inline;
+
+            & .atmosphere__rename {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+
+                margin-left: .25rem;
+            }
+        }
+
+        &__title__text {
+            margin: 0;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            padding-left: 0.2rem;
+        }
+
+        &__title__text.editable {
+            background-color: $offWhite;
+            border: 1px solid $coconut;
+            outline: none;
         }
     }
 
     /* TODO: get nicer colours */
     &--atmosphere {
         border-color: $phanary;
+        transition: border-color 0.5s ease-out;
 
         & .section__heading {
             background-color: $phanary;
             cursor: pointer;
+            transition: background-color 0.5s ease-out;
 
             &__title {
                 color: $coconut;
             }
+        }
+
+        &--active {
+            border-color: $vanilla;
+
+            & .section__heading {
+                background-color: $vanilla;
+            }
+            
         }
     }
 
@@ -36,8 +74,12 @@
         padding: 1rem 0;
     }
 
-    &__controls {
-        bakcground: red;
+    &__close {
+        padding: 2px;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 100%;
     }
 
 

@@ -11,8 +11,9 @@ class Track {
 
         this.id = trackData.id;
         this.atmosphere = atmosphere;
+        this.volume = 1;
 
-
+        // console.log("Track constructor: trackData.atmosphereId: " + trackData.atmosphereId);
         this.createElement(trackData);
         this.createAudio(trackData);
     }
@@ -27,11 +28,11 @@ class Track {
         // Add to tracklist
         var $trackHTML = $(trackHTML).hide().prependTo(g.$trackList).show('fast'); // TODO: only add to current atmosphere tracklist
 
+        var that = this;
         // Rig play, stop, and delete buttons to function
         var $playBtn = $trackHTML.find(".btn--play-track");
         var $stopBtn = $trackHTML.find(".btn--stop-track");
         var $delBtn = $trackHTML.find(".btn--delete");
-        var that = this;
         $playBtn.on('click', function() {
             that.play();
         });
@@ -42,13 +43,20 @@ class Track {
             that.delete();
         });
 
+        // Rig volume slider to function
+        var $volumeSlider = $trackHTML.find(".volume input[type=range]");
+        $volumeSlider.on('input', function() {
+            that.volume = $volumeSlider.val();
+            that.updateVolume();
+        })
+
         this.$trackHTML = $trackHTML;
 
     }
 
     createAudio() {
         
-        console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
+        // console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
 
         // Append prefix to filenames
         var filenames = this.data.filenames;
@@ -67,7 +75,7 @@ class Track {
             autoplay: false,
             loop: that.data.loop,                                 // TODO: button to change
             onload: function() {
-                console.log("Loaded track '" + that.data.name + "'.");
+                // console.log("Loaded track '" + that.data.name + "'.");
                 $playBtn.removeAttr("disabled");
             }
         });
@@ -77,7 +85,7 @@ class Track {
     }
 
     play() {
-        this.atmosphere.am.playTrack(this.id);
+        this.atmosphere.am.playTrack(this.id, this.volume);
         // TODO: disable/hide play button
     }
 
@@ -89,11 +97,15 @@ class Track {
     delete() {
         this.atmosphere.am.stopTrack(this.id);
         // Remove DOM Element
-        this.$trackHTML.hide('slow', function() {
+        this.$trackHTML.slideUp('fast', function() {
             this.remove();
         });
         // Unlink data object from containing atmosphere
         this.atmosphere.removeTrack(this.id);
+    }
+
+    updateVolume() {
+        this.atmosphere.am.setTrackVolume(this.id, this.volume);
     }
 
 }

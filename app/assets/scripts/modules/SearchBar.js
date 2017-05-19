@@ -4,13 +4,18 @@ import { g } from "./GlobalVars.js";
 class SearchBar {
 
     constructor() {
+        g.$searchBarInput.focus();
         this.events();
     }
 
     events() {
-        g.$searchBarInput.keyup(this.keyPressInSearchBar.bind(this)); // TODO: replace with on('keyup')??
+        g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this)); // TODO: replace with on('keyup')??
         g.$searchBarInput.keydown(this.blockArrowKeys);
         g.$searchBarClearBtn.click(this.clearSearchBar.bind(this));
+        g.$autoplayCheckbox.click(function(event) {
+            g.$searchBarInput.focus();
+            event.stopPropagation();
+        });
     }
 
     keyPressInSearchBar(e) {

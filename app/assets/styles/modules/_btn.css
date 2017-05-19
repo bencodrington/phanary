@@ -5,6 +5,7 @@
     cursor: pointer;
     display: inline-block;
     overflow: hidden;
+    transition: background-color 0.2s ease-out;
 
     &:hover {
         background-color: $lighterGrey;

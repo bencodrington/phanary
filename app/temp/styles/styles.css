@@ -509,13 +509,18 @@ a {
     max-width: 1236px;
     margin-left: auto;
     margin-right: auto;
-    /* Took this out as it was interfering with tooltips */
 }
 
 /*overflow: hidden;*/
 
 .wrapper--top-margin {
         margin-top: 4.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
+    }
+
+/* Took this out as it was interfering with tooltips */
+
+.wrapper--bottom-margin {
+        margin-bottom: 8.5rem;
     }
 
 .search-container {
@@ -549,7 +554,7 @@ a {
                 flex: 2;
         background-color: #9FB1BC;
         color: #2E5266;
-        font-weight: 500;
+        font-weight: 400;
         font-family: 'Roboto';
     }
 
@@ -561,22 +566,29 @@ a {
         content: '';
         box-shadow: 0 0 10px black;*/
 
+.search-container__search-bar:focus {
+        background-color: #AFC2CD;
+    }
+
 .search-container__search-bar::-webkit-input-placeholder {
         text-shadow: none;
         font-style: italic;
         color: rgba(46,82,102, 0.6);
+        font-weight: 300;
     }
 
 .search-container__search-bar:-ms-input-placeholder {
         text-shadow: none;
         font-style: italic;
         color: rgba(46,82,102, 0.6);
+        font-weight: 300;
     }
 
 .search-container__search-bar::placeholder {
         text-shadow: none;
         font-style: italic;
         color: rgba(46,82,102, 0.6);
+        font-weight: 300;
     }
 
 .search-container__addon {
@@ -664,6 +676,8 @@ a {
     cursor: pointer;
     display: inline-block;
     overflow: hidden;
+    -webkit-transition: background-color 0.2s ease-out;
+    transition: background-color 0.2s ease-out;
 }
 
 .btn:hover {
@@ -727,17 +741,10 @@ a {
                 transform: translateY(-50%);
     }
 
-.track__btn-container {
-        padding: 2px;
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        height: 100%;
-    }
-
 .sidebar {
     width: 33%;
     height: 100%;
+    overflow-y: auto;
     float: left;
     position: fixed;
     background-color: #2E5266;
@@ -755,6 +762,7 @@ a {
         background-color: #2E5266;
         -webkit-box-shadow: 0 0 10px rgba(0,0,0, 0.5);
                 box-shadow: 0 0 10px rgba(0,0,0, 0.5); /* TODO: darker blueberry */
+        z-index: 8;
         /*bottom: 0px;*/
     }
 
@@ -914,6 +922,10 @@ a {
         position: relative;
     }
 
+.atmosphere__rename:hover {
+        color: #C68343;
+    }
+
 .section {
     border: 1px solid #2E5266;
     border-radius: 5px;
@@ -925,40 +937,86 @@ a {
 
 .section__heading {
         background-color: #2E5266;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 3rem 0.5rem 1rem;
         position: relative;
+        display: block;
+        width: 100%;
     }
 
+/*overflow: hidden;*/
+
 .section__heading__title {
-            display: inline-block;
             margin: 0;
+            padding: 0;
             color: #9FB1BC;
             font-family: 'Slabo 27px', serif;
             font-weight: 100;
-            
+            /*width: 100%;*/
+            white-space: nowrap;
+            display: inline;
+        }
+
+.section__heading__title .atmosphere__rename {
+                position: absolute;
+                top: 50%;
+                -webkit-transform: translateY(-50%);
+                        transform: translateY(-50%);
+
+                margin-left: .25rem;
+            }
+
+.section__heading__title__text {
+            margin: 0;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            padding-left: 0.2rem;
+        }
+
+.section__heading__title__text.editable {
+            background-color: #FFFFDD;
+            border: 1px solid #995835;
+            outline: none;
         }
 
 /* TODO: get nicer colours */
 
 .section--atmosphere {
         border-color: #F7CE38;
+        -webkit-transition: border-color 0.5s ease-out;
+        transition: border-color 0.5s ease-out;
     }
 
 .section--atmosphere .section__heading {
             background-color: #F7CE38;
             cursor: pointer;
+            -webkit-transition: background-color 0.5s ease-out;
+            transition: background-color 0.5s ease-out;
         }
 
 .section--atmosphere .section__heading__title {
                 color: #995835;
             }
 
+.section--atmosphere--active {
+            border-color: #F4E2A1;
+            
+        }
+
+.section--atmosphere--active .section__heading {
+                background-color: #F4E2A1;
+            }
+
 .section__body {
         padding: 1rem 0;
     }
 
-.section__controls {
-        bakcground: red;
+.section__close {
+        padding: 2px;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 100%;
     }
 
 input[type=range] {
@@ -991,6 +1049,7 @@ input[type=range]::-webkit-slider-thumb {
         border-radius: 50%;
         background: #F7CE38;
         margin-top: -6px;
+        z-index: 2;
     }
 
 input[type=range]::-moz-range-thumb {
@@ -1001,6 +1060,7 @@ input[type=range]::-moz-range-thumb {
         border-radius: 50%;
         background: #F7CE38;
         margin-top: -6px;
+        z-index: 2;
     }
 
 input[type=range]:focus {
@@ -1061,21 +1121,23 @@ input[type=range]:focus::-moz-range-track {
 /* Tooltip text */
 
 .tooltip .tooltiptext {
+    display: none;
     font-weight: 200;
     visibility: hidden;
     opacity: 0;
     background-color: rgba(6,20,35, 0.5);
     color: #fff;
+    font-family: 'Roboto', sans-serif;
     text-align: center;
     padding: 5px 10px;
     border-radius: 6px;
-    -webkit-transition: opacity 0.2s ease-out;
-    transition: opacity 0.2s ease-out;
+    white-space: pre;
  
     /* Position the tooltip text */
     position: absolute;
-    z-index: 1;
+    z-index: 20;
     bottom: 100%;
+    left: 0;
     margin-bottom: 5px;
 }
 
@@ -1085,7 +1147,7 @@ input[type=range]:focus::-moz-range-track {
         content: '';
         position: absolute;
         top: 100%; /* At the bottom of the tooltip */
-        left: 15%;
+        left: 1rem;
         margin-left: -5px;
         border-width: 5px;
         border-style: solid;
@@ -1095,6 +1157,7 @@ input[type=range]:focus::-moz-range-track {
 /* Show the tooltip text when you mouse over the tooltip container */
 
 .tooltip:hover .tooltiptext {
+    display: block;
     visibility: visible;
     opacity: 1;
 }

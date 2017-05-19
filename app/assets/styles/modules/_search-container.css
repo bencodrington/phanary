@@ -30,14 +30,19 @@
         flex: 2;
         background-color: $stormGrey;
         color: $blueberry;
-        font-weight: 500;
+        font-weight: 400;
         font-family: 'Roboto';
+    }
+
+    &__search-bar:focus {
+        background-color: $lighterGrey;
     }
 
     &__search-bar::placeholder {
         text-shadow: none;
         font-style: italic;
         color: rgba($blueberry, 0.6);
+        font-weight: 300;
     }
 
     &__addon {
