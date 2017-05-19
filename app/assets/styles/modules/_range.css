@@ -27,6 +27,7 @@ input[type=range] {
         border-radius: 50%;
         background: $phanary;
         margin-top: -6px;
+        z-index: 2;
     }
 
     &::-moz-range-thumb {
@@ -37,6 +38,7 @@ input[type=range] {
         border-radius: 50%;
         background: $phanary;
         margin-top: -6px;
+        z-index: 2;
     }
 
     &:focus {

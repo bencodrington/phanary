@@ -1,6 +1,7 @@
 .sidebar {
     width: 33%;
     height: 100%;
+    overflow-y: auto;
     float: left;
     position: fixed;
     background-color: $blueberry;
@@ -13,6 +14,7 @@
         padding: 1rem 0;
         background-color: $blueberry;
         box-shadow: 0 0 10px rgba(#000, 0.5); /* TODO: darker blueberry */
+        z-index: 8;
         /*bottom: 0px;*/
 
         /*&__btn-new {

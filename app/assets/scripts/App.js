@@ -1,7 +1,6 @@
 import SearchBar from './modules/SearchBar';
-import AtmosphereManager from './modules/AtmosphereManager';
+import { g } from './modules/GlobalVars';
 
 
 var searchBar = new SearchBar();
-var atmosphereManager = new AtmosphereManager();
-searchBar.atmosphereManager = atmosphereManager;
+searchBar.atmosphereManager = g.atmosphereManager;
