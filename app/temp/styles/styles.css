@@ -503,6 +503,15 @@ a {
                 box-sizing: content-box;
     }
 
+.navbar__brand img {
+            /*position: absolute;
+            right: 0;*/
+            float: left;
+            height: 2rem;
+            width: auto;
+            margin: 0 0.5rem 0 0;
+        }
+
 .wrapper {
     padding-left: 18px;
     padding-right: 18px;
