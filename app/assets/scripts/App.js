@@ -3,4 +3,4 @@ import { g } from './modules/GlobalVars';
 
 
 var searchBar = new SearchBar();
-searchBar.atmosphereManager = g.atmosphereManager;
+g.searchBar = searchBar;

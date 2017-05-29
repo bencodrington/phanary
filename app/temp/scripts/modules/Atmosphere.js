@@ -18,6 +18,7 @@ class Atmosphere {
         this.id = id;
         this.idCounter = 0;
         this.am = new AudioManager();         // Controls this atmosphere's list of audio sources
+        this.muted = false;
 
         this.createElement();
         this.instantiateTracks(atmosphereData.tracks);
@@ -37,6 +38,13 @@ class Atmosphere {
         this.rigTitleEditing($atmosphereHTML);
 
         this.rigVolumeControls($atmosphereHTML);
+        
+        var $delBtn = $atmosphereHTML.find(".btn--delete");
+        var that = this;
+        $delBtn.on('click', function(event) {
+            that.delete();
+            event.stopPropagation();
+        });
         
 
         this.$atmosphereHTML = $atmosphereHTML;
@@ -95,7 +103,11 @@ class Atmosphere {
         var $volumeSlider = $atmosphereHTML.find('.volume input[type=range]');
         $volumeSlider.on('input', function() {
             that.updateTrackVolumes($volumeSlider.val());
-            
+            that.unmute();
+        });
+        var $muteBtn = $atmosphereHTML.find(".btn--mute");
+        $muteBtn.on('click', function() {
+            that.mute();
         });
     }
 
@@ -109,7 +121,7 @@ class Atmosphere {
     }
 
     addTrack(trackObject) {
-        console.log("Adding track: " + trackObject.name);
+        // console.log("Adding track: " + trackObject.name);
         // Get track information
         trackObject.id = this.idCounter;
         trackObject.atmosphereId = this.id;
@@ -154,6 +166,15 @@ class Atmosphere {
         });
     }
 
+    mute() {
+        this.updateTrackVolumes(0);
+        // TODO: style mute button
+    }
+
+    unmute() {
+        // TODO: style mute button;
+    }
+
     delete() {
         // Loop through tracks and delete them
         this.tracks.forEach(function(track) {
@@ -163,6 +184,11 @@ class Atmosphere {
         this.$atmosphereHTML.slideUp('fast', function() {
             this.remove();
         });
+        // Remove from atmosphere manager array
+        if (g.atmosphereManager.activeAtmosphere == this) {
+            g.atmosphereManager.activeAtmosphere = null;
+        }
+        g.atmosphereManager.atmospheres[this.id] = null;
     }
 }
 

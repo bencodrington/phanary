@@ -14,16 +14,15 @@
 
     &--track-control {
         border: 1px solid $blueberry;
-        border-radius: 5px;
         width: $buttonSize;
         height: $buttonSize;
     }
 
-    &--stop-track {
+    &--stop {
         background-color: red;
     }
 
-    &--play-track {
+    &--play {
         background-color: green;
     }
 

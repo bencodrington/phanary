@@ -26,12 +26,12 @@ class Track {
         var trackHTML = g.trackTemplate(this.data);
 
         // Add to tracklist
-        var $trackHTML = $(trackHTML).hide().prependTo(g.$trackList).show('fast'); // TODO: only add to current atmosphere tracklist
+        var $trackHTML = $(trackHTML).hide().prependTo(g.$trackList).show('fast');
 
         var that = this;
         // Rig play, stop, and delete buttons to function
-        var $playBtn = $trackHTML.find(".btn--play-track");
-        var $stopBtn = $trackHTML.find(".btn--stop-track");
+        var $playBtn = $trackHTML.find(".btn--play");
+        var $stopBtn = $trackHTML.find(".btn--stop");
         var $delBtn = $trackHTML.find(".btn--delete");
         $playBtn.on('click', function() {
             that.play();
@@ -49,6 +49,10 @@ class Track {
             that.volume = $volumeSlider.val();
             that.updateVolume();
         })
+        var $muteBtn = $trackHTML.find(".btn--mute");
+        $muteBtn.on('click', function() {
+            that.toggleMute();
+        });
 
         this.$trackHTML = $trackHTML;
 
@@ -63,9 +67,9 @@ class Track {
         filenames = filenames.map(function(filename) {
             return g.trackPrefix + filename;
         });
-        console.log(filenames);
+        // console.log(filenames);
 
-        var $playBtn = this.$trackHTML.find(".btn--play-track");
+        var $playBtn = this.$trackHTML.find(".btn--play");
         // Create new audio source
         // TODO: if audio already contains newId, just add another source
         var that = this;
@@ -94,14 +98,26 @@ class Track {
         // TODO: enable/show play button=
     }
 
+    toggleMute() {
+        this.atmosphere.am.toggleTrackMute(this.id);
+    }
+
+    setMute(muted) {
+        this.atmosphere.am.setTrackMute(this.id, muted)
+    }
+
     delete() {
-        this.atmosphere.am.stopTrack(this.id);
+        var that = this;
+        this.atmosphere.am.stopTrack(this.id, function() {
+            that.atmosphere.am.unloadTrack(that.id);
+            // Unlink data object from containing atmosphere
+            that.atmosphere.removeTrack(that.id);
+        });
+        
         // Remove DOM Element
         this.$trackHTML.slideUp('fast', function() {
             this.remove();
         });
-        // Unlink data object from containing atmosphere
-        this.atmosphere.removeTrack(this.id);
     }
 
     updateVolume() {

@@ -30,7 +30,22 @@ class DataReader {
             resultObject['name'] = name;
             resultObject['type'] = type;
             resultHTML = compiledTemplate(resultObject);
-            $(resultHTML).appendTo(g.$searchResults);
+            var $resultHTML = $(resultHTML).appendTo(g.$searchResults);
+            $resultHTML.on('mouseover', function() {
+                g.searchBar.select($resultHTML);
+            })
+            $resultHTML.on('click', function() {
+                if ($resultHTML.hasClass("result--track")) {
+                    g.atmosphereManager.addTrack(
+                        g.nameToTrackData($resultHTML.text())
+                    );
+                } else if ($resultHTML.hasClass("result--atmosphere")) {
+                    g.atmosphereManager.addAtmosphere(
+                        g.nameToAtmosphereData($resultHTML.text())
+                    );
+                }
+                g.searchBar.clearSearchBar();
+            });
         } );
     }
 
