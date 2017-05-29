@@ -651,29 +651,21 @@ a {
         overflow: hidden;
         -webkit-box-shadow: 0 0 5px #2E5266;
                 box-shadow: 0 0 5px #2E5266;
+
     }
 
 .search-container__results li {
             background-color: #9FB1BC;
             border-bottom: 1px rgba(46,82,102, 0.25) solid;
             padding: 5px;
+            color: #2E5266;
+            cursor: pointer;
         }
+
+/*TODO: hover-effect*/
 
 .search-container__results li.selected {
             background-color: #2E5266;
-        }
-
-/* TODO: implement this with jquery */
-
-.search-container__results li.last-result { 
-            border-bottom: none;
-        }
-
-.search-container__results li a {
-            color: #2E5266;
-        }
-
-.search-container__results li.selected a {
             font-weight: 500;
             color: #9FB1BC;
         }
@@ -696,16 +688,15 @@ a {
 
 .btn--track-control {
         border: 1px solid #2E5266;
-        border-radius: 5px;
         width: 20px;
         height: 20px;
     }
 
-.btn--stop-track {
+.btn--stop {
         background-color: red;
     }
 
-.btn--play-track {
+.btn--play {
         background-color: green;
     }
 

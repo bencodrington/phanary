@@ -99,24 +99,16 @@
             background-color: $stormGrey;
             border-bottom: 1px rgba($blueberry, 0.25) solid;
             padding: 5px;
+            color: $blueberry;
+            cursor: pointer;
         }
+        /*TODO: hover-effect*/
 
         & li.selected {
             background-color: $blueberry;
-        }
-
-        /* TODO: implement this with jquery */
-        & li.last-result { 
-            border-bottom: none;
-        }
-
-        & li a {
-            color: $blueberry;
-        }
-
-        & li.selected a {
             font-weight: 500;
             color: $stormGrey;
         }
+
     }
 }

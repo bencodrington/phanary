@@ -9,7 +9,7 @@ class SearchBar {
     }
 
     events() {
-        g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this)); // TODO: replace with on('keyup')??
+        g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this));
         g.$searchBarInput.keydown(this.blockArrowKeys);
         g.$searchBarClearBtn.click(this.clearSearchBar.bind(this));
         g.$autoplayCheckbox.click(function(event) {
@@ -27,13 +27,13 @@ class SearchBar {
                 var $selected = $(".selected");
                 if ($selected) {
                     if ($selected.hasClass("result--track")) {
-                        this.atmosphereManager.addTrack(
+                        g.atmosphereManager.addTrack(
                             g.nameToTrackData($selected.text())
-                            );
+                        );
                     } else if ($selected.hasClass("result--atmosphere")) {
-                        this.atmosphereManager.addAtmosphere(
+                        g.atmosphereManager.addAtmosphere(
                             g.nameToAtmosphereData($selected.text())
-                            );
+                        );
                     }
                     this.clearSearchBar();
                 }
@@ -61,9 +61,7 @@ class SearchBar {
     moveSearchSelector(keyCode, $visibleResults) {
         var $current;
         var $selected = $visibleResults.filter(".selected");
-        // console.log("BEFORE: $selected: " + $selected.html());
         var index = $visibleResults.index($selected);
-        //console.log("== moveSearchSelector: $visibleResults.length: " + $visibleResults.length);
         // Remove .selected class from currently selected thing
         $selected.removeClass("selected");
         if (keyCode == 38) {
@@ -95,8 +93,16 @@ class SearchBar {
             console.error("moveSearchSelector: Invalid keyCode was passed: " + keyCode);
             return;
         }
-        // console.log("moveSearchSelector: Currently selected: index #" + index + ", " + $current.html())
         $current.addClass("selected");
+    }
+
+    deselect() {
+        var $results = g.$searchResults.find('.selected').removeClass('selected');
+    }
+
+    select($result) {
+        this.deselect();
+        $result.addClass('selected');
     }
 
     // TODO: move to helper class

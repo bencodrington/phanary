@@ -2,7 +2,7 @@ class AudioManager {
     constructor() {
         this.audio = []; // The master list of audio sources
         this.fadeLength = 1500; // Milliseconds
-        this.volume = 1; // TODO: The volume modifier for all of an atmosphere's tracks
+        this.volume = 1; // The volume modifier for all of an atmosphere's tracks
     }
 
     playTrack(trackID, volume) {
@@ -13,20 +13,43 @@ class AudioManager {
         track.fade(0, this.volume * volume, this.fadeLength);
     }
 
-    stopTrack(trackID) {
+    stopTrack(trackID, callback) {
         // console.log('AudioManager: stopping track #' + trackID);
         var that = this;
         var track = this.audio[trackID];
         track.fade(track.volume(), 0, this.fadeLength);
-        track.on('fade', function() {
+        track.once('fade', function() {
             that.audio[trackID].stop();
+            if (callback) {
+                callback();
+            }
         });
-        
     }
+
+    toggleTrackMute(trackID) {
+        var track = this.audio[trackID];
+        if (track.mute()) {
+            track.mute(false);
+        } else {
+            track.mute(true);
+        }
+    }
+
+    setTrackMute(trackID, muted) {
+        var track = this.audio[trackID];
+        track.mute(muted);
+    }
+
+    
 
     setTrackVolume(trackID, newVolume) {
         var track = this.audio[trackID];
         track.volume(this.volume * newVolume);
+    }
+
+    unloadTrack(trackID) {
+        var track = this.audio[trackID];
+        track.unload();
     }
 }
 

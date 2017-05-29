@@ -10531,6 +10531,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.g = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// TODO: import handlebars runtime 
+// import handleBars from 'handlebars/handlebars.runtime.js';
+// import resultTemplate from './../../../temp/templates/templates.js';
+
 
 var _jquery = __webpack_require__(2);
 
@@ -10556,7 +10560,7 @@ var trackDataURL = "assets/data/tracks.json"; //https:api.myjson.com/bins/15eiip
 var atmosphereDataURL = "assets/data/atmospheres.json";
 
 var GlobalVars = function () {
-    // Do all jquery searches here, then other classes can import this file as g and use g.searchResults for example
+    // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
 
     function GlobalVars() {
         _classCallCheck(this, GlobalVars);
@@ -10627,6 +10631,11 @@ var GlobalVars = function () {
                 template = _handlebars2.default.compile(rawTemplate);
                 that.atmosphereTemplate = template;
             });
+            // $.get("assets/templates/searchResult.html", function(rawTemplate) {
+            //     template = Handlebars.compile(rawTemplate);
+            //     that.resultTemplate = template;
+            // });
+            // console.log(Phanary.templates.searchResult());
         }
     }, {
         key: 'nameToTrackData',
@@ -10976,7 +10985,18 @@ var DataReader = function () {
                 resultObject['name'] = name;
                 resultObject['type'] = type;
                 resultHTML = compiledTemplate(resultObject);
-                (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
+                var $resultHTML = (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
+                $resultHTML.on('mouseover', function () {
+                    _GlobalVars.g.searchBar.select($resultHTML);
+                });
+                $resultHTML.on('click', function () {
+                    if ($resultHTML.hasClass("result--track")) {
+                        _GlobalVars.g.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($resultHTML.text()));
+                    } else if ($resultHTML.hasClass("result--atmosphere")) {
+                        _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($resultHTML.text()));
+                    }
+                    _GlobalVars.g.searchBar.clearSearchBar();
+                });
             });
         }
     }]);
@@ -11117,7 +11137,7 @@ var SearchBar = function () {
     _createClass(SearchBar, [{
         key: 'events',
         value: function events() {
-            _GlobalVars.g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this)); // TODO: replace with on('keyup')??
+            _GlobalVars.g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this));
             _GlobalVars.g.$searchBarInput.keydown(this.blockArrowKeys);
             _GlobalVars.g.$searchBarClearBtn.click(this.clearSearchBar.bind(this));
             _GlobalVars.g.$autoplayCheckbox.click(function (event) {
@@ -11137,9 +11157,9 @@ var SearchBar = function () {
                     var $selected = (0, _jquery2.default)(".selected");
                     if ($selected) {
                         if ($selected.hasClass("result--track")) {
-                            this.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($selected.text()));
+                            _GlobalVars.g.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($selected.text()));
                         } else if ($selected.hasClass("result--atmosphere")) {
-                            this.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($selected.text()));
+                            _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($selected.text()));
                         }
                         this.clearSearchBar();
                     }
@@ -11169,9 +11189,7 @@ var SearchBar = function () {
         value: function moveSearchSelector(keyCode, $visibleResults) {
             var $current;
             var $selected = $visibleResults.filter(".selected");
-            // console.log("BEFORE: $selected: " + $selected.html());
             var index = $visibleResults.index($selected);
-            //console.log("== moveSearchSelector: $visibleResults.length: " + $visibleResults.length);
             // Remove .selected class from currently selected thing
             $selected.removeClass("selected");
             if (keyCode == 38) {
@@ -11200,8 +11218,18 @@ var SearchBar = function () {
                 console.error("moveSearchSelector: Invalid keyCode was passed: " + keyCode);
                 return;
             }
-            // console.log("moveSearchSelector: Currently selected: index #" + index + ", " + $current.html())
             $current.addClass("selected");
+        }
+    }, {
+        key: 'deselect',
+        value: function deselect() {
+            var $results = _GlobalVars.g.$searchResults.find('.selected').removeClass('selected');
+        }
+    }, {
+        key: 'select',
+        value: function select($result) {
+            this.deselect();
+            $result.addClass('selected');
         }
 
         // TODO: move to helper class
@@ -11279,7 +11307,7 @@ var _GlobalVars = __webpack_require__(3);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var searchBar = new _SearchBar2.default();
-searchBar.atmosphereManager = _GlobalVars.g.atmosphereManager;
+_GlobalVars.g.searchBar = searchBar;
 
 /***/ }),
 /* 12 */
@@ -11328,6 +11356,7 @@ var Atmosphere = function () {
         this.id = id;
         this.idCounter = 0;
         this.am = new _AudioManager2.default(); // Controls this atmosphere's list of audio sources
+        this.muted = false;
 
         this.createElement();
         this.instantiateTracks(atmosphereData.tracks);
@@ -11349,6 +11378,13 @@ var Atmosphere = function () {
             this.rigTitleEditing($atmosphereHTML);
 
             this.rigVolumeControls($atmosphereHTML);
+
+            var $delBtn = $atmosphereHTML.find(".btn--delete");
+            var that = this;
+            $delBtn.on('click', function (event) {
+                that.delete();
+                event.stopPropagation();
+            });
 
             this.$atmosphereHTML = $atmosphereHTML;
         }
@@ -11406,6 +11442,11 @@ var Atmosphere = function () {
             var $volumeSlider = $atmosphereHTML.find('.volume input[type=range]');
             $volumeSlider.on('input', function () {
                 that.updateTrackVolumes($volumeSlider.val());
+                that.unmute();
+            });
+            var $muteBtn = $atmosphereHTML.find(".btn--mute");
+            $muteBtn.on('click', function () {
+                that.mute();
             });
         }
     }, {
@@ -11421,7 +11462,7 @@ var Atmosphere = function () {
     }, {
         key: 'addTrack',
         value: function addTrack(trackObject) {
-            console.log("Adding track: " + trackObject.name);
+            // console.log("Adding track: " + trackObject.name);
             // Get track information
             trackObject.id = this.idCounter;
             trackObject.atmosphereId = this.id;
@@ -11470,6 +11511,17 @@ var Atmosphere = function () {
             });
         }
     }, {
+        key: 'mute',
+        value: function mute() {
+            this.updateTrackVolumes(0);
+            // TODO: style mute button
+        }
+    }, {
+        key: 'unmute',
+        value: function unmute() {
+            // TODO: style mute button;
+        }
+    }, {
         key: 'delete',
         value: function _delete() {
             // Loop through tracks and delete them
@@ -11480,6 +11532,11 @@ var Atmosphere = function () {
             this.$atmosphereHTML.slideUp('fast', function () {
                 this.remove();
             });
+            // Remove from atmosphere manager array
+            if (_GlobalVars.g.atmosphereManager.activeAtmosphere == this) {
+                _GlobalVars.g.atmosphereManager.activeAtmosphere = null;
+            }
+            _GlobalVars.g.atmosphereManager.atmospheres[this.id] = null;
         }
     }]);
 
@@ -11634,7 +11691,7 @@ var AudioManager = function () {
 
         this.audio = []; // The master list of audio sources
         this.fadeLength = 1500; // Milliseconds
-        this.volume = 1; // TODO: The volume modifier for all of an atmosphere's tracks
+        this.volume = 1; // The volume modifier for all of an atmosphere's tracks
     }
 
     _createClass(AudioManager, [{
@@ -11648,20 +11705,45 @@ var AudioManager = function () {
         }
     }, {
         key: 'stopTrack',
-        value: function stopTrack(trackID) {
+        value: function stopTrack(trackID, callback) {
             // console.log('AudioManager: stopping track #' + trackID);
             var that = this;
             var track = this.audio[trackID];
             track.fade(track.volume(), 0, this.fadeLength);
-            track.on('fade', function () {
+            track.once('fade', function () {
                 that.audio[trackID].stop();
+                if (callback) {
+                    callback();
+                }
             });
+        }
+    }, {
+        key: 'toggleTrackMute',
+        value: function toggleTrackMute(trackID) {
+            var track = this.audio[trackID];
+            if (track.mute()) {
+                track.mute(false);
+            } else {
+                track.mute(true);
+            }
+        }
+    }, {
+        key: 'setTrackMute',
+        value: function setTrackMute(trackID, muted) {
+            var track = this.audio[trackID];
+            track.mute(muted);
         }
     }, {
         key: 'setTrackVolume',
         value: function setTrackVolume(trackID, newVolume) {
             var track = this.audio[trackID];
             track.volume(this.volume * newVolume);
+        }
+    }, {
+        key: 'unloadTrack',
+        value: function unloadTrack(trackID) {
+            var track = this.audio[trackID];
+            track.unload();
         }
     }]);
 
@@ -11719,12 +11801,12 @@ var Track = function () {
             var trackHTML = _GlobalVars.g.trackTemplate(this.data);
 
             // Add to tracklist
-            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast'); // TODO: only add to current atmosphere tracklist
+            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast');
 
             var that = this;
             // Rig play, stop, and delete buttons to function
-            var $playBtn = $trackHTML.find(".btn--play-track");
-            var $stopBtn = $trackHTML.find(".btn--stop-track");
+            var $playBtn = $trackHTML.find(".btn--play");
+            var $stopBtn = $trackHTML.find(".btn--stop");
             var $delBtn = $trackHTML.find(".btn--delete");
             $playBtn.on('click', function () {
                 that.play();
@@ -11742,6 +11824,10 @@ var Track = function () {
                 that.volume = $volumeSlider.val();
                 that.updateVolume();
             });
+            var $muteBtn = $trackHTML.find(".btn--mute");
+            $muteBtn.on('click', function () {
+                that.toggleMute();
+            });
 
             this.$trackHTML = $trackHTML;
         }
@@ -11756,9 +11842,9 @@ var Track = function () {
             filenames = filenames.map(function (filename) {
                 return _GlobalVars.g.trackPrefix + filename;
             });
-            console.log(filenames);
+            // console.log(filenames);
 
-            var $playBtn = this.$trackHTML.find(".btn--play-track");
+            var $playBtn = this.$trackHTML.find(".btn--play");
             // Create new audio source
             // TODO: if audio already contains newId, just add another source
             var that = this;
@@ -11789,15 +11875,29 @@ var Track = function () {
             // TODO: enable/show play button=
         }
     }, {
+        key: 'toggleMute',
+        value: function toggleMute() {
+            this.atmosphere.am.toggleTrackMute(this.id);
+        }
+    }, {
+        key: 'setMute',
+        value: function setMute(muted) {
+            this.atmosphere.am.setTrackMute(this.id, muted);
+        }
+    }, {
         key: 'delete',
         value: function _delete() {
-            this.atmosphere.am.stopTrack(this.id);
+            var that = this;
+            this.atmosphere.am.stopTrack(this.id, function () {
+                that.atmosphere.am.unloadTrack(that.id);
+                // Unlink data object from containing atmosphere
+                that.atmosphere.removeTrack(that.id);
+            });
+
             // Remove DOM Element
             this.$trackHTML.slideUp('fast', function () {
                 this.remove();
             });
-            // Unlink data object from containing atmosphere
-            this.atmosphere.removeTrack(this.id);
         }
     }, {
         key: 'updateVolume',
