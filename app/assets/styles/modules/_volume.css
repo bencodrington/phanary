@@ -1,7 +1,7 @@
 .volume {
-    width: 100%;
+    flex: 10;
     display: flex;
-    margin: 10px 0 5px;
+    align-content: center;
 
     & input[type=range] {
         flex: 100;
@@ -11,5 +11,10 @@
     &__mute {
         display: inline-block;
         float: right;
+    }
+
+    &--spacing {
+        padding-top: 10px;
+        margin-right: 2px;
     }
 }

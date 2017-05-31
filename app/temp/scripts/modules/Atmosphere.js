@@ -40,11 +40,23 @@ class Atmosphere {
         this.rigVolumeControls($atmosphereHTML);
         
         var $delBtn = $atmosphereHTML.find(".btn--delete");
+        var $stopBtn = $atmosphereHTML.find(".btn--stop");
+        var $addBtn = $atmosphereHTML.find(".atmosphere__add");
+        var $replaceBtn = $atmosphereHTML.find(".atmosphere__replace");
         var that = this;
         $delBtn.on('click', function(event) {
             that.delete();
             event.stopPropagation();
         });
+        $addBtn.on('click', function() {
+            that.play();
+        });
+        $replaceBtn.on('click', function() {
+            g.atmosphereManager.switchTo(that);
+        })
+        $stopBtn.on('click', function() {
+            that.stop();
+        })
         
 
         this.$atmosphereHTML = $atmosphereHTML;
@@ -58,16 +70,27 @@ class Atmosphere {
         var $titleText = $title.find(".section__heading__title__text");
         var $rename = $title.find(".atmosphere__rename");
 
+        // Don't deselect current atmosphere if this is clicked
+        $atmosphereHTML.on('click', function(e) {
+            g.stopEditingTitle();
+            e.stopPropagation();
+        });
+
         // Rig heading to set atmosphere as active
         $heading.on('click', function() {
             g.atmosphereManager.setActiveAtmosphere(that);
+            g.hideSidebar();
+        });
+
+        $titleText.focus(function() {
+            g.selectElementContents($titleText[0]);
         });
         
         // Rig rename button to toggle title editability
         $rename.click(function(event) {
             var isEditable = $titleText.is('.editable');
-            g.stopEditingTitle(); // Clear any title currently being edited
             $titleText.prop('contenteditable', !isEditable);
+            g.stopEditingTitle(); // Clear any title currently being edited
             if (!isEditable) {
                 $titleText.addClass("editable")
                 // If it's now editable,
@@ -75,7 +98,7 @@ class Atmosphere {
                 g.$editingTitle = $titleText;
                 //  and select it with the cursor.
                 $titleText.focus()
-                .delay(1).select();
+                // .delay(100).select();
                 // .select();
             } else {
                  $titleText.removeClass("editable")
@@ -92,9 +115,16 @@ class Atmosphere {
             }
         });
 
+        $titleText.on('click', function(e) {
+            var isEditable = $titleText.is('.editable');
+            if (isEditable) {
+                e.stopPropagation();
+            }
+        });
+
         $titleText.on('select', function(event) {
-            console.log('ya');
-            event.preventDefault();
+            // console.log('ya');
+            // event.preventDefault();
         })
     }
 
@@ -173,6 +203,24 @@ class Atmosphere {
 
     unmute() {
         // TODO: style mute button;
+    }
+
+    play() {
+        // console.log('playing tracks');
+        this.tracks.forEach(function(element) {
+            if (element != null) {
+                element.play();
+            }
+        });
+    }
+
+    stop() {
+        // console.log('stopping tracks');
+        this.tracks.forEach(function(element) {
+            if (element != null) {
+                element.stop();
+            }
+        });
     }
 
     delete() {

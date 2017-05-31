@@ -1,30 +1,60 @@
 .sidebar {
-    width: 33%;
+    width: 100%;
+    transition: width 0.3s ease-out;
     height: 100%;
-    overflow-y: auto;
     float: left;
     position: fixed;
     background-color: $blueberry;
-    box-shadow: 0 0 10px rgba(#000, 0.5); /* TODO: darker blueberry */
+    box-shadow: 0 0 10px rgba($deepSea, 0.8);
+    overflow: auto;
+    z-index: 5;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &.mobile-hidden {
+        width: 0%;
+    }
+
+    @mixin atSmall {
+        width: 33%;
+
+        &.mobile-hidden {
+            width: 33%;
+        }
+    }
 
     &__footer {
-        width: 33%;
-        position: fixed; /* TODO: give content above bottom padding to avoid overlap */
+        width: 100%;
+        transition: all 0.3s ease-out;
+        position: fixed;
         bottom: 0;
         padding: 1rem 0;
         background-color: $blueberry;
-        box-shadow: 0 0 10px rgba(#000, 0.5); /* TODO: darker blueberry */
+        box-shadow: 0 0 10px rgba($deepSea, 0.5);
         z-index: 8;
-        /*bottom: 0px;*/
+        max-height: 500px;
 
-        /*&__btn-new {
-            height: 100%;
-            display: inline-block;
-            position: relative;
-            float: right;
-            margin-right: 1rem;
-            text-align: center;
-        }*/
+        &.mobile-hidden {
+            max-height: 0;
+            padding: 0;
+        }
+        
+        @mixin atSmall {
+            width: 33%;
+            max-height: 500px;
+
+            &.mobile-hidden {
+                width: 33%;
+                max-height: 500px;
+                padding: 1rem 0;
+            }
+        }
+
+        &__btn-new {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
 
         &__btn-new p {
             position: absolute;
@@ -32,5 +62,10 @@
             transform: translateY(-50%);
             width: 100%;
         }
+    }
+
+    &__footer__controls {
+        display: flex;
+        align-items: center;
     }
 }

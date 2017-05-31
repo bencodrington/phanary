@@ -8,9 +8,9 @@ class AudioManager {
     playTrack(trackID, volume) {
         // console.log('AudioManager: playing track #' + trackID);
         var track = this.audio[trackID];
-        track.volume(0);
+        track.off('fade');
         track.play();
-        track.fade(0, this.volume * volume, this.fadeLength);
+        track.fade(track.volume(), this.volume * volume, this.fadeLength);
     }
 
     stopTrack(trackID, callback) {
@@ -19,6 +19,7 @@ class AudioManager {
         var track = this.audio[trackID];
         track.fade(track.volume(), 0, this.fadeLength);
         track.once('fade', function() {
+            // console.log('AudioManager: finishing track stop');
             that.audio[trackID].stop();
             if (callback) {
                 callback();

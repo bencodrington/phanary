@@ -22,7 +22,15 @@ class AtmosphereManager {
             this.newAtmosphere();
         }.bind(this));
 
-        // Exit title edit mode if not
+        // Deselect active atmosphere on background click
+        $('.sidebar').on('click', function() {
+            this.deselectActiveAtmosphere();
+        }.bind(this));
+
+        // But not if clicking the footer
+        $('.sidebar__footer').on('click', function(e) {
+            e.stopPropagation();
+        });
     }
 
     // Called when 'Create custom atmosphere' button is clicked,
@@ -39,8 +47,6 @@ class AtmosphereManager {
     // Called when enter is pressed in the search bar, while a track is highlighted.
     //  Also called by this.newAtmosphere();
     addAtmosphere(atmosphereData) {
-        // TODO: read atmosphere template and generate a new one with the current id
-        // TODO: increment id_counter
         var atmosphere = new Atmosphere(atmosphereData, this.id_counter);
         this.id_counter++;
         this.atmospheres.push(atmosphere)
@@ -53,9 +59,17 @@ class AtmosphereManager {
             return;
         }
 
-        var oldAtmosphere = this.activeAtmosphere;
+        this.deselectActiveAtmosphere();
         this.activeAtmosphere = atmosphere;
 
+        // Add 'active' class to new active atmosphere
+        $(this.activeAtmosphere.$atmosphereHTML).addClass(activeClass);
+        // Show new tracks
+        this.activeAtmosphere.showTracks();
+    }
+
+    deselectActiveAtmosphere() {
+        var oldAtmosphere = this.activeAtmosphere;
         if (oldAtmosphere != null) {
             // Remove 'active' class from current active atmosphere
             $(oldAtmosphere.$atmosphereHTML).removeClass(activeClass);
@@ -63,11 +77,7 @@ class AtmosphereManager {
             // Hide current tracks
             oldAtmosphere.hideTracks();
         }
-
-        // Add 'active' class to new active atmosphere
-        $(this.activeAtmosphere.$atmosphereHTML).addClass(activeClass);
-        // Show new tracks
-        this.activeAtmosphere.showTracks();
+        this.activeAtmosphere = null;
     }
     // Called when enter is pressed in the search bar, while a track is highlighted.
     addTrack(trackData) {
@@ -78,6 +88,18 @@ class AtmosphereManager {
         }
 
         this.activeAtmosphere.addTrack(trackData);
+    }
+
+    switchTo(atmosphere) {
+        this.atmospheres.forEach(function(current) {
+            if (current != null) {
+                if (current == atmosphere) {
+                    current.play();
+                } else {
+                    current.stop();
+                }
+            }
+        });
     }
 
 }

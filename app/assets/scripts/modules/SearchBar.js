@@ -10,6 +10,9 @@ class SearchBar {
 
     events() {
         g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this));
+        g.$searchBarInput.focus(function() {
+            $(this).select();
+        });
         g.$searchBarInput.keydown(this.blockArrowKeys);
         g.$searchBarClearBtn.click(this.clearSearchBar.bind(this));
         g.$autoplayCheckbox.click(function(event) {

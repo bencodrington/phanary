@@ -8,6 +8,18 @@
     z-index: 10;
     box-shadow: 0 5px 10px rgba(#000, 0.2);
 
+    &__content {
+        display: flex;
+    }
+
+    &__hide.btn {
+        flex-shrink: 0;
+
+        @mixin atSmall {
+            display: none;
+        }
+    }
+
     &__brand {
         display: block;
         font-size: 2rem;
@@ -17,15 +29,26 @@
         font-weight: bold;
         float: right;
         box-sizing: content-box;
+        flex-shrink: 0;
 
         & img {
-            /*position: absolute;
-            right: 0;*/
             float: left;
             height: 2rem;
             width: auto;
-            margin: 0 0.5rem 0 0;
+
+            @mixin atSmall {
+                margin: 0 0.5rem 0 0;
+            }
         }
+
+        &__text {
+            display: none;
+
+            @mixin atSmall {
+                display: inline;
+            }
+        }
+
     }
 
 }
