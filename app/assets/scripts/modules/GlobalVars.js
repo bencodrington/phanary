@@ -19,6 +19,8 @@ class GlobalVars {
         this.$atmosphereList    = $("#atmosphereList");     // The div containing all atmospheres
         this.$searchResults     = $("#searchResults");      // The ul containing all search results
         this.$searchBarInput    = $("#searchBarInput");
+        this.$sideBar           = $(".sidebar");
+        this.$sideBarFooter     = $(".sidebar__footer");
         this.$autoplayCheckbox  = $("#autoplayCheckbox");
         this.$searchBarClearBtn = $("#searchBarClearBtn");
         this.$editingTitle      = null;
@@ -47,6 +49,17 @@ class GlobalVars {
                 that.stopEditingTitle();
             }
         });
+
+        // Toggle hidden class on sidebar upon hide button click
+        $(".navbar__hide").click(function() {
+            that.hideSidebar();
+        });
+
+    }
+
+    hideSidebar() {
+        this.$sideBar.toggleClass("mobile-hidden");
+        this.$sideBarFooter.toggleClass("mobile-hidden");
     }
 
     stopEditingTitle() {
@@ -103,6 +116,14 @@ class GlobalVars {
         var atmosphereObject = this.atmosphereData.atmospheres[name];
         atmosphereObject.name = name;
         return atmosphereObject;
+    }
+
+    selectElementContents(el) {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
     }
 
 }

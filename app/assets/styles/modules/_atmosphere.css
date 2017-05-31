@@ -1,13 +1,18 @@
+/* TODO: move me to the section file */
 .atmosphere {
-    background-color: blue;
-    width: 100%;
-    position: relative;
 
-    &__play {
-        position: relative;
+    &__rename {
+        transition: all 0.3s ease-out;
     }
 
     &__rename:hover {
-        color: $peru;
+        color: $lightPurple;
+    }
+}
+
+.section--atmosphere--active .atmosphere {
+
+    &__rename:hover {
+        color: $darkPurple;
     }
 }

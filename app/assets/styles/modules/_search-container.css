@@ -1,7 +1,8 @@
 .search-container {
-    position: absolute;
-    width: 50%;
-    top: .65rem;
+    display: inline-block;
+    flex: 10 4;
+    width: 10px;
+    margin: 0 10px;
 
     &__search-controls {
         width: 100%;
@@ -10,23 +11,15 @@
         border: none;
         border-radius: 5px;
         overflow: hidden;
-        box-shadow: 0 0 5px rgba(#000, 0.8) ; /* TODO: darker blueberry, and expand when textbox has focus */
+        box-shadow: 0 0 5px rgba(#000, 0.8) ; /* TODO: expand when textbox has focus */
     }
-
-    /*&__search-controls::before {
-        background-color: red;
-        width: 100%;
-        height: 100%;
-        z-index: 400;
-        content: '';
-        box-shadow: 0 0 10px black;*/
-    /*}*/
 
     &__search-bar {
         display: inline-block;
         border: none;
         padding: 5px 10px;
         height: 100%;
+        width: 10px;
         flex: 2;
         background-color: $stormGrey;
         color: $blueberry;
@@ -86,21 +79,23 @@
     }
 
     &__results {
-        position: relative;
+        position: absolute;
+        top: 3.25rem;
         margin: 0;
         padding: 0;
         width: 100%;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         overflow: hidden;
-        box-shadow: 0 0 5px $blueberry;
+        box-shadow: 0 0 5px $deepSea;
 
         & li {
             background-color: $stormGrey;
-            border-bottom: 1px rgba($blueberry, 0.25) solid;
+            border-bottom: 1px rgba($deepSea, 0.25) solid;
             padding: 5px;
             color: $blueberry;
             cursor: pointer;
+            list-style: none;
         }
         /*TODO: hover-effect*/
 

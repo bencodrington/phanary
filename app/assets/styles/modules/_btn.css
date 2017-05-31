@@ -5,7 +5,7 @@
     cursor: pointer;
     display: inline-block;
     overflow: hidden;
-    transition: background-color 0.2s ease-out;
+    transition: all 0.2s ease-out;
 
     &:hover {
         background-color: $lighterGrey;
@@ -39,7 +39,16 @@
 
     &--yellow:hover {
         background-color: $vanilla;
-        color: $coconut;
+        color: $peru;
+    }
+
+    &--yellow.btn--delete:hover {
+        color: $peru;
+    }
+
+    &--medium {
+        width: 2rem;
+        height: 2rem;
     }
     
     &--delete {
@@ -47,15 +56,18 @@
         top: 0;
         right: 0;
         border-top-right-radius: 5px;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+    }
+
+    &--delete:hover {
+        background-color: transparent;
+        color: $offWhite;
     }
 
     &--rounded {
         border-radius: 5px;
-    }
-
-    &--medium {
-        width: 2rem;
-        height: 2rem;
     }
 
     &__inner {
@@ -65,4 +77,27 @@
         top: 50%;
         transform: translateY(-50%);
     }
+}
+
+.section--atmosphere .btn {
+    background-color: $darkPurple;
+    color: $blackPurple;
+
+    &:hover {
+        background-color: $lightPurple;
+        color: $darkPurple;
+    }
+
+    &--delete {
+        background-color: transparent;
+    }
+
+    &--delete:hover {
+        background-color: transparent;
+        color: $lightPurple;
+    }
+}
+
+.section--atmosphere--active .btn--delete:hover {
+    color: $darkPurple;
 }

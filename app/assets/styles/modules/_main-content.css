@@ -1,4 +1,8 @@
 .main-content {
-    width: 66%;
+    width: 100%;
     float: right;
+
+    @mixin atSmall {
+        width: 66%;
+    }
 }
