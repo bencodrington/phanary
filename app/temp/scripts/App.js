@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -260,6 +260,200 @@ module.exports = exports['default'];
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.g = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// TODO: import handlebars runtime 
+// import handleBars from 'handlebars/handlebars.runtime.js';
+// import resultTemplate from './../../../temp/templates/templates.js';
+
+
+var _jquery = __webpack_require__(3);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _handlebars = __webpack_require__(10);
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+var _DataReader = __webpack_require__(6);
+
+var _DataReader2 = _interopRequireDefault(_DataReader);
+
+var _AtmosphereManager = __webpack_require__(14);
+
+var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var trackDataURL = "assets/data/tracks.json"; //https:api.myjson.com/bins/15eiip";
+var atmosphereDataURL = "assets/data/atmospheres.json";
+
+var GlobalVars = function () {
+    // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
+
+    function GlobalVars() {
+        _classCallCheck(this, GlobalVars);
+
+        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
+        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
+        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
+        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
+        this.$sideBar = (0, _jquery2.default)(".sidebar");
+        this.$sideBarFooter = (0, _jquery2.default)(".sidebar__footer");
+        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
+        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
+        this.$editingTitle = null;
+
+        this.trackIdCounter = 0;
+        this.trackPrefix = "assets/audio/tracks/";
+
+        this.atmosphereManager = new _AtmosphereManager2.default();
+
+        this.trackDataReader = new _DataReader2.default(trackDataURL, this.onTrackDataReadComplete.bind(this));
+        this.atmosphereDataReader = new _DataReader2.default(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
+
+        this.compileTemplates();
+
+        this.events();
+    }
+
+    _createClass(GlobalVars, [{
+        key: 'events',
+        value: function events() {
+            // Stop editing title upon mouse click outside the title
+            var that = this;
+            (0, _jquery2.default)(document).click(function (event) {
+                if (that.$editingTitle != null && !that.$editingTitle.is(event.target) && that.$editingTitle.has(event.target).length === 0) {
+                    that.stopEditingTitle();
+                }
+            });
+
+            // Toggle hidden class on sidebar upon hide button click
+            (0, _jquery2.default)(".navbar__hide").click(function () {
+                that.hideSidebar();
+            });
+        }
+    }, {
+        key: 'hideSidebar',
+        value: function hideSidebar() {
+            this.$sideBar.toggleClass("mobile-hidden");
+            this.$sideBarFooter.toggleClass("mobile-hidden");
+        }
+    }, {
+        key: 'stopEditingTitle',
+        value: function stopEditingTitle() {
+            if (g.$editingTitle != null) {
+                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
+                this.$editingTitle = null;
+            }
+        }
+    }, {
+        key: 'onTrackDataReadComplete',
+        value: function onTrackDataReadComplete(trackData) {
+            this.trackData = trackData;
+            this.trackDataReader.populateSearchResults(trackData.tracks, "result--track");
+        }
+    }, {
+        key: 'onAtmosphereDataReadComplete',
+        value: function onAtmosphereDataReadComplete(atmosphereData) {
+            this.atmosphereData = atmosphereData;
+            this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres, "result--atmosphere");
+        }
+    }, {
+        key: 'compileTemplates',
+        value: function compileTemplates() {
+            var that = this;
+            var template;
+            // TODO: move paths to variable
+            _jquery2.default.get("assets/templates/track.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.trackTemplate = template;
+            });
+            _jquery2.default.get("assets/templates/atmosphere.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.atmosphereTemplate = template;
+            });
+            _jquery2.default.get("assets/templates/oneshot.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.oneshotTemplate = template;
+            });
+            // $.get("assets/templates/searchResult.html", function(rawTemplate) {
+            //     template = Handlebars.compile(rawTemplate);
+            //     that.resultTemplate = template;
+            // });
+            // console.log(Phanary.templates.searchResult());
+        }
+    }, {
+        key: 'nameToTrackData',
+        value: function nameToTrackData(name) {
+            if (this.trackData == null) {
+                console.error("Track Data failed to fetch from server. Cannot add track.");
+                return;
+            }
+            var trackObject = this.trackData.tracks[name];
+            trackObject.name = name;
+            return trackObject;
+        }
+    }, {
+        key: 'nameToAtmosphereData',
+        value: function nameToAtmosphereData(name) {
+            if (this.atmosphereData == null) {
+                console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
+                return;
+            }
+            var atmosphereObject = this.atmosphereData.atmospheres[name];
+            atmosphereObject.name = name;
+            return atmosphereObject;
+        }
+    }, {
+        key: 'selectElementContents',
+        value: function selectElementContents(el) {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }, {
+        key: 'appendTrackPrefixes',
+        value: function appendTrackPrefixes(filenames) {
+            var that = this;
+            filenames = filenames.map(function (filename) {
+                return that.trackPrefix + filename;
+            });
+            return filenames;
+        }
+    }, {
+        key: 'getRandomInt',
+        value: function getRandomInt(max) {
+            max = Math.floor(max);
+            return Math.floor(Math.random() * max);
+        }
+    }, {
+        key: 'clamp',
+        value: function clamp(min, number, max) {
+            return Math.min(Math.max(number, min), max);
+        }
+    }]);
+
+    return GlobalVars;
+}();
+
+var g = exports.g = new GlobalVars();
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10519,176 +10713,6 @@ return jQuery;
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.g = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-// TODO: import handlebars runtime 
-// import handleBars from 'handlebars/handlebars.runtime.js';
-// import resultTemplate from './../../../temp/templates/templates.js';
-
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _handlebars = __webpack_require__(9);
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
-var _DataReader = __webpack_require__(6);
-
-var _DataReader2 = _interopRequireDefault(_DataReader);
-
-var _AtmosphereManager = __webpack_require__(13);
-
-var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var trackDataURL = "assets/data/tracks.json"; //https:api.myjson.com/bins/15eiip";
-var atmosphereDataURL = "assets/data/atmospheres.json";
-
-var GlobalVars = function () {
-    // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
-
-    function GlobalVars() {
-        _classCallCheck(this, GlobalVars);
-
-        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
-        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
-        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
-        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
-        this.$sideBar = (0, _jquery2.default)(".sidebar");
-        this.$sideBarFooter = (0, _jquery2.default)(".sidebar__footer");
-        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
-        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
-        this.$editingTitle = null;
-
-        this.trackIdCounter = 0;
-        this.trackPrefix = "assets/audio/tracks/";
-
-        this.atmosphereManager = new _AtmosphereManager2.default();
-
-        this.trackDataReader = new _DataReader2.default(trackDataURL, this.onTrackDataReadComplete.bind(this));
-        this.atmosphereDataReader = new _DataReader2.default(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
-
-        this.compileTemplates();
-
-        this.events();
-    }
-
-    _createClass(GlobalVars, [{
-        key: 'events',
-        value: function events() {
-            // Stop editing title upon mouse click outside the title
-            var that = this;
-            (0, _jquery2.default)(document).click(function (event) {
-                if (that.$editingTitle != null && !that.$editingTitle.is(event.target) && that.$editingTitle.has(event.target).length === 0) {
-                    that.stopEditingTitle();
-                }
-            });
-
-            // Toggle hidden class on sidebar upon hide button click
-            (0, _jquery2.default)(".navbar__hide").click(function () {
-                that.hideSidebar();
-            });
-        }
-    }, {
-        key: 'hideSidebar',
-        value: function hideSidebar() {
-            this.$sideBar.toggleClass("mobile-hidden");
-            this.$sideBarFooter.toggleClass("mobile-hidden");
-        }
-    }, {
-        key: 'stopEditingTitle',
-        value: function stopEditingTitle() {
-            if (g.$editingTitle != null) {
-                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
-                this.$editingTitle = null;
-            }
-        }
-    }, {
-        key: 'onTrackDataReadComplete',
-        value: function onTrackDataReadComplete(trackData) {
-            this.trackData = trackData;
-            this.trackDataReader.populateSearchResults(trackData.tracks, "result--track");
-        }
-    }, {
-        key: 'onAtmosphereDataReadComplete',
-        value: function onAtmosphereDataReadComplete(atmosphereData) {
-            this.atmosphereData = atmosphereData;
-            this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres, "result--atmosphere");
-        }
-    }, {
-        key: 'compileTemplates',
-        value: function compileTemplates() {
-            var that = this;
-            var template;
-            // TODO: move paths to variable
-            _jquery2.default.get("assets/templates/track.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.trackTemplate = template;
-            });
-            _jquery2.default.get("assets/templates/atmosphere.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.atmosphereTemplate = template;
-            });
-            // $.get("assets/templates/searchResult.html", function(rawTemplate) {
-            //     template = Handlebars.compile(rawTemplate);
-            //     that.resultTemplate = template;
-            // });
-            // console.log(Phanary.templates.searchResult());
-        }
-    }, {
-        key: 'nameToTrackData',
-        value: function nameToTrackData(name) {
-            if (this.trackData == null) {
-                console.error("Track Data failed to fetch from server. Cannot add track.");
-                return;
-            }
-            var trackObject = this.trackData.tracks[name];
-            trackObject.name = name;
-            return trackObject;
-        }
-    }, {
-        key: 'nameToAtmosphereData',
-        value: function nameToAtmosphereData(name) {
-            if (this.atmosphereData == null) {
-                console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
-                return;
-            }
-            var atmosphereObject = this.atmosphereData.atmospheres[name];
-            atmosphereObject.name = name;
-            return atmosphereObject;
-        }
-    }, {
-        key: 'selectElementContents',
-        value: function selectElementContents(el) {
-            var range = document.createRange();
-            range.selectNodeContents(el);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
-    }]);
-
-    return GlobalVars;
-}();
-
-var g = exports.g = new GlobalVars();
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10707,11 +10731,11 @@ var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(28);
+var _helpers = __webpack_require__(29);
 
-var _decorators = __webpack_require__(26);
+var _decorators = __webpack_require__(27);
 
-var _logger = __webpack_require__(36);
+var _logger = __webpack_require__(37);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10959,15 +10983,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _handlebars = __webpack_require__(9);
+var _handlebars = __webpack_require__(10);
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11035,6 +11059,166 @@ exports.default = DataReader;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(3);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _GlobalVars = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Track object, contains all the data associated with a given track
+var Track = function () {
+    function Track(trackData, atmosphere) {
+        _classCallCheck(this, Track);
+
+        this.data = trackData;
+
+        this.id = trackData.id;
+        this.atmosphere = atmosphere;
+        this.volume = 1;
+
+        // console.log("Track constructor: trackData.atmosphereId: " + trackData.atmosphereId);
+        this.createElement(trackData);
+        this.createAudio(trackData);
+    }
+
+    _createClass(Track, [{
+        key: 'template',
+        value: function template(data) {
+            return _GlobalVars.g.trackTemplate(data);
+        }
+    }, {
+        key: 'createElement',
+        value: function createElement() {
+
+            // TODO: check if template is compiled or not
+
+            // Convert object to HTML
+            var trackHTML = this.template(this.data);
+
+            // Add to tracklist
+            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast');
+
+            var that = this;
+            // Rig play, stop, and delete buttons to function
+            var $playBtn = $trackHTML.find(".btn--play");
+            var $stopBtn = $trackHTML.find(".btn--stop");
+            var $delBtn = $trackHTML.find(".btn--delete");
+            $playBtn.on('click', function () {
+                that.play();
+            });
+            $stopBtn.on('click', function () {
+                that.stop();
+            });
+            $delBtn.on('click', function () {
+                that.delete();
+            });
+
+            // Rig volume slider to function
+            var $volumeSlider = $trackHTML.find(".volume input[type=range]");
+            $volumeSlider.on('input', function () {
+                that.volume = $volumeSlider.val();
+                that.updateVolume();
+            });
+            var $muteBtn = $trackHTML.find(".btn--mute");
+            $muteBtn.on('click', function () {
+                that.toggleMute();
+            });
+
+            this.$trackHTML = $trackHTML;
+        }
+    }, {
+        key: 'createAudio',
+        value: function createAudio() {
+
+            // console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
+
+            // Append prefix to filenames
+            var filenames = _GlobalVars.g.appendTrackPrefixes(this.data.filenames);
+            // console.log(filenames);
+
+            var $playBtn = this.$trackHTML.find(".btn--play");
+            // Create new audio source
+            var that = this;
+            this.atmosphere.am.addTrack(this.id, new Howl({
+                src: filenames,
+                buffer: true,
+                autoplay: false,
+                loop: true,
+                onload: function onload() {
+                    // console.log("Loaded track '" + that.data.name + "'.");
+                    $playBtn.removeAttr("disabled");
+                }
+            }));
+            if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
+                this.play();
+            }
+        }
+    }, {
+        key: 'play',
+        value: function play() {
+            this.atmosphere.am.playTrack(this.id, this.volume);
+            // TODO: disable/hide play button
+        }
+    }, {
+        key: 'stop',
+        value: function stop() {
+            this.atmosphere.am.stopTrack(this.id);
+            // TODO: enable/show play button=
+        }
+    }, {
+        key: 'toggleMute',
+        value: function toggleMute() {
+            this.atmosphere.am.toggleTrackMute(this.id);
+        }
+    }, {
+        key: 'setMute',
+        value: function setMute(muted) {
+            this.atmosphere.am.setTrackMute(this.id, muted);
+        }
+    }, {
+        key: 'delete',
+        value: function _delete() {
+            var that = this;
+            this.atmosphere.am.stopTrack(this.id, function () {
+                that.atmosphere.am.unloadTrack(that.id);
+                // Unlink data object from containing atmosphere
+                that.atmosphere.removeTrack(that.id);
+            });
+
+            // Remove DOM Element
+            this.$trackHTML.slideUp('fast', function () {
+                this.remove();
+            });
+        }
+    }, {
+        key: 'updateVolume',
+        value: function updateVolume() {
+            this.atmosphere.am.setTrackVolume(this.id, this.volume);
+        }
+    }]);
+
+    return Track;
+}();
+
+exports.default = Track;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 exports.__esModule = true;
 var AST = {
   // Public API used to evaluate derived attributes regarding AST nodes
@@ -11067,7 +11251,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11092,10 +11276,10 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(39)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -11104,9 +11288,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(16)['default'];
+var handlebars = __webpack_require__(17)['default'];
 
-var printer = __webpack_require__(24);
+var printer = __webpack_require__(25);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -11126,7 +11310,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11138,11 +11322,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11317,17 +11501,17 @@ var SearchBar = function () {
 exports.default = SearchBar;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _SearchBar = __webpack_require__(10);
+var _SearchBar = __webpack_require__(11);
 
 var _SearchBar2 = _interopRequireDefault(_SearchBar);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11335,7 +11519,7 @@ var searchBar = new _SearchBar2.default();
 _GlobalVars.g.searchBar = searchBar;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11347,19 +11531,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _Track = __webpack_require__(15);
+var _Track = __webpack_require__(7);
 
 var _Track2 = _interopRequireDefault(_Track);
 
-var _AudioManager = __webpack_require__(14);
+var _OneShot = __webpack_require__(16);
+
+var _OneShot2 = _interopRequireDefault(_OneShot);
+
+var _AudioManager = __webpack_require__(15);
 
 var _AudioManager2 = _interopRequireDefault(_AudioManager);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11526,7 +11714,13 @@ var Atmosphere = function () {
 
             // Create track data object
             var track;
-            track = new _Track2.default(trackObject, this);
+            if (trackObject.type === "oneshot") {
+                // OneShot
+                track = new _OneShot2.default(trackObject, this);
+            } else {
+                // Default
+                track = new _Track2.default(trackObject, this);
+            }
 
             // Add track to array
             this.tracks.push(track);
@@ -11622,7 +11816,7 @@ var Atmosphere = function () {
 exports.default = Atmosphere;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11634,7 +11828,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -11642,7 +11836,7 @@ var _DataReader = __webpack_require__(6);
 
 var _DataReader2 = _interopRequireDefault(_DataReader);
 
-var _Atmosphere = __webpack_require__(12);
+var _Atmosphere = __webpack_require__(13);
 
 var _Atmosphere2 = _interopRequireDefault(_Atmosphere);
 
@@ -11771,7 +11965,7 @@ var AtmosphereManager = function () {
 exports.default = AtmosphereManager;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11782,6 +11976,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _GlobalVars = __webpack_require__(2);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11795,13 +11991,28 @@ var AudioManager = function () {
     }
 
     _createClass(AudioManager, [{
+        key: 'addTrack',
+        value: function addTrack(id, howl) {
+            this.audio[id] = howl;
+        }
+    }, {
+        key: 'addOneShotSet',
+        value: function addOneShotSet(id, howls) {
+            this.audio[id] = howls;
+        }
+    }, {
         key: 'playTrack',
         value: function playTrack(trackID, volume) {
             // console.log('AudioManager: playing track #' + trackID);
             var track = this.audio[trackID];
-            track.off('fade');
-            track.play();
-            track.fade(track.volume(), this.volume * volume, this.fadeLength);
+            if (this.isOneShot(track)) {
+                var sampleToPlay = track[_GlobalVars.g.getRandomInt(track.length)];
+                sampleToPlay.play();
+            } else {
+                track.off('fade');
+                track.play();
+                track.fade(track.volume(), this.volume * volume, this.fadeLength);
+            }
         }
     }, {
         key: 'stopTrack',
@@ -11822,29 +12033,62 @@ var AudioManager = function () {
         key: 'toggleTrackMute',
         value: function toggleTrackMute(trackID) {
             var track = this.audio[trackID];
-            if (track.mute()) {
-                track.mute(false);
+            if (this.isOneShot(track)) {
+                // One-shot
+                track.forEach(function (sample) {
+                    if (sample.mute()) {
+                        sample.mute(false);
+                    } else {
+                        sample.mute(true);
+                    }
+                });
             } else {
-                track.mute(true);
+                // Loop
+                if (track.mute()) {
+                    track.mute(false);
+                } else {
+                    track.mute(true);
+                }
             }
         }
     }, {
         key: 'setTrackMute',
         value: function setTrackMute(trackID, muted) {
             var track = this.audio[trackID];
-            track.mute(muted);
+            if (this.isOneShot(track)) {
+                // One-shot
+                track.forEach(function (sample) {
+                    sample.mute(muted);
+                });
+            } else {
+                // Loop
+                track.mute(muted);
+            }
         }
     }, {
         key: 'setTrackVolume',
         value: function setTrackVolume(trackID, newVolume) {
             var track = this.audio[trackID];
-            track.volume(this.volume * newVolume);
+            if (this.isOneShot(track)) {
+                // One-shot
+                track.forEach(function (sample) {
+                    sample.volume(this.volume * newVolume);
+                }, this);
+            } else {
+                // Loop
+                track.volume(this.volume * newVolume);
+            }
         }
     }, {
         key: 'unloadTrack',
         value: function unloadTrack(trackID) {
             var track = this.audio[trackID];
             track.unload();
+        }
+    }, {
+        key: 'isOneShot',
+        value: function isOneShot(track) {
+            return Array.isArray(track);
         }
     }]);
 
@@ -11854,7 +12098,7 @@ var AudioManager = function () {
 exports.default = AudioManager;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11866,154 +12110,187 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _Track2 = __webpack_require__(7);
 
-var _jquery2 = _interopRequireDefault(_jquery);
+var _Track3 = _interopRequireDefault(_Track2);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// Track object, contains all the data associated with a given track
-var Track = function () {
-    function Track(trackData, atmosphere) {
-        _classCallCheck(this, Track);
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-        this.data = trackData;
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-        this.id = trackData.id;
-        this.atmosphere = atmosphere;
-        this.volume = 1;
+// Used for setting random time ranges
+var _timesteps = [1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
 
-        // console.log("Track constructor: trackData.atmosphereId: " + trackData.atmosphereId);
-        this.createElement(trackData);
-        this.createAudio(trackData);
+var OneShot = function (_Track) {
+    _inherits(OneShot, _Track);
+
+    _createClass(OneShot, null, [{
+        key: 'timesteps',
+        get: function get() {
+            return _timesteps;
+        }
+    }]);
+
+    function OneShot(trackData, atmosphere) {
+        _classCallCheck(this, OneShot);
+
+        var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere));
+
+        _this.rigOneShotControls();
+        _this.timeOut = null;
+        _this.minIndex = 1;
+        _this.maxIndex = 2;
+        // Update labels
+        // TODO: just make updateLabels function
+        _this.changeRange('min', 0);
+        _this.changeRange('max', 0);
+        return _this;
     }
 
-    _createClass(Track, [{
-        key: 'createElement',
-        value: function createElement() {
-
-            // TODO: check if template is compiled or not
-
-            // Convert object to HTML
-            var trackHTML = _GlobalVars.g.trackTemplate(this.data);
-
-            // Add to tracklist
-            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast');
-
-            var that = this;
-            // Rig play, stop, and delete buttons to function
-            var $playBtn = $trackHTML.find(".btn--play");
-            var $stopBtn = $trackHTML.find(".btn--stop");
-            var $delBtn = $trackHTML.find(".btn--delete");
-            $playBtn.on('click', function () {
-                that.play();
-            });
-            $stopBtn.on('click', function () {
-                that.stop();
-            });
-            $delBtn.on('click', function () {
-                that.delete();
-            });
-
-            // Rig volume slider to function
-            var $volumeSlider = $trackHTML.find(".volume input[type=range]");
-            $volumeSlider.on('input', function () {
-                that.volume = $volumeSlider.val();
-                that.updateVolume();
-            });
-            var $muteBtn = $trackHTML.find(".btn--mute");
-            $muteBtn.on('click', function () {
-                that.toggleMute();
-            });
-
-            this.$trackHTML = $trackHTML;
+    _createClass(OneShot, [{
+        key: 'template',
+        value: function template(data) {
+            return _GlobalVars.g.oneshotTemplate(data);
         }
     }, {
         key: 'createAudio',
-        value: function createAudio() {
-
-            // console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
-
-            // Append prefix to filenames
-            var filenames = this.data.filenames;
-            filenames = filenames.map(function (filename) {
-                return _GlobalVars.g.trackPrefix + filename;
-            });
-            // console.log(filenames);
+        value: function createAudio(trackData) {
 
             var $playBtn = this.$trackHTML.find(".btn--play");
-            // Create new audio source
-            // TODO: if audio already contains newId, just add another source
             var that = this;
-            this.atmosphere.am.audio[this.id] = new Howl({
-                src: filenames,
-                buffer: true,
-                autoplay: false,
-                loop: that.data.loop, // TODO: button to change
-                onload: function onload() {
-                    // console.log("Loaded track '" + that.data.name + "'.");
-                    $playBtn.removeAttr("disabled");
-                }
+            var samples = [];
+            var paths, howl;
+            var samples = [];
+            this.data.filenames.forEach(function (filenames) {
+                // For each oneshot
+                // Append track prefixes to each fallback audio path
+                paths = _GlobalVars.g.appendTrackPrefixes(filenames);
+                // Create new howl for the sample
+                howl = new Howl({
+                    src: paths,
+                    buffer: true,
+                    autoplay: false,
+                    loop: false,
+                    onload: function onload() {
+                        // console.log("Loaded track '" + that.data.name + "'.");
+                        $playBtn.removeAttr("disabled");
+                    }
+                });
+
+                samples.push(howl); //TODO:
             });
+
+            // Add to audio manager
+            this.atmosphere.am.addOneShotSet(this.id, samples);
+
             if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
                 this.play();
             }
         }
     }, {
-        key: 'play',
-        value: function play() {
-            this.atmosphere.am.playTrack(this.id, this.volume);
-            // TODO: disable/hide play button
+        key: 'rigOneShotControls',
+        value: function rigOneShotControls() {
+            var that = this;
+            var $startBtn = this.$trackHTML.find('.btn--start');
+            var $minMore = this.$trackHTML.find('.oneshot-min.btn--more');
+            var $minLess = this.$trackHTML.find('.oneshot-min.btn--less');
+            var $maxMore = this.$trackHTML.find('.oneshot-max.btn--more');
+            var $maxLess = this.$trackHTML.find('.oneshot-max.btn--less');
+            this.$minLabel = this.$trackHTML.find('.oneshot-min-label');
+            this.$maxLabel = this.$trackHTML.find('.oneshot-max-label');
+            $startBtn.on('click', function () {
+                that.start();
+            });
+            $minLess.on('click', function () {
+                that.changeRange('min', -1);
+            });
+            $minMore.on('click', function () {
+                that.changeRange('min', 1);
+            });
+            $maxLess.on('click', function () {
+                that.changeRange('max', -1);
+            });
+            $maxMore.on('click', function () {
+                that.changeRange('max', 1);
+            });
         }
     }, {
         key: 'stop',
         value: function stop() {
-            this.atmosphere.am.stopTrack(this.id);
-            // TODO: enable/show play button=
+            if (this.timeOut != null) {
+                clearTimeout(this.timeOut);
+            }
         }
     }, {
-        key: 'toggleMute',
-        value: function toggleMute() {
-            this.atmosphere.am.toggleTrackMute(this.id);
-        }
-    }, {
-        key: 'setMute',
-        value: function setMute(muted) {
-            this.atmosphere.am.setTrackMute(this.id, muted);
+        key: 'start',
+        value: function start() {
+            var that = this;
+            var timerLength = this.getTimerLength() * 1000;
+            // Clear previous timeout
+            this.stop();
+            // Play after delay
+            this.timeOut = setTimeout(function () {
+                that.play();
+                that.start();
+            }, timerLength);
         }
     }, {
         key: 'delete',
         value: function _delete() {
-            var that = this;
-            this.atmosphere.am.stopTrack(this.id, function () {
-                that.atmosphere.am.unloadTrack(that.id);
-                // Unlink data object from containing atmosphere
-                that.atmosphere.removeTrack(that.id);
-            });
-
-            // Remove DOM Element
-            this.$trackHTML.slideUp('fast', function () {
-                this.remove();
-            });
+            //TODO:
         }
     }, {
-        key: 'updateVolume',
-        value: function updateVolume() {
-            this.atmosphere.am.setTrackVolume(this.id, this.volume);
+        key: 'changeRange',
+        value: function changeRange(minmax, difference) {
+
+            if (minmax === 'min') {
+                this.minIndex = _GlobalVars.g.clamp(0, this.minIndex + difference, OneShot.timesteps.length - 1);
+                this.$minLabel.text(OneShot.getTimeStep(this.minIndex));
+                if (this.minIndex > this.maxIndex) {
+                    // Increase max
+                    // console.log("OneShot:changeRange(): " + this.minIndex + " is greater than " + this.maxIndex);
+                    this.changeRange('max', 1);
+                }
+            } else {
+                // 'max'
+                this.maxIndex = _GlobalVars.g.clamp(0, this.maxIndex + difference, OneShot.timesteps.length - 1);
+                this.$maxLabel.text(OneShot.getTimeStep(this.maxIndex));
+                if (this.maxIndex < this.minIndex) {
+                    // Decrease min
+                    // console.log("OneShot:changeRange(): " + this.maxIndex + " is less than " + this.minIndex);
+                    this.changeRange('min', -1);
+                }
+            }
+        }
+    }, {
+        key: 'getTimerLength',
+        value: function getTimerLength() {
+            var min = OneShot.getTimeStep(this.minIndex);
+            var max = OneShot.getTimeStep(this.maxIndex);
+            var length = min + _GlobalVars.g.getRandomInt(max - min + 1);
+            // console.log("OneShot:getTimerLength(): " + length);
+            return length;
+        }
+    }], [{
+        key: 'getTimeStep',
+        value: function getTimeStep(index) {
+            return OneShot.timesteps[index];
         }
     }]);
 
-    return Track;
-}();
+    return OneShot;
+}(_Track3.default);
 
-exports.default = Track;
+exports.default = OneShot;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12024,21 +12301,21 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(17);
+var _handlebarsRuntime = __webpack_require__(18);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
 // Compiler imports
 
-var _handlebarsCompilerAst = __webpack_require__(7);
+var _handlebarsCompilerAst = __webpack_require__(8);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(18);
+var _handlebarsCompilerBase = __webpack_require__(19);
 
-var _handlebarsCompilerCompiler = __webpack_require__(20);
+var _handlebarsCompilerCompiler = __webpack_require__(21);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(22);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(23);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -12046,7 +12323,7 @@ var _handlebarsCompilerVisitor = __webpack_require__(5);
 
 var _handlebarsCompilerVisitor2 = _interopRequireDefault(_handlebarsCompilerVisitor);
 
-var _handlebarsNoConflict = __webpack_require__(8);
+var _handlebarsNoConflict = __webpack_require__(9);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -12085,7 +12362,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12107,7 +12384,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(38);
+var _handlebarsSafeString = __webpack_require__(39);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -12119,11 +12396,11 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(37);
+var _handlebarsRuntime = __webpack_require__(38);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
-var _handlebarsNoConflict = __webpack_require__(8);
+var _handlebarsNoConflict = __webpack_require__(9);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -12158,7 +12435,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12174,15 +12451,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(23);
+var _parser = __webpack_require__(24);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(25);
+var _whitespaceControl = __webpack_require__(26);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(21);
+var _helpers = __webpack_require__(22);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -12213,7 +12490,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12386,7 +12663,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12408,7 +12685,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _ast = __webpack_require__(7);
+var _ast = __webpack_require__(8);
 
 var _ast2 = _interopRequireDefault(_ast);
 
@@ -12965,7 +13242,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13202,7 +13479,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13221,7 +13498,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(19);
+var _codeGen = __webpack_require__(20);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -14337,7 +14614,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15083,7 +15360,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15276,7 +15553,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15504,7 +15781,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15516,7 +15793,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(27);
+var _decoratorsInline = __webpack_require__(28);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -15527,7 +15804,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15563,7 +15840,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15575,31 +15852,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(29);
+var _helpersBlockHelperMissing = __webpack_require__(30);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(30);
+var _helpersEach = __webpack_require__(31);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(31);
+var _helpersHelperMissing = __webpack_require__(32);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(32);
+var _helpersIf = __webpack_require__(33);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(33);
+var _helpersLog = __webpack_require__(34);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(34);
+var _helpersLookup = __webpack_require__(35);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(35);
+var _helpersWith = __webpack_require__(36);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -15616,7 +15893,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15662,7 +15939,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15763,7 +16040,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15795,7 +16072,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15831,7 +16108,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15864,7 +16141,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15883,7 +16160,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15923,7 +16200,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15977,7 +16254,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16291,7 +16568,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16313,7 +16590,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports) {
 
 var g;

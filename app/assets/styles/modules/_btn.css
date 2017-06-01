@@ -12,12 +12,6 @@
         color: $blueberry;
     }
 
-    &--track-control {
-        border: 1px solid $blueberry;
-        width: $buttonSize;
-        height: $buttonSize;
-    }
-
     &--stop {
         background-color: red;
     }
@@ -81,11 +75,29 @@
 
 .section--atmosphere .btn {
     background-color: $darkPurple;
-    color: $blackPurple;
+    color: $lightPurple;
 
     &:hover {
         background-color: $lightPurple;
-        color: $darkPurple;
+        color: $whitePurple;
+    }
+
+    &--delete, .section--atmosphere--active .btn--delete {
+        background-color: transparent;
+    }
+
+    &--delete:hover, .section--atmosphere--active .btn--delete:hover {
+        background-color: transparent;
+    }
+}
+
+.section--track .btn {
+    background-color: $darkBlue;
+    color: $lightBlue;
+
+    &:hover {
+        background-color: $mediumBlue;
+        color: $whiteBlue;
     }
 
     &--delete {
@@ -94,10 +106,5 @@
 
     &--delete:hover {
         background-color: transparent;
-        color: $lightPurple;
     }
-}
-
-.section--atmosphere--active .btn--delete:hover {
-    color: $darkPurple;
 }

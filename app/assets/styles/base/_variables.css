@@ -1,6 +1,3 @@
-$buttonSize: 20px;
-
-
 /* Yellows */
 $phanary: #F7CE38;
 $vanilla: #F4E2A1;
@@ -13,12 +10,18 @@ $blueberry: #2E5266;
 $stormGrey: #9FB1BC;
 $lighterGrey: #AFC2CD;
 
+$blackBlue: $deepSea;
+$darkBlue: $blueberry;
+$mediumBlue: #3A6982;
+$lightBlue: $stormGrey;
+$whiteBlue: $lighterGrey;
+
 /* Browns */
 $coconut: #995835;
 $peru: #C68343;
 
 /* Purples */
-$blackPurple: #261438;
-$darkPurple: #8259AB;
-$lightPurple: #9E7EBE;
-$whitePurple: #D2C4E1;
+$blackPurple: #2D1B33;
+$darkPurple: #442D49;
+$lightPurple: #A489BF;
+$whitePurple: #C7B1D8;

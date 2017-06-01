@@ -1,6 +1,7 @@
-<div id=track{{trackId}} class="section" data-atmosphere="{{atmosphereId}}">
+<div class="section section--track" data-atmosphere="{{atmosphereId}}">
     <div class="section__heading">
-        <h4 class="section__heading__title tooltip">{{name}}
+        <h4 class="section__heading__title tooltip">
+            <span class="section__heading__title__text">{{name}}</span>
             <span class="tooltiptext">Tags will go here</span>
         </h4>
         <div class="btn btn--delete btn--medium btn--inverted">
@@ -11,14 +12,24 @@
     </div>
     <div class="section__body">
         <div class="wrapper">
-        <p>{{filename}}</p>
-        <!-- remove me-->
-        <p>Hello, I am track #{{trackId}}.</p>
-        <div class="controls">
-            <button type="button" class="btn--play btn btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-            <button type="button" class="btn--stop btn btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
-        </div>
-        <div class="volume">
+            <div class="btn-group">
+                <!-- TODO: disabled/enabled -->
+                <div class="btn--play btn btn--rounded btn--medium">
+                    <div class="btn__inner">
+                        <i class="fa fa-play" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="btn--stop btn btn--rounded btn--medium">
+                    <div class="btn__inner">
+                        <i class="fa fa-stop" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+        <!--<div class="controls">
+            <button type="button" class="btn--play btn btn--rounded  btn--medium btn--track-control" disabled="disabled"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+            <button type="button" class="btn--stop btn btn--rounded  btn--medium btn--track-control"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+        </div>-->
+        <div class="volume volume--spacing">
             <input type="range" min="0" max="1" value="1" step="0.05">
             <label class="control control--checkbox control--custom volume__mute">
               <input type="checkbox" class="btn--mute">
