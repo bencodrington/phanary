@@ -91,6 +91,10 @@ class GlobalVars {
             template = Handlebars.compile(rawTemplate);
             that.atmosphereTemplate = template;
         });
+        $.get("assets/templates/oneshot.html", function(rawTemplate) {
+            template = Handlebars.compile(rawTemplate);
+            that.oneshotTemplate = template;
+        });
         // $.get("assets/templates/searchResult.html", function(rawTemplate) {
         //     template = Handlebars.compile(rawTemplate);
         //     that.resultTemplate = template;
@@ -126,6 +130,22 @@ class GlobalVars {
         sel.addRange(range);
     }
 
+    appendTrackPrefixes(filenames) {
+        var that = this;
+        filenames = filenames.map(function(filename) {
+            return that.trackPrefix + filename;
+        });
+        return filenames;
+    }
+
+    getRandomInt(max) {
+        max = Math.floor(max);
+        return Math.floor(Math.random() * max);
+    }
+
+    clamp(min, number, max) {
+        return Math.min(Math.max(number, min), max);
+    }
 }
 
 export let g = new GlobalVars();

@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 import Track from './Track.js';
+import OneShot from './OneShot.js';
 import AudioManager from './AudioManager';
 import { g } from "./GlobalVars.js";
 
@@ -159,7 +160,14 @@ class Atmosphere {
         
         // Create track data object
         var track;
-        track = new Track(trackObject, this);
+        if (trackObject.type === "oneshot") {
+            // OneShot
+            track = new OneShot(trackObject, this);
+        } else {
+            // Default
+            track = new Track(trackObject, this);
+        }
+        
 
         // Add track to array
         this.tracks.push(track);

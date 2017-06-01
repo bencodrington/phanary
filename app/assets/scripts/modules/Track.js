@@ -18,12 +18,16 @@ class Track {
         this.createAudio(trackData);
     }
 
+    template(data) {
+        return g.trackTemplate(data);
+    }
+
     createElement() {
         
         // TODO: check if template is compiled or not
         
         // Convert object to HTML
-        var trackHTML = g.trackTemplate(this.data);
+        var trackHTML = this.template(this.data);
 
         // Add to tracklist
         var $trackHTML = $(trackHTML).hide().prependTo(g.$trackList).show('fast');
@@ -63,26 +67,25 @@ class Track {
         // console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
 
         // Append prefix to filenames
-        var filenames = this.data.filenames;
-        filenames = filenames.map(function(filename) {
-            return g.trackPrefix + filename;
-        });
+        var filenames = g.appendTrackPrefixes(this.data.filenames);
         // console.log(filenames);
 
         var $playBtn = this.$trackHTML.find(".btn--play");
         // Create new audio source
-        // TODO: if audio already contains newId, just add another source
         var that = this;
-        this.atmosphere.am.audio[this.id] = new Howl({
-            src: filenames,
-            buffer: true,
-            autoplay: false,
-            loop: that.data.loop,                                 // TODO: button to change
-            onload: function() {
-                // console.log("Loaded track '" + that.data.name + "'.");
-                $playBtn.removeAttr("disabled");
-            }
-        });
+        this.atmosphere.am.addTrack(
+            this.id,
+            new Howl({
+                src: filenames,
+                buffer: true,
+                autoplay: false,
+                loop: true,
+                onload: function() {
+                    // console.log("Loaded track '" + that.data.name + "'.");
+                    $playBtn.removeAttr("disabled");
+                }
+            })
+        );
         if (g.$autoplayCheckbox.is(":checked")) {
             this.play();
         }

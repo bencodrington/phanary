@@ -663,6 +663,8 @@ a {
     }
 
 .search-container__addon label {
+        -webkit-transition: color 0.3s ease-out;
+        transition: color 0.3s ease-out;
         font-weight: 300;
     }
 
@@ -718,12 +720,6 @@ a {
 .btn:hover {
         background-color: #AFC2CD;
         color: #2E5266;
-    }
-
-.btn--track-control {
-        border: 1px solid #2E5266;
-        width: 20px;
-        height: 20px;
     }
 
 .btn--stop {
@@ -788,27 +784,40 @@ a {
     }
 
 .section--atmosphere .btn {
-    background-color: #8259AB;
-    color: #261438;
+    background-color: #442D49;
+    color: #A489BF;
 }
 
 .section--atmosphere .btn:hover {
-        background-color: #9E7EBE;
-        color: #8259AB;
+        background-color: #A489BF;
+        color: #C7B1D8;
     }
 
-.section--atmosphere .btn--delete {
+.section--atmosphere .btn--delete, .section--atmosphere .btn .section--atmosphere--active .btn--delete {
         background-color: transparent;
     }
 
-.section--atmosphere .btn--delete:hover {
+.section--atmosphere .btn--delete:hover, .section--atmosphere .btn .section--atmosphere--active .btn--delete:hover {
         background-color: transparent;
-        color: #9E7EBE;
     }
 
-.section--atmosphere--active .btn--delete:hover {
-    color: #8259AB;
+.section--track .btn {
+    background-color: #2E5266;
+    color: #9FB1BC;
 }
+
+.section--track .btn:hover {
+        background-color: #3A6982;
+        color: #AFC2CD;
+    }
+
+.section--track .btn--delete {
+        background-color: transparent;
+    }
+
+.section--track .btn--delete:hover {
+        background-color: transparent;
+    }
 
 .sidebar {
     width: 100%;
@@ -933,6 +942,8 @@ a {
         width: 20px;
         height: 20px;
         background: #FFFFDD;
+        -webkit-transition: all 0.3s ease-out;
+        transition: all 0.3s ease-out;
         border-radius: 2px;
     }
 
@@ -940,6 +951,10 @@ a {
         width: 2rem;
         height: 2rem;
         border-radius: 5px;
+    }
+
+.control:hover {
+        color: white;
     }
 
 /* Hover and focus states */
@@ -1042,11 +1057,11 @@ a {
     }
 
 .atmosphere__rename:hover {
-        color: #9E7EBE;
+        color: #A489BF;
     }
 
 .section--atmosphere--active .atmosphere__rename:hover {
-        color: #8259AB;
+        color: #442D49;
     }
 
 .section {
@@ -1096,31 +1111,32 @@ a {
         }
 
 .section__heading__title__text.editable {
-            background-color: #9E7EBE;
-            border-color: #8259AB;
+            background-color: #442D49;
+            color: #C7B1D8;
+            border-color: #442D49;
             border-radius: 2px;
             outline: none;
         }
 
 .section--atmosphere {
-        border-color: #8259AB;
+        border-color: #2D1B33;
         -webkit-transition: border-color 0.5s ease-out;
         transition: border-color 0.5s ease-out;
     }
 
 .section--atmosphere .section__heading {
-            background-color: #8259AB;
+            background-color: #2D1B33;
             cursor: pointer;
             -webkit-transition: background-color 0.5s ease-out;
             transition: background-color 0.5s ease-out;
         }
 
 .section--atmosphere .section__heading__title {
-                color: #261438;
+                color: #A489BF;
             }
 
 .section--atmosphere .section__body {
-            background-color: #D2C4E1;
+            background-color: #C7B1D8;
         }
 
 .section--atmosphere::before {
@@ -1133,22 +1149,56 @@ a {
             border-radius: 5px;
             -webkit-box-shadow: 0 2px 15px rgba(6,20,35, 1);
                     box-shadow: 0 2px 15px rgba(6,20,35, 1);
-            -webkit-transition: opacity 0.3s ease-out;
-            transition: opacity 0.3s ease-out;
+            -webkit-transition: opacity 0.7s ease-out;
+            transition: opacity 0.7s ease-out;
         }
 
 .section--atmosphere--active {
-            border-color: #9E7EBE;
+            border-color: #442D49;
             
         }
 
 .section--atmosphere--active .section__heading {
-                background-color: #9E7EBE;
+                background-color: #442D49;
             }
 
 .section--atmosphere--active::before {
                 opacity: 100;
             }
+
+.section--track {
+        border-color: #2E5266;
+        -webkit-transition: border-color 0.5s ease-out;
+        transition: border-color 0.5s ease-out;
+    }
+
+.section--track .section__heading {
+            background-color: #2E5266;
+            -webkit-transition: background-color 0.5s ease-out;
+            transition: background-color 0.5s ease-out;
+        }
+
+.section--track .section__heading__title {
+                color: #9FB1BC;
+            }
+
+.section--track .section__body {
+            background-color: #AFC2CD;
+        }
+
+.section--track::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            border-radius: 5px;
+            -webkit-box-shadow: 0 2px 15px rgba(6,20,35, 1);
+                    box-shadow: 0 2px 15px rgba(6,20,35, 1);
+            -webkit-transition: opacity 0.7s ease-out;
+            transition: opacity 0.7s ease-out;
+        }
 
 .section__body {
         padding: 1rem 0;
