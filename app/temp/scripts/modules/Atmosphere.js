@@ -41,9 +41,9 @@ class Atmosphere {
         this.rigVolumeControls($atmosphereHTML);
         
         var $delBtn = $atmosphereHTML.find(".btn--delete");
-        var $stopBtn = $atmosphereHTML.find(".btn--stop");
-        var $addBtn = $atmosphereHTML.find(".atmosphere__add");
-        var $replaceBtn = $atmosphereHTML.find(".atmosphere__replace");
+        var $stopBtn = this.$stopBtn = $atmosphereHTML.find(".btn--stop");
+        var $addBtn = this.$addBtn = $atmosphereHTML.find(".atmosphere__add");
+        var $replaceBtn = this.$replaceBtn = $atmosphereHTML.find(".atmosphere__replace");
         var that = this;
         $delBtn.on('click', function(event) {
             that.delete();
@@ -58,6 +58,7 @@ class Atmosphere {
         $stopBtn.on('click', function() {
             that.stop();
         })
+        $stopBtn.hide();
         
 
         this.$atmosphereHTML = $atmosphereHTML;
@@ -220,6 +221,10 @@ class Atmosphere {
                 element.play();
             }
         });
+
+        this.$addBtn.hide();
+        this.$replaceBtn.hide();
+        this.$stopBtn.show();
     }
 
     stop() {
@@ -229,6 +234,9 @@ class Atmosphere {
                 element.stop();
             }
         });
+        this.$addBtn.show();
+        this.$replaceBtn.show();
+        this.$stopBtn.hide();
     }
 
     delete() {

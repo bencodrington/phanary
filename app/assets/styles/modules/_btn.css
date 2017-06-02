@@ -3,7 +3,6 @@
     background-color: $stormGrey;
     font-weight: 500;
     cursor: pointer;
-    display: inline-block;
     overflow: hidden;
     transition: all 0.2s ease-out;
 

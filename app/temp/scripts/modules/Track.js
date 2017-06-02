@@ -34,8 +34,8 @@ class Track {
 
         var that = this;
         // Rig play, stop, and delete buttons to function
-        var $playBtn = $trackHTML.find(".btn--play");
-        var $stopBtn = $trackHTML.find(".btn--stop");
+        var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
+        var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
         var $delBtn = $trackHTML.find(".btn--delete");
         $playBtn.on('click', function() {
             that.play();
@@ -43,6 +43,7 @@ class Track {
         $stopBtn.on('click', function() {
             that.stop();
         });
+        $stopBtn.hide();
         $delBtn.on('click', function() {
             that.delete();
         });
@@ -70,7 +71,7 @@ class Track {
         var filenames = g.appendTrackPrefixes(this.data.filenames);
         // console.log(filenames);
 
-        var $playBtn = this.$trackHTML.find(".btn--play");
+        var $playBtn = this.$playBtn;
         // Create new audio source
         var that = this;
         this.atmosphere.am.addTrack(
@@ -93,12 +94,16 @@ class Track {
 
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
-        // TODO: disable/hide play button
+        // Disable/hide play button
+        this.$playBtn.toggle();
+        this.$stopBtn.toggle();
     }
 
     stop() {
         this.atmosphere.am.stopTrack(this.id);
         // TODO: enable/show play button=
+        this.$playBtn.toggle();
+        this.$stopBtn.toggle();
     }
 
     toggleMute() {
@@ -107,6 +112,10 @@ class Track {
 
     setMute(muted) {
         this.atmosphere.am.setTrackMute(this.id, muted)
+    }
+
+    hidePlayBtn() {
+        this.$playBtn.hide();
     }
 
     delete() {

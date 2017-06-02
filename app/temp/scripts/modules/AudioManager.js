@@ -10,6 +10,7 @@ class AudioManager {
 
     addTrack(id, howl) {
         this.audio[id] = howl;
+        this.audio[id].volume(0);
     }
 
     addOneShotSet(id, howls) {
@@ -34,14 +35,22 @@ class AudioManager {
         // console.log('AudioManager: stopping track #' + trackID);
         var that = this;
         var track = this.audio[trackID];
-        track.fade(track.volume(), 0, this.fadeLength);
-        track.once('fade', function() {
-            // console.log('AudioManager: finishing track stop');
-            that.audio[trackID].stop();
-            if (callback) {
-                callback();
-            }
-        });
+        if (this.isOneShot(track)) {
+            // One-shot
+            track.forEach(function(sample) {
+                sample.stop();
+            });
+        } else {
+            // Loop
+            track.fade(track.volume(), 0, this.fadeLength);
+            track.once('fade', function() {
+                // console.log('AudioManager: finishing track stop');
+                that.audio[trackID].stop();
+                if (callback) {
+                    callback();
+                }
+            });
+        }
     }
 
     toggleTrackMute(trackID) {

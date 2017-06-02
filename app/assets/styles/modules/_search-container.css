@@ -11,7 +11,7 @@
         border: none;
         border-radius: 5px;
         overflow: hidden;
-        box-shadow: 0 0 5px rgba(#000, 0.8) ; /* TODO: expand when textbox has focus */
+        box-shadow: 0 0 5px rgba($deepSea, 1) ; /* TODO: expand when textbox has focus */
     }
 
     &__search-bar {
@@ -98,13 +98,32 @@
             cursor: pointer;
             list-style: none;
         }
-        /*TODO: hover-effect*/
+
+        & li.result--atmosphere {
+            background-color: $lightPurple;
+            color: $darkPurple;
+            &.selected {
+                background-color: $darkPurple;
+                color: $lightPurple;
+            }
+        }
+
+        & li.result--oneshot {
+            /* TODO: */
+            background-color: $offWhite;
+            color: $peru;
+            &.selected {
+                background-color: $vanilla;
+                color: $coconut;
+            }
+        }
 
         & li.selected {
             background-color: $blueberry;
             font-weight: 500;
             color: $stormGrey;
         }
+
 
     }
 }
