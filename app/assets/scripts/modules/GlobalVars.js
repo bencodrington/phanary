@@ -71,12 +71,12 @@ class GlobalVars {
     
     onTrackDataReadComplete(trackData) {
         this.trackData = trackData;
-        this.trackDataReader.populateSearchResults(trackData.tracks, "result--track");
+        this.trackDataReader.populateSearchResults(trackData.tracks);
     }
     
     onAtmosphereDataReadComplete(atmosphereData) {
         this.atmosphereData = atmosphereData;
-        this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres, "result--atmosphere");
+        this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres);
     }
 
     compileTemplates() {

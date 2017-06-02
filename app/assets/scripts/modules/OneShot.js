@@ -65,15 +65,21 @@ class OneShot extends Track {
 
     rigOneShotControls() {
         var that = this;
-        var $startBtn = this.$trackHTML.find('.btn--start');
+        var $startBtn = this.$startBtn = this.$trackHTML.find('.btn--start');
+        var $stopBtn = this.$trackHTML.find('.btn--stop');
         var $minMore = this.$trackHTML.find('.oneshot-min.btn--more');
         var $minLess = this.$trackHTML.find('.oneshot-min.btn--less');
         var $maxMore = this.$trackHTML.find('.oneshot-max.btn--more');
         var $maxLess = this.$trackHTML.find('.oneshot-max.btn--less');
+        this.$playText = this.$trackHTML.find('.oneshot-play-text');
         this.$minLabel = this.$trackHTML.find('.oneshot-min-label');
         this.$maxLabel = this.$trackHTML.find('.oneshot-max-label');
         $startBtn.on('click', function() {
             that.start();
+            that.togglePlayText();
+        });
+        $stopBtn.on('click', function() {
+            that.togglePlayText();
         });
         $minLess.on('click', function() {
             that.changeRange('min', -1);
@@ -89,10 +95,16 @@ class OneShot extends Track {
         });
     }
 
+    play() {
+        this.atmosphere.am.playTrack(this.id, this.volume);
+    }
+
     stop() {
         if (this.timeOut != null) {
             clearTimeout(this.timeOut);
         }
+        this.$startBtn.toggle();
+        this.$stopBtn.toggle();
     }
 
     start() {
@@ -105,10 +117,8 @@ class OneShot extends Track {
             that.play();
             that.start();
         }, timerLength);
-    }
-
-    delete() {
-        //TODO:
+        this.$startBtn.hide();
+        this.$stopBtn.show();
     }
 
     changeRange(minmax, difference) {
@@ -138,6 +148,14 @@ class OneShot extends Track {
         var length = min + g.getRandomInt(max - min + 1);
         // console.log("OneShot:getTimerLength(): " + length);
         return length;
+    }
+
+    togglePlayText() {
+        if (this.$playText.text() === "Play") {
+            this.$playText.text("Playing");
+        } else {
+            this.$playText.text("Play");
+        }
     }
 
     static getTimeStep(index) {

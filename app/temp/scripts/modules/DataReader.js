@@ -20,15 +20,15 @@ class DataReader {
         xhr.send();
     }
 
-    populateSearchResults(data, type) {
+    populateSearchResults(data) {
         var rawTemplate = $("#searchResultTemplate").html();
         var compiledTemplate = Handlebars.compile(rawTemplate);
         var resultObject = {};
         var resultHTML;
-        $.each(data, function(name) {
-            // console.log("DataReader.js: populateSearchResults: name: " + name);
+        $.each(data, function(name, object) {
+            // console.log("DataReader.js: populateSearchResults: type: " + object.type);
             resultObject['name'] = name;
-            resultObject['type'] = type;
+            resultObject['type'] = "result--" + object.type;
             resultHTML = compiledTemplate(resultObject);
             var $resultHTML = $(resultHTML).appendTo(g.$searchResults);
             $resultHTML.on('mouseover', function() {

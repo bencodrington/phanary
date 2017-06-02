@@ -29,7 +29,8 @@ class SearchBar {
                 // Add selected track
                 var $selected = $(".selected");
                 if ($selected) {
-                    if ($selected.hasClass("result--track")) {
+                    if ($selected.hasClass("result--track")
+                        || $selected.hasClass("result--oneshot")) {
                         g.atmosphereManager.addTrack(
                             g.nameToTrackData($selected.text())
                         );

@@ -362,13 +362,13 @@ var GlobalVars = function () {
         key: 'onTrackDataReadComplete',
         value: function onTrackDataReadComplete(trackData) {
             this.trackData = trackData;
-            this.trackDataReader.populateSearchResults(trackData.tracks, "result--track");
+            this.trackDataReader.populateSearchResults(trackData.tracks);
         }
     }, {
         key: 'onAtmosphereDataReadComplete',
         value: function onAtmosphereDataReadComplete(atmosphereData) {
             this.atmosphereData = atmosphereData;
-            this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres, "result--atmosphere");
+            this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres);
         }
     }, {
         key: 'compileTemplates',
@@ -11021,15 +11021,15 @@ var DataReader = function () {
         }
     }, {
         key: 'populateSearchResults',
-        value: function populateSearchResults(data, type) {
+        value: function populateSearchResults(data) {
             var rawTemplate = (0, _jquery2.default)("#searchResultTemplate").html();
             var compiledTemplate = _handlebars2.default.compile(rawTemplate);
             var resultObject = {};
             var resultHTML;
-            _jquery2.default.each(data, function (name) {
-                // console.log("DataReader.js: populateSearchResults: name: " + name);
+            _jquery2.default.each(data, function (name, object) {
+                // console.log("DataReader.js: populateSearchResults: type: " + object.type);
                 resultObject['name'] = name;
-                resultObject['type'] = type;
+                resultObject['type'] = "result--" + object.type;
                 resultHTML = compiledTemplate(resultObject);
                 var $resultHTML = (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
                 $resultHTML.on('mouseover', function () {
@@ -11110,8 +11110,8 @@ var Track = function () {
 
             var that = this;
             // Rig play, stop, and delete buttons to function
-            var $playBtn = $trackHTML.find(".btn--play");
-            var $stopBtn = $trackHTML.find(".btn--stop");
+            var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
+            var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
             var $delBtn = $trackHTML.find(".btn--delete");
             $playBtn.on('click', function () {
                 that.play();
@@ -11119,6 +11119,7 @@ var Track = function () {
             $stopBtn.on('click', function () {
                 that.stop();
             });
+            $stopBtn.hide();
             $delBtn.on('click', function () {
                 that.delete();
             });
@@ -11146,7 +11147,7 @@ var Track = function () {
             var filenames = _GlobalVars.g.appendTrackPrefixes(this.data.filenames);
             // console.log(filenames);
 
-            var $playBtn = this.$trackHTML.find(".btn--play");
+            var $playBtn = this.$playBtn;
             // Create new audio source
             var that = this;
             this.atmosphere.am.addTrack(this.id, new Howl({
@@ -11167,13 +11168,17 @@ var Track = function () {
         key: 'play',
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
-            // TODO: disable/hide play button
+            // Disable/hide play button
+            this.$playBtn.toggle();
+            this.$stopBtn.toggle();
         }
     }, {
         key: 'stop',
         value: function stop() {
             this.atmosphere.am.stopTrack(this.id);
             // TODO: enable/show play button=
+            this.$playBtn.toggle();
+            this.$stopBtn.toggle();
         }
     }, {
         key: 'toggleMute',
@@ -11184,6 +11189,11 @@ var Track = function () {
         key: 'setMute',
         value: function setMute(muted) {
             this.atmosphere.am.setTrackMute(this.id, muted);
+        }
+    }, {
+        key: 'hidePlayBtn',
+        value: function hidePlayBtn() {
+            this.$playBtn.hide();
         }
     }, {
         key: 'delete',
@@ -11365,7 +11375,7 @@ var SearchBar = function () {
                     // Add selected track
                     var $selected = (0, _jquery2.default)(".selected");
                     if ($selected) {
-                        if ($selected.hasClass("result--track")) {
+                        if ($selected.hasClass("result--track") || $selected.hasClass("result--oneshot")) {
                             _GlobalVars.g.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($selected.text()));
                         } else if ($selected.hasClass("result--atmosphere")) {
                             _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($selected.text()));
@@ -11593,9 +11603,9 @@ var Atmosphere = function () {
             this.rigVolumeControls($atmosphereHTML);
 
             var $delBtn = $atmosphereHTML.find(".btn--delete");
-            var $stopBtn = $atmosphereHTML.find(".btn--stop");
-            var $addBtn = $atmosphereHTML.find(".atmosphere__add");
-            var $replaceBtn = $atmosphereHTML.find(".atmosphere__replace");
+            var $stopBtn = this.$stopBtn = $atmosphereHTML.find(".btn--stop");
+            var $addBtn = this.$addBtn = $atmosphereHTML.find(".atmosphere__add");
+            var $replaceBtn = this.$replaceBtn = $atmosphereHTML.find(".atmosphere__replace");
             var that = this;
             $delBtn.on('click', function (event) {
                 that.delete();
@@ -11610,6 +11620,7 @@ var Atmosphere = function () {
             $stopBtn.on('click', function () {
                 that.stop();
             });
+            $stopBtn.hide();
 
             this.$atmosphereHTML = $atmosphereHTML;
         }
@@ -11780,6 +11791,10 @@ var Atmosphere = function () {
                     element.play();
                 }
             });
+
+            this.$addBtn.hide();
+            this.$replaceBtn.hide();
+            this.$stopBtn.show();
         }
     }, {
         key: 'stop',
@@ -11790,6 +11805,9 @@ var Atmosphere = function () {
                     element.stop();
                 }
             });
+            this.$addBtn.show();
+            this.$replaceBtn.show();
+            this.$stopBtn.hide();
         }
     }, {
         key: 'delete',
@@ -11994,6 +12012,7 @@ var AudioManager = function () {
         key: 'addTrack',
         value: function addTrack(id, howl) {
             this.audio[id] = howl;
+            this.audio[id].volume(0);
         }
     }, {
         key: 'addOneShotSet',
@@ -12020,14 +12039,22 @@ var AudioManager = function () {
             // console.log('AudioManager: stopping track #' + trackID);
             var that = this;
             var track = this.audio[trackID];
-            track.fade(track.volume(), 0, this.fadeLength);
-            track.once('fade', function () {
-                // console.log('AudioManager: finishing track stop');
-                that.audio[trackID].stop();
-                if (callback) {
-                    callback();
-                }
-            });
+            if (this.isOneShot(track)) {
+                // One-shot
+                track.forEach(function (sample) {
+                    sample.stop();
+                });
+            } else {
+                // Loop
+                track.fade(track.volume(), 0, this.fadeLength);
+                track.once('fade', function () {
+                    // console.log('AudioManager: finishing track stop');
+                    that.audio[trackID].stop();
+                    if (callback) {
+                        callback();
+                    }
+                });
+            }
         }
     }, {
         key: 'toggleTrackMute',
@@ -12197,15 +12224,21 @@ var OneShot = function (_Track) {
         key: 'rigOneShotControls',
         value: function rigOneShotControls() {
             var that = this;
-            var $startBtn = this.$trackHTML.find('.btn--start');
+            var $startBtn = this.$startBtn = this.$trackHTML.find('.btn--start');
+            var $stopBtn = this.$trackHTML.find('.btn--stop');
             var $minMore = this.$trackHTML.find('.oneshot-min.btn--more');
             var $minLess = this.$trackHTML.find('.oneshot-min.btn--less');
             var $maxMore = this.$trackHTML.find('.oneshot-max.btn--more');
             var $maxLess = this.$trackHTML.find('.oneshot-max.btn--less');
+            this.$playText = this.$trackHTML.find('.oneshot-play-text');
             this.$minLabel = this.$trackHTML.find('.oneshot-min-label');
             this.$maxLabel = this.$trackHTML.find('.oneshot-max-label');
             $startBtn.on('click', function () {
                 that.start();
+                that.togglePlayText();
+            });
+            $stopBtn.on('click', function () {
+                that.togglePlayText();
             });
             $minLess.on('click', function () {
                 that.changeRange('min', -1);
@@ -12221,11 +12254,18 @@ var OneShot = function (_Track) {
             });
         }
     }, {
+        key: 'play',
+        value: function play() {
+            this.atmosphere.am.playTrack(this.id, this.volume);
+        }
+    }, {
         key: 'stop',
         value: function stop() {
             if (this.timeOut != null) {
                 clearTimeout(this.timeOut);
             }
+            this.$startBtn.toggle();
+            this.$stopBtn.toggle();
         }
     }, {
         key: 'start',
@@ -12239,11 +12279,8 @@ var OneShot = function (_Track) {
                 that.play();
                 that.start();
             }, timerLength);
-        }
-    }, {
-        key: 'delete',
-        value: function _delete() {
-            //TODO:
+            this.$startBtn.hide();
+            this.$stopBtn.show();
         }
     }, {
         key: 'changeRange',
@@ -12276,6 +12313,15 @@ var OneShot = function (_Track) {
             var length = min + _GlobalVars.g.getRandomInt(max - min + 1);
             // console.log("OneShot:getTimerLength(): " + length);
             return length;
+        }
+    }, {
+        key: 'togglePlayText',
+        value: function togglePlayText() {
+            if (this.$playText.text() === "Play") {
+                this.$playText.text("Playing");
+            } else {
+                this.$playText.text("Play");
+            }
         }
     }], [{
         key: 'getTimeStep',
