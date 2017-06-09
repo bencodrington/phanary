@@ -19,7 +19,6 @@ class Atmosphere {
         this.id = id;
         this.idCounter = 0;
         this.am = new AudioManager();         // Controls this atmosphere's list of audio sources
-        this.muted = false;
 
         this.createElement();
         this.instantiateTracks(atmosphereData.tracks);
@@ -135,11 +134,10 @@ class Atmosphere {
         var $volumeSlider = $atmosphereHTML.find('.volume input[type=range]');
         $volumeSlider.on('input', function() {
             that.updateTrackVolumes($volumeSlider.val());
-            that.unmute();
         });
         var $muteBtn = $atmosphereHTML.find(".btn--mute");
         $muteBtn.on('click', function() {
-            that.mute();
+            that.toggleMute();
         });
     }
 
@@ -197,21 +195,18 @@ class Atmosphere {
         });
     }
 
+    toggleMute() {
+        // Invert multiplier
+        this.am.muteMultiplier = 1 - this.am.muteMultiplier;
+        this.updateTrackVolumes(this.am.volume);
+    }
+
     updateTrackVolumes(newVolume) {
         this.am.volume = newVolume;
         // Loop through tracks and update them
         this.tracks.forEach(function(track) {
             track.updateVolume();
         });
-    }
-
-    mute() {
-        this.updateTrackVolumes(0);
-        // TODO: style mute button
-    }
-
-    unmute() {
-        // TODO: style mute button;
     }
 
     play() {
@@ -253,6 +248,10 @@ class Atmosphere {
             g.atmosphereManager.activeAtmosphere = null;
         }
         g.atmosphereManager.atmospheres[this.id] = null;
+    }
+
+    getVolume() {
+        return this.am.volume;
     }
 }
 

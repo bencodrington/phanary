@@ -6,6 +6,7 @@ class AudioManager {
         this.audio = []; // The master list of audio sources
         this.fadeLength = 1500; // Milliseconds
         this.volume = 1; // The volume modifier for all of an atmosphere's tracks
+        this.muteMultiplier = 1;
     }
 
     addTrack(id, howl) {
@@ -26,7 +27,7 @@ class AudioManager {
         } else {
             track.off('fade');
             track.play();
-            track.fade(track.volume(), this.volume * volume, this.fadeLength);
+            track.fade(track.volume(), this.calculateVolume(volume), this.fadeLength);
         }
         
     }
@@ -94,13 +95,22 @@ class AudioManager {
         if (this.isOneShot(track)) {
             // One-shot
             track.forEach(function(sample) {
-                sample.volume(this.volume * newVolume);
+                sample.volume(this.calculateVolume(newVolume));
             }, this);
         } else {
             // Loop
-            track.volume(this.volume * newVolume);
+            track.volume(this.calculateVolume(newVolume));
         }
         
+    }
+
+    calculateVolume(trackVolume) {
+        return g.atmosphereManager.muteMultiplier // Whether global mute is checked
+            * g.atmosphereManager.volume          // Global volume modifier
+            * this.muteMultiplier   // Whether this atmosphere's mute button is checked
+            * this.volume           // This atmosphere's volume modifier
+                                    // TODO: Whether this track's mute button is checked
+            * trackVolume           // This track's volume modifier
     }
 
     unloadTrack(trackID) {

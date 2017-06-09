@@ -25,7 +25,6 @@ class GlobalVars {
         this.$searchBarClearBtn = $("#searchBarClearBtn");
         this.$editingTitle      = null;
         
-        this.trackIdCounter     = 0;
         this.trackPrefix        = "assets/audio/tracks/";
 
         
