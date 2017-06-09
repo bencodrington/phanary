@@ -16,6 +16,7 @@
     "glyphicons": "^0.2.0",
     "handlebars": "^4.0.8",
     "jquery": "^3.2.1",
+    "mongoose": "^4.10.5",
     "normalize.css": "^7.0.0"
   },
   "devDependencies": {
@@ -25,6 +26,7 @@
     "babel-preset-es2015": "^6.24.1",
     "browser-sync": "^2.18.8",
     "gulp": "^3.9.1",
+    "gulp-connect-php": "^1.0.1",
     "gulp-postcss": "^7.0.0",
     "gulp-watch": "^4.3.11",
     "postcss-hexrgba": "^0.2.1",

@@ -27,6 +27,10 @@ gulp.task('watch', function() {
         gulp.start('templatesRefresh');
     })
 
+    watch('./app/assets/**/*.php', function() {
+        browserSync.reload();
+    });
+
 
 });
 

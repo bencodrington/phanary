@@ -8,10 +8,13 @@ var activeClass = 'section--atmosphere--active';
 class AtmosphereManager {
 
     constructor() {
-        this.id_counter = 0;
-        this.atmospheres = [];
-        this.activeAtmosphere = null;
-        this.$newAtmosphereBtn = $('#newAtmosphereBtn');
+        this.id_counter         = 0;
+
+        this.muteMultiplier     = 1;
+        this.volume             = 1;
+        this.atmospheres        = [];
+        this.activeAtmosphere   = null;
+        this.$newAtmosphereBtn  = $('#newAtmosphereBtn');
 
         this.events();
     }
@@ -31,6 +34,7 @@ class AtmosphereManager {
         $('.sidebar__footer').on('click', function(e) {
             e.stopPropagation();
         });
+        this.rigVolumeControls();
     }
 
     // Called when 'Create custom atmosphere' button is clicked,
@@ -99,6 +103,35 @@ class AtmosphereManager {
                     current.stop();
                 }
             }
+        });
+    }
+
+    rigVolumeControls() {
+        var that = this;
+        var $muteBtn = $(".volume__mute-btn-global");
+        $muteBtn.on('click', function() {
+            that.toggleMute();
+        });
+        var $volumeSlider = $('.volume__range-global');
+        $volumeSlider.on('input', function() {
+            that.updateGlobalVolume($volumeSlider.val());
+        });
+
+    }
+
+    toggleMute() {
+        this.muteMultiplier = 1 - this.muteMultiplier;
+        this.updateAllVolumes();
+    }
+
+    updateGlobalVolume(newVolume) {
+        this.volume = newVolume;
+        this.updateAllVolumes();
+    }
+
+    updateAllVolumes() {
+        this.atmospheres.forEach(function(atmosphere) {
+            atmosphere.updateTrackVolumes(atmosphere.getVolume());
         });
     }
 
