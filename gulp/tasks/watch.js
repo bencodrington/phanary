@@ -6,12 +6,10 @@ gulp.task('watch', function() {
 
     browserSync.init({
         notify: false,  // Supresses notification on updates
-        server: {
-            baseDir: "app"
-        }
+        proxy: "localhost:8000"
     });
 
-    watch('./app/index.html', function() {
+    watch('./views/**/*.hbs', function() {
         browserSync.reload();
     });
 
@@ -23,19 +21,15 @@ gulp.task('watch', function() {
         gulp.start('scriptsRefresh');
     });
 
-    watch('./app/assets/templates/**/*.hbs', function() {
+    watch('./app/assets//templates/**/*.hbs', function() {
         gulp.start('templatesRefresh');
     })
-
-    watch('./app/assets/**/*.php', function() {
-        browserSync.reload();
-    });
 
 
 });
 
 gulp.task('cssInject', ['styles'], function() {
-    return gulp.src('./app/temp/styles/styles.css')
+    return gulp.src('./public/stylesheets/style.css')
         .pipe(browserSync.stream());
 });
 
@@ -43,6 +37,6 @@ gulp.task('scriptsRefresh', ['scripts'], function() {
     browserSync.reload();
 });
 
-gulp.task('templatesRefresh', ['templates'], function() {
+gulp.task('templatesRefresh', ['scripts'], function() {
     browserSync.reload();
 });

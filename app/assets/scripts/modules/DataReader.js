@@ -1,6 +1,6 @@
 import $ from 'jquery';
-import Handlebars from 'handlebars';
-import { g } from "./GlobalVars.js";
+import { g } from "./GlobalVars";
+require('./templates/searchResult');
 
 class DataReader {
 
@@ -21,15 +21,13 @@ class DataReader {
     }
 
     populateSearchResults(data) {
-        var rawTemplate = $("#searchResultTemplate").html();
-        var compiledTemplate = Handlebars.compile(rawTemplate);
         var resultObject = {};
         var resultHTML;
         $.each(data, function(name, object) {
             // console.log("DataReader.js: populateSearchResults: type: " + object.type);
             resultObject['name'] = name;
             resultObject['type'] = "result--" + object.type;
-            resultHTML = compiledTemplate(resultObject);
+            resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
             var $resultHTML = $(resultHTML).appendTo(g.$searchResults);
             $resultHTML.on('mouseover', function() {
                 g.searchBar.select($resultHTML);

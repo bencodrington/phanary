@@ -8,8 +8,8 @@ import Handlebars from 'handlebars';
 import DataReader from './DataReader';
 import AtmosphereManager from './AtmosphereManager';
 
-var trackDataURL = "assets/data/tracks.json"; //https:api.myjson.com/bins/15eiip";
-var atmosphereDataURL = "assets/data/atmospheres.json";
+var trackDataURL = "/data/tracks.json";
+var atmosphereDataURL = "/data/atmospheres.json";
 
 class GlobalVars {
     // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
@@ -25,7 +25,7 @@ class GlobalVars {
         this.$searchBarClearBtn = $("#searchBarClearBtn");
         this.$editingTitle      = null;
         
-        this.trackPrefix        = "assets/audio/tracks/";
+        this.trackPrefix        = "/audio/tracks/";
 
         
         this.atmosphereManager = new AtmosphereManager();
@@ -82,15 +82,15 @@ class GlobalVars {
         var that = this;
         var template;
         // TODO: move paths to variable
-        $.get("assets/templates/track.html", function(rawTemplate) {
+        $.get("/templates/track.html", function(rawTemplate) {
             template = Handlebars.compile(rawTemplate);
             that.trackTemplate = template;
         });
-        $.get("assets/templates/atmosphere.html", function(rawTemplate) {
+        $.get("/templates/atmosphere.html", function(rawTemplate) {
             template = Handlebars.compile(rawTemplate);
             that.atmosphereTemplate = template;
         });
-        $.get("assets/templates/oneshot.html", function(rawTemplate) {
+        $.get("/templates/oneshot.html", function(rawTemplate) {
             template = Handlebars.compile(rawTemplate);
             that.oneshotTemplate = template;
         });

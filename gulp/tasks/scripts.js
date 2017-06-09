@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
 webpack = require('webpack');
 
-gulp.task('scripts', function(callback) {
+gulp.task('scripts', ['templates'], function(callback) {
     webpack(require('../../webpack.config.js'), function(err, stats) {
         if (err) {
             console.log(err.toString());
@@ -10,5 +10,5 @@ gulp.task('scripts', function(callback) {
         callback();
     });
     gulp.src('./app/assets/scripts/**/*.js')
-        .pipe(gulp.dest('./app/temp/scripts'));
+        .pipe(gulp.dest('./public/scripts'));
 });

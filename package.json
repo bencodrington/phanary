@@ -1,22 +1,20 @@
 {
-  "name": "phanary",
-  "version": "1.0.0",
-  "description": "Phanary is an ongoing project with a practical purpose: to allow tabletop RPG GM's to quickly and easily switch between premade and custom atmospheres, to bring that extra level of immersion to their tables.   Each atmosphere is made up of soundscapes, background music, and looping samples, which can be customized in advance. This allows GM's to transition smoothly to an entirely new sonic landscape with the click of a button.",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bencodrington/phanary.git"
+  "name": "phanaryexpress",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+    // TODO: "handlebars app/assets/templates/searchResult.hbs -f app/assets/scripts/modules/templates/searchResult.js"
   },
-  "author": "Ben Codrington",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/bencodrington/phanary/issues"
-  },
-  "homepage": "https://github.com/bencodrington/phanary#readme",
   "dependencies": {
-    "glyphicons": "^0.2.0",
-    "handlebars": "^4.0.8",
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "express-handlebars": "^3.0.0",
+    "morgan": "~1.8.1",
+    "serve-favicon": "~2.4.2",
     "jquery": "^3.2.1",
-    "mongoose": "^4.10.5",
     "normalize.css": "^7.0.0"
   },
   "devDependencies": {
@@ -26,9 +24,12 @@
     "babel-preset-es2015": "^6.24.1",
     "browser-sync": "^2.18.8",
     "gulp": "^3.9.1",
-    "gulp-connect-php": "^1.0.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-declare": "^0.3.0",
+    "gulp-handlebars": "^4.0.0",
     "gulp-postcss": "^7.0.0",
     "gulp-watch": "^4.3.11",
+    "gulp-wrap": "^0.13.0",
     "postcss-hexrgba": "^0.2.1",
     "postcss-import": "^10.0.0",
     "postcss-mixins": "^6.0.0",
