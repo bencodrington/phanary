@@ -1,0 +1,43 @@
+{
+    "tracks": {
+        "Cafeteria Ambience": {
+            "filenames": ["caf-1.mp3"],
+            "loop": true,
+            "type": "track"
+        },
+        
+        "Heavy Rain": {
+            "filenames": ["rain-1.mp3"],
+            "loop": true,
+            "type": "track"
+        },
+
+        "Waterfall": {
+            "filenames": ["waterfall-1.mp3"],
+            "loop": true,
+            "type": "track"
+        },
+        
+        "Light Rain": {
+            "filenames": ["rain-6.mp3"],
+            "loop": true,
+            "type": "track"
+        },
+
+        "Water Drop": {
+            "type": "oneshot",
+            "filenames": [
+                ["water-drop-1.wav"]
+                ]
+        },
+
+        "Phanary": {
+            "type": "oneshot",
+            "filenames": [
+                ["phanary1.wav"],
+                ["phanary2.wav"],
+                ["phanary3.wav"]
+            ]
+        }
+    }
+}
