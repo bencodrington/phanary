@@ -1,5 +1,6 @@
 import $ from 'jquery';
 
+import { g } from "./GlobalVars.js";
 import DataReader from './DataReader';
 import Atmosphere from './Atmosphere';
 
@@ -46,6 +47,25 @@ class AtmosphereManager {
             color: 'default'
         }
         this.addAtmosphere(emptyAtmosphere);
+    }
+
+    // Called when enter is pressed in the search bar, or a result is clicked
+    addSelected($selected) {
+        var id = $selected.data('db-id');
+        //TODO: check if ID is legit
+        if ($selected.hasClass("result--track")) {
+            g.dataManager.getData('tracks', id, function(result) {
+                this.addTrack(result);
+            }.bind(this));
+        } else if ($selected.hasClass("result--oneshot")) {
+            this.addTrack(
+                g.dataManager.getData($selected)
+            )
+        } else if ($selected.hasClass("result--atmosphere")) {
+            g.atmosphereManager.addAtmosphere(
+                g.nameToAtmosphereData($selected.text()) //TODO:
+            );
+        }
     }
 
     // Called when enter is pressed in the search bar, while a track is highlighted.

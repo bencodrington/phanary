@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -204,6 +204,192 @@ function appendContextPath(contextPath, id) {
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.g = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// TODO: import handlebars runtime 
+// import handleBars from 'handlebars/handlebars.runtime.js';
+// import resultTemplate from './../../../temp/templates/templates.js';
+
+
+var _jquery = __webpack_require__(3);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _handlebars = __webpack_require__(41);
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+var _DataReader = __webpack_require__(6);
+
+var _DataReader2 = _interopRequireDefault(_DataReader);
+
+var _DataManager = __webpack_require__(16);
+
+var _DataManager2 = _interopRequireDefault(_DataManager);
+
+var _AtmosphereManager = __webpack_require__(14);
+
+var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// var trackDataURL = "/data/tracks.json";
+// var atmosphereDataURL = "/data/atmospheres.json";
+
+var GlobalVars = function () {
+    // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
+
+    function GlobalVars() {
+        _classCallCheck(this, GlobalVars);
+
+        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
+        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
+        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
+        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
+        this.$sideBar = (0, _jquery2.default)(".sidebar");
+        this.$sideBarFooter = (0, _jquery2.default)(".sidebar__footer");
+        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
+        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
+        this.$editingTitle = null;
+
+        this.trackPrefix = "/audio/tracks/";
+
+        this.atmosphereManager = new _AtmosphereManager2.default();
+
+        this.dataManager = new _DataManager2.default();
+        // this.trackDataReader = new DataReader(trackDataURL, this.onTrackDataReadComplete.bind(this));
+        // this.atmosphereDataReader = new DataReader(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
+
+        this.compileTemplates();
+
+        this.events();
+    }
+
+    _createClass(GlobalVars, [{
+        key: 'events',
+        value: function events() {
+            // Stop editing title upon mouse click outside the title
+            var that = this;
+            (0, _jquery2.default)(document).click(function (event) {
+                if (that.$editingTitle != null && !that.$editingTitle.is(event.target) && that.$editingTitle.has(event.target).length === 0) {
+                    that.stopEditingTitle();
+                }
+            });
+
+            // Toggle hidden class on sidebar upon hide button click
+            (0, _jquery2.default)(".navbar__hide").click(function () {
+                that.hideSidebar();
+            });
+        }
+    }, {
+        key: 'hideSidebar',
+        value: function hideSidebar() {
+            this.$sideBar.toggleClass("mobile-hidden");
+            this.$sideBarFooter.toggleClass("mobile-hidden");
+        }
+    }, {
+        key: 'stopEditingTitle',
+        value: function stopEditingTitle() {
+            if (g.$editingTitle != null) {
+                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
+                this.$editingTitle = null;
+            }
+        }
+
+        // onTrackDataReadComplete(trackData) {
+        //     this.trackData = trackData;
+        //     this.trackDataReader.populateSearchResults(trackData.tracks);
+        // }
+
+        // onAtmosphereDataReadComplete(atmosphereData) {
+        //     this.atmosphereData = atmosphereData;
+        //     this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres);
+        // }
+
+    }, {
+        key: 'compileTemplates',
+        value: function compileTemplates() {
+            var that = this;
+            var template;
+            // TODO: move paths to variable
+            _jquery2.default.get("/templates/track.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.trackTemplate = template;
+            });
+            _jquery2.default.get("/templates/atmosphere.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.atmosphereTemplate = template;
+            });
+            _jquery2.default.get("/templates/oneshot.html", function (rawTemplate) {
+                template = _handlebars2.default.compile(rawTemplate);
+                that.oneshotTemplate = template;
+            });
+            // $.get("assets/templates/searchResult.html", function(rawTemplate) {
+            //     template = Handlebars.compile(rawTemplate);
+            //     that.resultTemplate = template;
+            // });
+            // console.log(Phanary.templates.searchResult());
+        }
+    }, {
+        key: 'nameToAtmosphereData',
+        value: function nameToAtmosphereData(name) {
+            if (this.atmosphereData == null) {
+                console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
+                return;
+            }
+            var atmosphereObject = this.atmosphereData.atmospheres[name];
+            atmosphereObject.name = name;
+            return atmosphereObject;
+        }
+    }, {
+        key: 'selectElementContents',
+        value: function selectElementContents(el) {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }, {
+        key: 'appendTrackPrefixes',
+        value: function appendTrackPrefixes(filenames) {
+            var that = this;
+            filenames = filenames.map(function (filename) {
+                return that.trackPrefix + filename;
+            });
+            return filenames;
+        }
+    }, {
+        key: 'getRandomInt',
+        value: function getRandomInt(max) {
+            max = Math.floor(max);
+            return Math.floor(Math.random() * max);
+        }
+    }, {
+        key: 'clamp',
+        value: function clamp(min, number, max) {
+            return Math.min(Math.max(number, min), max);
+        }
+    }]);
+
+    return GlobalVars;
+}();
+
+var g = exports.g = new GlobalVars();
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 exports.__esModule = true;
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -257,199 +443,6 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL2V4Y2VwdGlvbi5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7O0FBQ0EsSUFBTSxVQUFVLEdBQUcsQ0FBQyxhQUFhLEVBQUUsVUFBVSxFQUFFLFlBQVksRUFBRSxTQUFTLEVBQUUsTUFBTSxFQUFFLFFBQVEsRUFBRSxPQUFPLENBQUMsQ0FBQzs7QUFFbkcsU0FBUyxTQUFTLENBQUMsT0FBTyxFQUFFLElBQUksRUFBRTtBQUNoQyxNQUFJLEdBQUcsR0FBRyxJQUFJLElBQUksSUFBSSxDQUFDLEdBQUc7TUFDdEIsSUFBSSxZQUFBO01BQ0osTUFBTSxZQUFBLENBQUM7QUFDWCxNQUFJLEdBQUcsRUFBRTtBQUNQLFFBQUksR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQztBQUN0QixVQUFNLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUM7O0FBRTFCLFdBQU8sSUFBSSxLQUFLLEdBQUcsSUFBSSxHQUFHLEdBQUcsR0FBRyxNQUFNLENBQUM7R0FDeEM7O0FBRUQsTUFBSSxHQUFHLEdBQUcsS0FBSyxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLElBQUksRUFBRSxPQUFPLENBQUMsQ0FBQzs7O0FBRzFELE9BQUssSUFBSSxHQUFHLEdBQUcsQ0FBQyxFQUFFLEdBQUcsR0FBRyxVQUFVLENBQUMsTUFBTSxFQUFFLEdBQUcsRUFBRSxFQUFFO0FBQ2hELFFBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxHQUFHLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7R0FDOUM7OztBQUdELE1BQUksS0FBSyxDQUFDLGlCQUFpQixFQUFFO0FBQzNCLFNBQUssQ0FBQyxpQkFBaUIsQ0FBQyxJQUFJLEVBQUUsU0FBUyxDQUFDLENBQUM7R0FDMUM7O0FBRUQsTUFBSTtBQUNGLFFBQUksR0FBRyxFQUFFO0FBQ1AsVUFBSSxDQUFDLFVBQVUsR0FBRyxJQUFJLENBQUM7Ozs7QUFJdkIsVUFBSSxNQUFNLENBQUMsY0FBYyxFQUFFO0FBQ3pCLGNBQU0sQ0FBQyxjQUFjLENBQUMsSUFBSSxFQUFFLFFBQVEsRUFBRTtBQUNwQyxlQUFLLEVBQUUsTUFBTTtBQUNiLG9CQUFVLEVBQUUsSUFBSTtTQUNqQixDQUFDLENBQUM7T0FDSixNQUFNO0FBQ0wsWUFBSSxDQUFDLE1BQU0sR0FBRyxNQUFNLENBQUM7T0FDdEI7S0FDRjtHQUNGLENBQUMsT0FBTyxHQUFHLEVBQUU7O0dBRWI7Q0FDRjs7QUFFRCxTQUFTLENBQUMsU0FBUyxHQUFHLElBQUksS0FBSyxFQUFFLENBQUM7O3FCQUVuQixTQUFTIiwiZmlsZSI6ImV4Y2VwdGlvbi5qcyIsInNvdXJjZXNDb250ZW50IjpbIlxuY29uc3QgZXJyb3JQcm9wcyA9IFsnZGVzY3JpcHRpb24nLCAnZmlsZU5hbWUnLCAnbGluZU51bWJlcicsICdtZXNzYWdlJywgJ25hbWUnLCAnbnVtYmVyJywgJ3N0YWNrJ107XG5cbmZ1bmN0aW9uIEV4Y2VwdGlvbihtZXNzYWdlLCBub2RlKSB7XG4gIGxldCBsb2MgPSBub2RlICYmIG5vZGUubG9jLFxuICAgICAgbGluZSxcbiAgICAgIGNvbHVtbjtcbiAgaWYgKGxvYykge1xuICAgIGxpbmUgPSBsb2Muc3RhcnQubGluZTtcbiAgICBjb2x1bW4gPSBsb2Muc3RhcnQuY29sdW1uO1xuXG4gICAgbWVzc2FnZSArPSAnIC0gJyArIGxpbmUgKyAnOicgKyBjb2x1bW47XG4gIH1cblxuICBsZXQgdG1wID0gRXJyb3IucHJvdG90eXBlLmNvbnN0cnVjdG9yLmNhbGwodGhpcywgbWVzc2FnZSk7XG5cbiAgLy8gVW5mb3J0dW5hdGVseSBlcnJvcnMgYXJlIG5vdCBlbnVtZXJhYmxlIGluIENocm9tZSAoYXQgbGVhc3QpLCBzbyBgZm9yIHByb3AgaW4gdG1wYCBkb2Vzbid0IHdvcmsuXG4gIGZvciAobGV0IGlkeCA9IDA7IGlkeCA8IGVycm9yUHJvcHMubGVuZ3RoOyBpZHgrKykge1xuICAgIHRoaXNbZXJyb3JQcm9wc1tpZHhdXSA9IHRtcFtlcnJvclByb3BzW2lkeF1dO1xuICB9XG5cbiAgLyogaXN0YW5idWwgaWdub3JlIGVsc2UgKi9cbiAgaWYgKEVycm9yLmNhcHR1cmVTdGFja1RyYWNlKSB7XG4gICAgRXJyb3IuY2FwdHVyZVN0YWNrVHJhY2UodGhpcywgRXhjZXB0aW9uKTtcbiAgfVxuXG4gIHRyeSB7XG4gICAgaWYgKGxvYykge1xuICAgICAgdGhpcy5saW5lTnVtYmVyID0gbGluZTtcblxuICAgICAgLy8gV29yayBhcm91bmQgaXNzdWUgdW5kZXIgc2FmYXJpIHdoZXJlIHdlIGNhbid0IGRpcmVjdGx5IHNldCB0aGUgY29sdW1uIHZhbHVlXG4gICAgICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICAgICAgaWYgKE9iamVjdC5kZWZpbmVQcm9wZXJ0eSkge1xuICAgICAgICBPYmplY3QuZGVmaW5lUHJvcGVydHkodGhpcywgJ2NvbHVtbicsIHtcbiAgICAgICAgICB2YWx1ZTogY29sdW1uLFxuICAgICAgICAgIGVudW1lcmFibGU6IHRydWVcbiAgICAgICAgfSk7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICB0aGlzLmNvbHVtbiA9IGNvbHVtbjtcbiAgICAgIH1cbiAgICB9XG4gIH0gY2F0Y2ggKG5vcCkge1xuICAgIC8qIElnbm9yZSBpZiB0aGUgYnJvd3NlciBpcyB2ZXJ5IHBhcnRpY3VsYXIgKi9cbiAgfVxufVxuXG5FeGNlcHRpb24ucHJvdG90eXBlID0gbmV3IEVycm9yKCk7XG5cbmV4cG9ydCBkZWZhdWx0IEV4Y2VwdGlvbjtcbiJdfQ==
 
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.g = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-// TODO: import handlebars runtime 
-// import handleBars from 'handlebars/handlebars.runtime.js';
-// import resultTemplate from './../../../temp/templates/templates.js';
-
-
-var _jquery = __webpack_require__(3);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _handlebars = __webpack_require__(40);
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
-var _DataReader = __webpack_require__(6);
-
-var _DataReader2 = _interopRequireDefault(_DataReader);
-
-var _AtmosphereManager = __webpack_require__(13);
-
-var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var trackDataURL = "/data/tracks.json";
-var atmosphereDataURL = "/data/atmospheres.json";
-
-var GlobalVars = function () {
-    // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
-
-    function GlobalVars() {
-        _classCallCheck(this, GlobalVars);
-
-        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
-        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
-        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
-        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
-        this.$sideBar = (0, _jquery2.default)(".sidebar");
-        this.$sideBarFooter = (0, _jquery2.default)(".sidebar__footer");
-        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
-        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
-        this.$editingTitle = null;
-
-        this.trackPrefix = "/audio/tracks/";
-
-        this.atmosphereManager = new _AtmosphereManager2.default();
-
-        this.trackDataReader = new _DataReader2.default(trackDataURL, this.onTrackDataReadComplete.bind(this));
-        this.atmosphereDataReader = new _DataReader2.default(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
-
-        this.compileTemplates();
-
-        this.events();
-    }
-
-    _createClass(GlobalVars, [{
-        key: 'events',
-        value: function events() {
-            // Stop editing title upon mouse click outside the title
-            var that = this;
-            (0, _jquery2.default)(document).click(function (event) {
-                if (that.$editingTitle != null && !that.$editingTitle.is(event.target) && that.$editingTitle.has(event.target).length === 0) {
-                    that.stopEditingTitle();
-                }
-            });
-
-            // Toggle hidden class on sidebar upon hide button click
-            (0, _jquery2.default)(".navbar__hide").click(function () {
-                that.hideSidebar();
-            });
-        }
-    }, {
-        key: 'hideSidebar',
-        value: function hideSidebar() {
-            this.$sideBar.toggleClass("mobile-hidden");
-            this.$sideBarFooter.toggleClass("mobile-hidden");
-        }
-    }, {
-        key: 'stopEditingTitle',
-        value: function stopEditingTitle() {
-            if (g.$editingTitle != null) {
-                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
-                this.$editingTitle = null;
-            }
-        }
-    }, {
-        key: 'onTrackDataReadComplete',
-        value: function onTrackDataReadComplete(trackData) {
-            this.trackData = trackData;
-            this.trackDataReader.populateSearchResults(trackData.tracks);
-        }
-    }, {
-        key: 'onAtmosphereDataReadComplete',
-        value: function onAtmosphereDataReadComplete(atmosphereData) {
-            this.atmosphereData = atmosphereData;
-            this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres);
-        }
-    }, {
-        key: 'compileTemplates',
-        value: function compileTemplates() {
-            var that = this;
-            var template;
-            // TODO: move paths to variable
-            _jquery2.default.get("/templates/track.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.trackTemplate = template;
-            });
-            _jquery2.default.get("/templates/atmosphere.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.atmosphereTemplate = template;
-            });
-            _jquery2.default.get("/templates/oneshot.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.oneshotTemplate = template;
-            });
-            // $.get("assets/templates/searchResult.html", function(rawTemplate) {
-            //     template = Handlebars.compile(rawTemplate);
-            //     that.resultTemplate = template;
-            // });
-            // console.log(Phanary.templates.searchResult());
-        }
-    }, {
-        key: 'nameToTrackData',
-        value: function nameToTrackData(name) {
-            if (this.trackData == null) {
-                console.error("Track Data failed to fetch from server. Cannot add track.");
-                return;
-            }
-            var trackObject = this.trackData.tracks[name];
-            trackObject.name = name;
-            return trackObject;
-        }
-    }, {
-        key: 'nameToAtmosphereData',
-        value: function nameToAtmosphereData(name) {
-            if (this.atmosphereData == null) {
-                console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
-                return;
-            }
-            var atmosphereObject = this.atmosphereData.atmospheres[name];
-            atmosphereObject.name = name;
-            return atmosphereObject;
-        }
-    }, {
-        key: 'selectElementContents',
-        value: function selectElementContents(el) {
-            var range = document.createRange();
-            range.selectNodeContents(el);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
-    }, {
-        key: 'appendTrackPrefixes',
-        value: function appendTrackPrefixes(filenames) {
-            var that = this;
-            filenames = filenames.map(function (filename) {
-                return that.trackPrefix + filename;
-            });
-            return filenames;
-        }
-    }, {
-        key: 'getRandomInt',
-        value: function getRandomInt(max) {
-            max = Math.floor(max);
-            return Math.floor(Math.random() * max);
-        }
-    }, {
-        key: 'clamp',
-        value: function clamp(min, number, max) {
-            return Math.min(Math.max(number, min), max);
-        }
-    }]);
-
-    return GlobalVars;
-}();
-
-var g = exports.g = new GlobalVars();
 
 /***/ }),
 /* 3 */
@@ -10726,15 +10719,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(29);
+var _helpers = __webpack_require__(30);
 
-var _decorators = __webpack_require__(27);
+var _decorators = __webpack_require__(28);
 
-var _logger = __webpack_require__(37);
+var _logger = __webpack_require__(38);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10834,7 +10827,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -10986,13 +10979,13 @@ var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(16);
+__webpack_require__(8);
 
 var DataReader = function () {
     function DataReader(dataURL, callback) {
@@ -11064,7 +11057,7 @@ var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11224,6 +11217,29 @@ exports.default = Track;
 "use strict";
 
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+(function () {
+  var template = Handlebars.template,
+      templates = Handlebars.templates = Handlebars.templates || {};
+  templates['searchResult.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
+      var helper,
+          alias1 = depth0 != null ? depth0 : container.nullContext || {},
+          alias2 = helpers.helperMissing,
+          alias3 = "function",
+          alias4 = container.escapeExpression;
+
+      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\"><div class=\"wrapper\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</div></li>";
+    }, "useData": true });
+})();
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 exports.__esModule = true;
 var AST = {
   // Public API used to evaluate derived attributes regarding AST nodes
@@ -11256,7 +11272,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11281,10 +11297,10 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(42)))
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11300,7 +11316,7 @@ var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11339,11 +11355,7 @@ var SearchBar = function () {
                     // Add selected track
                     var $selected = (0, _jquery2.default)(".selected");
                     if ($selected) {
-                        if ($selected.hasClass("result--track") || $selected.hasClass("result--oneshot")) {
-                            _GlobalVars.g.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($selected.text()));
-                        } else if ($selected.hasClass("result--atmosphere")) {
-                            _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($selected.text()));
-                        }
+                        _GlobalVars.g.atmosphereManager.addSelected($selected);
                         this.clearSearchBar();
                     }
                     e.preventDefault();
@@ -11435,35 +11447,72 @@ var SearchBar = function () {
     }, {
         key: 'filterResults',
         value: function filterResults() {
-            var results, i, enabledCount;
-            //console.log("filterResults: Filtering...");
-            var filter = _GlobalVars.g.$searchBarInput.val().toUpperCase();
             if (_GlobalVars.g.$searchResults == null) {
                 console.log('SearchBar.js: filterResults: No search results. Returning...');
                 return;
             }
-            var results = _GlobalVars.g.$searchResults.children(),
-                enabledCount = 0;
+
+            _GlobalVars.g.dataManager.search(_GlobalVars.g.$searchBarInput.val(), { '_id': 1 }, this.update);
 
             // Loop through all list items, and hide those who don't match the search query
-            results.each(function () {
-                var $result = (0, _jquery2.default)(this);
-                if (filter != "" && $result.text().toUpperCase().indexOf(filter) > -1) {
-                    $result.css("display", "");
-                    enabledCount++;
-                    //console.log("filterResults(): Showing: " + $result.text());
-                } else {
-                    $result.css("display", "none");
-                    //console.log("filterResults(): Hiding: " + $result.text());
-                }
-            });
+            // results.each(function() {
+            //     var $result = $(this);
+            //     if ((filter != "") && ($result.text().toUpperCase().indexOf(filter) > -1)) {
+            //         $result.css("display", "");
+            //         enabledCount++;
+            //         //console.log("filterResults(): Showing: " + $result.text());
+            //     } else {
+            //         $result.css("display", "none");
+            //         //console.log("filterResults(): Hiding: " + $result.text());
+            //     }
+            // });
+            // //console.log("filterResults: There are " + enabledCount + " enabled list items.");
+            // results.removeClass("selected");
+            // if (enabledCount == 0) {
+            //     g.$searchResults.css("display", "none");
+            // } else {
+            //     // Select top element
+            //     g.$searchResults.css("display", "");
+            //     g.$searchResults.find("li:visible").first().addClass("selected")
+            // }
+        }
+    }, {
+        key: 'update',
+        value: function update(results) {
+            var searchResults = _GlobalVars.g.$searchResults.children(),
+                enabledCount = 0;
+
+            if (results && results.length != 0) {
+                var matchedIDs = [];
+                results.forEach(function (result) {
+                    matchedIDs.push(result._id);
+                });
+                // console.log('Searchbar.js/update/matchedIDs: ');
+                // console.log(matchedIDs);
+
+                // Loop through all list items, and hide those who don't match the search query
+                searchResults.each(function () {
+                    var $result = (0, _jquery2.default)(this);
+                    // If current result was selected by the search query
+                    if (_jquery2.default.inArray($result.data('db-id'), matchedIDs) >= 0) {
+                        // Display the item
+                        $result.css("display", "");
+                        enabledCount++;
+                        //console.log("filterResults(): Showing: " + $result.text());
+                    } else {
+                        $result.css("display", "none");
+                        //console.log("filterResults(): Hiding: " + $result.text());
+                    }
+                });
+            }
+
             //console.log("filterResults: There are " + enabledCount + " enabled list items.");
-            results.removeClass("selected");
+            searchResults.removeClass("selected");
             if (enabledCount == 0) {
                 _GlobalVars.g.$searchResults.css("display", "none");
             } else {
-                // Select top element
                 _GlobalVars.g.$searchResults.css("display", "");
+                // Select top element
                 _GlobalVars.g.$searchResults.find("li:visible").first().addClass("selected");
             }
         }
@@ -11475,17 +11524,17 @@ var SearchBar = function () {
 exports.default = SearchBar;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _SearchBar = __webpack_require__(10);
+var _SearchBar = __webpack_require__(11);
 
 var _SearchBar2 = _interopRequireDefault(_SearchBar);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11493,7 +11542,7 @@ var searchBar = new _SearchBar2.default();
 _GlobalVars.g.searchBar = searchBar;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11513,15 +11562,15 @@ var _Track = __webpack_require__(7);
 
 var _Track2 = _interopRequireDefault(_Track);
 
-var _OneShot = __webpack_require__(15);
+var _OneShot = __webpack_require__(17);
 
 var _OneShot2 = _interopRequireDefault(_OneShot);
 
-var _AudioManager = __webpack_require__(14);
+var _AudioManager = __webpack_require__(15);
 
 var _AudioManager2 = _interopRequireDefault(_AudioManager);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11798,7 +11847,7 @@ var Atmosphere = function () {
 exports.default = Atmosphere;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11814,11 +11863,13 @@ var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _GlobalVars = __webpack_require__(1);
+
 var _DataReader = __webpack_require__(6);
 
 var _DataReader2 = _interopRequireDefault(_DataReader);
 
-var _Atmosphere = __webpack_require__(12);
+var _Atmosphere = __webpack_require__(13);
 
 var _Atmosphere2 = _interopRequireDefault(_Atmosphere);
 
@@ -11875,6 +11926,25 @@ var AtmosphereManager = function () {
                 color: 'default'
             };
             this.addAtmosphere(emptyAtmosphere);
+        }
+
+        // Called when enter is pressed in the search bar, or a result is clicked
+
+    }, {
+        key: 'addSelected',
+        value: function addSelected($selected) {
+            var id = $selected.data('db-id');
+            //TODO: check if ID is legit
+            if ($selected.hasClass("result--track")) {
+                _GlobalVars.g.dataManager.getData('tracks', id, function (result) {
+                    this.addTrack(result);
+                }.bind(this));
+            } else if ($selected.hasClass("result--oneshot")) {
+                this.addTrack(_GlobalVars.g.dataManager.getData($selected));
+            } else if ($selected.hasClass("result--atmosphere")) {
+                _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($selected.text() //TODO:
+                ));
+            }
         }
 
         // Called when enter is pressed in the search bar, while a track is highlighted.
@@ -11983,7 +12053,7 @@ var AtmosphereManager = function () {
 exports.default = AtmosphereManager;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11995,7 +12065,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(1);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12136,7 +12206,133 @@ var AudioManager = function () {
 exports.default = AudioManager;
 
 /***/ }),
-/* 15 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(3);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _GlobalVars = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+__webpack_require__(8);
+
+var DataManager = function () {
+    function DataManager() {
+        _classCallCheck(this, DataManager);
+
+        this.fetchNames();
+    }
+
+    _createClass(DataManager, [{
+        key: 'fetchNames',
+        value: function fetchNames() {
+            var query = {
+                'collection': 'tracks',
+                'selectedInfo': {
+                    name: true
+                }
+            };
+
+            _jquery2.default.getJSON('/system/get', query, function (data) {
+                console.log('tracks retrieved');
+                console.log(data);
+                this.populateSearchResults(data, 'track');
+            }.bind(this));
+            query.collection = 'atmospheres';
+            _jquery2.default.getJSON('/system/get', query, function (data) {
+                console.log('atmospheres retrieved');
+                console.log(data);
+                this.populateSearchResults(data, 'atmosphere');
+            }.bind(this));
+            query.collection = 'oneshots';
+            _jquery2.default.getJSON('/system/get', query, function (data) {
+                console.log('oneshots retrieved');
+                console.log(data);
+                this.populateSearchResults(data, 'oneshot');
+            }.bind(this));
+        }
+    }, {
+        key: 'populateSearchResults',
+        value: function populateSearchResults(data, type) {
+            var that = this;
+            var resultHTML;
+            _jquery2.default.each(data, function (index, object) {
+                // console.log("DataManager.js: populateSearchResults: object.name: " + object.name);
+                var $resultHTML = that.generateResultHTML(object._id, object.name, type);
+                that.rigResultEvents($resultHTML);
+            });
+        }
+    }, {
+        key: 'generateResultHTML',
+        value: function generateResultHTML(id, name, type) {
+            var resultObject = {
+                _id: id,
+                name: name,
+                type: "result--" + type
+            };
+            var resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
+            return (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
+        }
+    }, {
+        key: 'rigResultEvents',
+        value: function rigResultEvents($resultHTML) {
+            $resultHTML.on('mouseover', function () {
+                _GlobalVars.g.searchBar.select($resultHTML);
+            });
+            $resultHTML.on('click', function () {
+                if ($resultHTML.hasClass("result--track") || $resultHTML.hasClass("result--oneshot")) {
+                    _GlobalVars.g.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($resultHTML.text()));
+                } else if ($resultHTML.hasClass("result--atmosphere")) {
+                    _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($resultHTML.text()));
+                }
+                _GlobalVars.g.searchBar.clearSearchBar();
+            });
+        }
+    }, {
+        key: 'search',
+        value: function search(query, selectedInfo, callback) {
+            var params = {
+                'query': query,
+                'selectedInfo': selectedInfo ? selectedInfo : {}
+            };
+            _jquery2.default.getJSON('/system/search', params, function (results) {
+                callback(results);
+            });
+        }
+    }, {
+        key: 'getData',
+        value: function getData(collection, id, callback) {
+            var params = {
+                'collection': collection,
+                'id': id
+            };
+            _jquery2.default.getJSON('/system/find', params, function (result) {
+                callback(result);
+            });
+        }
+    }]);
+
+    return DataManager;
+}();
+
+exports.default = DataManager;
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12152,7 +12348,7 @@ var _Track2 = __webpack_require__(7);
 
 var _Track3 = _interopRequireDefault(_Track2);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12347,30 +12543,7 @@ var OneShot = function (_Track) {
 exports.default = OneShot;
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-(function () {
-  var template = Handlebars.template,
-      templates = Handlebars.templates = Handlebars.templates || {};
-  templates['searchResult.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
-      var helper,
-          alias1 = depth0 != null ? depth0 : container.nullContext || {},
-          alias2 = helpers.helperMissing,
-          alias3 = "function",
-          alias4 = container.escapeExpression;
-
-      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\"><div class=\"wrapper\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</div></li>";
-    }, "useData": true });
-})();
-
-/***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12381,21 +12554,21 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(18);
+var _handlebarsRuntime = __webpack_require__(19);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
 // Compiler imports
 
-var _handlebarsCompilerAst = __webpack_require__(8);
+var _handlebarsCompilerAst = __webpack_require__(9);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(19);
+var _handlebarsCompilerBase = __webpack_require__(20);
 
-var _handlebarsCompilerCompiler = __webpack_require__(21);
+var _handlebarsCompilerCompiler = __webpack_require__(22);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(23);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(24);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -12403,7 +12576,7 @@ var _handlebarsCompilerVisitor = __webpack_require__(5);
 
 var _handlebarsCompilerVisitor2 = _interopRequireDefault(_handlebarsCompilerVisitor);
 
-var _handlebarsNoConflict = __webpack_require__(9);
+var _handlebarsNoConflict = __webpack_require__(10);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -12442,7 +12615,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12464,11 +12637,11 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(39);
+var _handlebarsSafeString = __webpack_require__(40);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
-var _handlebarsException = __webpack_require__(1);
+var _handlebarsException = __webpack_require__(2);
 
 var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 
@@ -12476,11 +12649,11 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(38);
+var _handlebarsRuntime = __webpack_require__(39);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
-var _handlebarsNoConflict = __webpack_require__(9);
+var _handlebarsNoConflict = __webpack_require__(10);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -12515,7 +12688,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12531,15 +12704,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(24);
+var _parser = __webpack_require__(25);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(26);
+var _whitespaceControl = __webpack_require__(27);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(22);
+var _helpers = __webpack_require__(23);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -12570,7 +12743,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12743,7 +12916,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12759,13 +12932,13 @@ exports.compile = compile;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _ast = __webpack_require__(8);
+var _ast = __webpack_require__(9);
 
 var _ast2 = _interopRequireDefault(_ast);
 
@@ -13323,7 +13496,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13344,7 +13517,7 @@ exports.preparePartialBlock = preparePartialBlock;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -13560,7 +13733,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13573,13 +13746,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _base = __webpack_require__(4);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(20);
+var _codeGen = __webpack_require__(21);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -14695,7 +14868,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15441,7 +15614,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15634,7 +15807,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15862,7 +16035,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15874,7 +16047,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(28);
+var _decoratorsInline = __webpack_require__(29);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -15885,7 +16058,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15921,7 +16094,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15933,31 +16106,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(30);
+var _helpersBlockHelperMissing = __webpack_require__(31);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(31);
+var _helpersEach = __webpack_require__(32);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(32);
+var _helpersHelperMissing = __webpack_require__(33);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(33);
+var _helpersIf = __webpack_require__(34);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(34);
+var _helpersLog = __webpack_require__(35);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(35);
+var _helpersLookup = __webpack_require__(36);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(36);
+var _helpersWith = __webpack_require__(37);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -15974,7 +16147,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16020,7 +16193,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16033,7 +16206,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16121,7 +16294,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16132,7 +16305,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16153,7 +16326,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16189,7 +16362,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16222,7 +16395,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16241,7 +16414,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16281,7 +16454,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16335,7 +16508,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16360,7 +16533,7 @@ var _utils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_utils);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16649,7 +16822,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16671,7 +16844,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -16680,9 +16853,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(17)['default'];
+var handlebars = __webpack_require__(18)['default'];
 
-var printer = __webpack_require__(25);
+var printer = __webpack_require__(26);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -16702,7 +16875,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports) {
 
 var g;
