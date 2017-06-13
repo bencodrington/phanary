@@ -14,6 +14,10 @@
                     <textarea name="filenames"></textarea>
                 </div>
                 <div class="input">
+                    <label for="tags">Tags (separate by newline)</label>
+                    <textarea name="tags"></textarea>
+                </div>
+                <div class="input">
                     <label for="collection">Collection</label>
                     <select name="collection">
                         <option value="tracks">Tracks</option>
@@ -43,6 +47,7 @@
                         <article class="item">
                             <div>Name: {{ this.name }}</div>
                             <div>File Names: [ {{ this.filenames }} ]</div>
+                            <div>Tags: [ {{ this.tags }} ]</div>
                             <div>ID: {{ this._id }}</div>
                         </article>
                     {{/each}}

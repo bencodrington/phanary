@@ -210,10 +210,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.g = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-// TODO: import handlebars runtime 
-// import handleBars from 'handlebars/handlebars.runtime.js';
-// import resultTemplate from './../../../temp/templates/templates.js';
-
 
 var _jquery = __webpack_require__(3);
 
@@ -243,7 +239,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // var atmosphereDataURL = "/data/atmospheres.json";
 
 var GlobalVars = function () {
-    // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
+    // Do all jquery searches here, then other classes can import this file as g and use g.$trackList for example
 
     function GlobalVars() {
         _classCallCheck(this, GlobalVars);
@@ -330,11 +326,6 @@ var GlobalVars = function () {
                 template = _handlebars2.default.compile(rawTemplate);
                 that.oneshotTemplate = template;
             });
-            // $.get("assets/templates/searchResult.html", function(rawTemplate) {
-            //     template = Handlebars.compile(rawTemplate);
-            //     that.resultTemplate = template;
-            // });
-            // console.log(Phanary.templates.searchResult());
         }
     }, {
         key: 'nameToAtmosphereData',
@@ -11481,6 +11472,9 @@ var SearchBar = function () {
         value: function update(results) {
             var searchResults = _GlobalVars.g.$searchResults.children(),
                 enabledCount = 0;
+
+            console.log("/update/results: ");
+            console.log(results);
 
             if (results && results.length != 0) {
                 var matchedIDs = [];

@@ -89,6 +89,13 @@ router.get('/search', function(req, res, next) {
     return res.end(JSON.stringify([]));
   }
 
+  var queryRegex = query.
+    split(/\s/g).       // Split query into words
+    filter(value => {   // Remove empty words
+      return value != ''; 
+    }).
+    join('|');          // Combine with regex OR
+
   var completed = 0; // Number of collections which have been queried
   var allResults = [];
   // console.log('/search query: ' + query);
@@ -96,14 +103,20 @@ router.get('/search', function(req, res, next) {
     model.
       // Search to see if name contains search query
       find(
-        { "name": { "$regex": query, "$options": "i" } },
+        {$or: [
+          { "name": { "$regex": queryRegex, "$options": "i" } },
+          { $text: {$search: query} }
+        ]},
         selectedInfo
       ).
       exec(function(err, results) {
-        // console.log("/search results: ");
-        // console.log(results);
-        // Append results from this operation
-        allResults = allResults.concat(results);
+        // TODO: error handling
+        console.log("/search results: ");
+        console.log(results);
+        if (results) {
+          // Append results from this operation
+          allResults = allResults.concat(results);
+        }
         completed++;
         // If this is the last 'find' operation to complete
         if (completed == models.length) {
@@ -112,27 +125,9 @@ router.get('/search', function(req, res, next) {
         }
       });
   });
-  // TrackModel.find(
-  //   { "name": { "$regex": query, "$options": "i" } }
-  // ).
-  // // TrackModel.
-  // //   find(
-  // //     {$text: {$search: query}},
-  // //     {score: {$meta: 'textScore'}}
-  // //   ).
-  // //   sort(
-  // //     {score: {$meta: 'textScore'}}
-  // //   ).
-  //   exec(function(err, results) {
-  //     console.log("/search results: ");
-  //     console.log(results);
-  //     completed++;
-  //     console.log("completed: " + completed);
-  //     if (completed == 1) {
-  //       return res.end(JSON.stringify({}));
-  //     }
-  //   });
 });
+
+/* Used for getting a specific record given the id and collection */
 
 router.get('/find', function(req, res, next) {
   var collection = req.query['collection'];
@@ -162,7 +157,8 @@ router.post('/insert', function(req, res, next) {
   var collection = req.body.collection;
   var item = {
     name: req.body.name,
-    filenames: parseFileNames(req.body.filenames)
+    filenames: parseMultilineInput(req.body.filenames),
+    tags: parseMultilineInput(req.body.tags)
   };
   console.log(item);
   var doc;
@@ -254,7 +250,7 @@ router.post('/delete', function(req, res, next) {
   res.redirect('/system');
 });
 
-function parseFileNames(textString) {
+function parseMultilineInput(textString) {
   return textString.replace(/\r\n/g,"\n").split('\n');
 }
 
