@@ -150,6 +150,9 @@ class SearchBar {
         var searchResults = g.$searchResults.children(),
         enabledCount = 0;
 
+        console.log("/update/results: ");
+        console.log(results);
+
         if (results && results.length != 0) {
             var matchedIDs = [];
             results.forEach(function(result) {

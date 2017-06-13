@@ -1,9 +1,5 @@
 import $ from 'jquery';
 import Handlebars from 'handlebars';
-// TODO: import handlebars runtime 
-// import handleBars from 'handlebars/handlebars.runtime.js';
-// import resultTemplate from './../../../temp/templates/templates.js';
-
 
 import DataReader from './DataReader';
 import DataManager from './DataManager';
@@ -13,7 +9,7 @@ import AtmosphereManager from './AtmosphereManager';
 // var atmosphereDataURL = "/data/atmospheres.json";
 
 class GlobalVars {
-    // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
+    // Do all jquery searches here, then other classes can import this file as g and use g.$trackList for example
 
     constructor() {
         this.$trackList         = $("#trackList");          // The div containing all tracks
@@ -96,11 +92,6 @@ class GlobalVars {
             template = Handlebars.compile(rawTemplate);
             that.oneshotTemplate = template;
         });
-        // $.get("assets/templates/searchResult.html", function(rawTemplate) {
-        //     template = Handlebars.compile(rawTemplate);
-        //     that.resultTemplate = template;
-        // });
-        // console.log(Phanary.templates.searchResult());
     }
 
     nameToAtmosphereData(name) {
