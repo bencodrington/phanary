@@ -29,16 +29,7 @@ class SearchBar {
                 // Add selected track
                 var $selected = $(".selected");
                 if ($selected) {
-                    if ($selected.hasClass("result--track")
-                        || $selected.hasClass("result--oneshot")) {
-                        g.atmosphereManager.addTrack(
-                            g.nameToTrackData($selected.text())
-                        );
-                    } else if ($selected.hasClass("result--atmosphere")) {
-                        g.atmosphereManager.addAtmosphere(
-                            g.nameToAtmosphereData($selected.text())
-                        );
-                    }
+                    g.atmosphereManager.addSelected($selected);
                     this.clearSearchBar();
                 }
                 e.preventDefault();
@@ -124,38 +115,74 @@ class SearchBar {
     }
 
     filterResults() {
-        var results, i, enabledCount;
-        //console.log("filterResults: Filtering...");
-        var filter = g.$searchBarInput.val().toUpperCase();
         if (g.$searchResults == null) {
             console.log('SearchBar.js: filterResults: No search results. Returning...');
             return;
         }
-        var results = g.$searchResults.children(),
-        enabledCount = 0;
+
+        g.dataManager.search(g.$searchBarInput.val(), { '_id': 1 }, this.update);
 
         // Loop through all list items, and hide those who don't match the search query
-        results.each(function() {
-            var $result = $(this);
-            if ((filter != "") && ($result.text().toUpperCase().indexOf(filter) > -1)) {
-                $result.css("display", "");
-                enabledCount++;
-                //console.log("filterResults(): Showing: " + $result.text());
-            } else {
-                $result.css("display", "none");
-                //console.log("filterResults(): Hiding: " + $result.text());
-            }
-        });
+        // results.each(function() {
+        //     var $result = $(this);
+        //     if ((filter != "") && ($result.text().toUpperCase().indexOf(filter) > -1)) {
+        //         $result.css("display", "");
+        //         enabledCount++;
+        //         //console.log("filterResults(): Showing: " + $result.text());
+        //     } else {
+        //         $result.css("display", "none");
+        //         //console.log("filterResults(): Hiding: " + $result.text());
+        //     }
+        // });
+        // //console.log("filterResults: There are " + enabledCount + " enabled list items.");
+        // results.removeClass("selected");
+        // if (enabledCount == 0) {
+        //     g.$searchResults.css("display", "none");
+        // } else {
+        //     // Select top element
+        //     g.$searchResults.css("display", "");
+        //     g.$searchResults.find("li:visible").first().addClass("selected")
+        // }
+
+    }
+
+    update(results) {
+        var searchResults = g.$searchResults.children(),
+        enabledCount = 0;
+
+        if (results && results.length != 0) {
+            var matchedIDs = [];
+            results.forEach(function(result) {
+                matchedIDs.push(result._id);
+            });
+            // console.log('Searchbar.js/update/matchedIDs: ');
+            // console.log(matchedIDs);
+
+            // Loop through all list items, and hide those who don't match the search query
+            searchResults.each(function() {
+                var $result = $(this);
+                // If current result was selected by the search query
+                if ( $.inArray($result.data('db-id'), matchedIDs) >= 0 ) {
+                    // Display the item
+                    $result.css("display", "");
+                    enabledCount++;
+                    //console.log("filterResults(): Showing: " + $result.text());
+                } else {
+                    $result.css("display", "none");
+                    //console.log("filterResults(): Hiding: " + $result.text());
+                }
+            });
+        }
+
         //console.log("filterResults: There are " + enabledCount + " enabled list items.");
-        results.removeClass("selected");
+        searchResults.removeClass("selected");
         if (enabledCount == 0) {
             g.$searchResults.css("display", "none");
         } else {
-            // Select top element
             g.$searchResults.css("display", "");
+            // Select top element
             g.$searchResults.find("li:visible").first().addClass("selected")
         }
-
     }
 
 }

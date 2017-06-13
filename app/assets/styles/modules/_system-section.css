@@ -1,0 +1,81 @@
+.system-section {
+    flex: 1;
+    margin: 0 .5rem 0 0;
+    background-color: $blueberry;
+    padding: .5rem;
+    border-radius: 5px;
+
+    &:last-child {
+        margin: 0;
+    }
+
+    &__title {
+        color: $stormGrey;
+        text-shadow: 1px 1px $deepSea;
+    }
+
+    & .input {
+        margin: 1rem 0;
+        border: 1px solid $mediumBlue;
+        padding: 0.5rem;
+        border-radius: 5px;
+    }
+
+    & .input label {
+        font-weight: bold;
+        color: $whiteBlue;
+    }
+
+    & .input input, .input textarea {
+        width: 100%;
+    }
+
+    & .input input[type='radio'] {
+        width: auto;
+        display: inline;
+        margin-left: 10px;
+    }
+
+    & button {
+        width: 100%;
+        background-color: $blueberry;
+        border: 1px solid $whiteBlue;
+        padding: 0.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        color: $whiteBlue;
+        font-weight: bold;
+        box-shadow: 1px 1px 3px $deepSea;
+        transition: all 0.1s ease-out;
+    }
+
+    & button:hover {
+        background-color: $mediumBlue;
+    }
+
+    & .item {
+        background-color: $mediumBlue;
+        margin: 1rem 0;
+        padding: 0.5rem;
+        border-radius: 5px;
+        color: $deepSea;
+        font-weight: bold;
+    }
+}
+
+.system-sections {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.system-section-title {
+    color: $deepSea;
+    text-shadow: 1px 1px $whiteBlue;
+}
+
+.collection-title {
+    margin-top: 1rem;
+    color: $deepSea;
+    text-decoration: underline;
+}

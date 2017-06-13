@@ -6,10 +6,11 @@ import Handlebars from 'handlebars';
 
 
 import DataReader from './DataReader';
+import DataManager from './DataManager';
 import AtmosphereManager from './AtmosphereManager';
 
-var trackDataURL = "/data/tracks.json";
-var atmosphereDataURL = "/data/atmospheres.json";
+// var trackDataURL = "/data/tracks.json";
+// var atmosphereDataURL = "/data/atmospheres.json";
 
 class GlobalVars {
     // Do all jquery searches here, then other classes can import this file as g and use g.$searchResults for example
@@ -30,8 +31,9 @@ class GlobalVars {
         
         this.atmosphereManager = new AtmosphereManager();
         
-        this.trackDataReader = new DataReader(trackDataURL, this.onTrackDataReadComplete.bind(this));
-        this.atmosphereDataReader = new DataReader(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
+        this.dataManager = new DataManager();
+        // this.trackDataReader = new DataReader(trackDataURL, this.onTrackDataReadComplete.bind(this));
+        // this.atmosphereDataReader = new DataReader(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
 
         this.compileTemplates();
 
@@ -68,15 +70,15 @@ class GlobalVars {
         }
     }
     
-    onTrackDataReadComplete(trackData) {
-        this.trackData = trackData;
-        this.trackDataReader.populateSearchResults(trackData.tracks);
-    }
+    // onTrackDataReadComplete(trackData) {
+    //     this.trackData = trackData;
+    //     this.trackDataReader.populateSearchResults(trackData.tracks);
+    // }
     
-    onAtmosphereDataReadComplete(atmosphereData) {
-        this.atmosphereData = atmosphereData;
-        this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres);
-    }
+    // onAtmosphereDataReadComplete(atmosphereData) {
+    //     this.atmosphereData = atmosphereData;
+    //     this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres);
+    // }
 
     compileTemplates() {
         var that = this;
@@ -99,16 +101,6 @@ class GlobalVars {
         //     that.resultTemplate = template;
         // });
         // console.log(Phanary.templates.searchResult());
-    }
-
-    nameToTrackData(name) {
-        if (this.trackData == null) {
-            console.error("Track Data failed to fetch from server. Cannot add track.");
-            return;
-        }
-        var trackObject = this.trackData.tracks[name];
-        trackObject.name = name;
-        return trackObject;
     }
 
     nameToAtmosphereData(name) {
