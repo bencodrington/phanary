@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 mongoose.connect('localhost:27017/phanary');
-var Schema = mongoose.Schema;
 
 var TrackModel = require('../public/scripts/modules/models/TrackModel').TrackModel;
 var AtmosphereModel = require('../public/scripts/modules/models/AtmosphereModel').AtmosphereModel;
@@ -15,29 +14,6 @@ router.get('/', function(req, res, next) {
   res.render('system', {
     title: 'Phanary System'
   });
-});
-
-router.get('/read', function(req, res, next) {
-  var collection = req.query['collection'];
-  switch (collection) {
-    case 'tracks':
-      TrackModel.find().then(function(results) {
-        displayReadResults(results, res);
-      });
-      break;
-    case 'atmospheres':
-      AtmosphereModel.find().then(function(results) {
-        displayReadResults(results, res);
-      });
-      break;
-    case 'oneshots':
-      OneshotModel.find().then(function(results) {
-        displayReadResults(results, res);
-      });
-      break;
-    default:
-      console.log("system.js:/read: invalid collection: " + collection);
-  }
 });
 
 router.get('/get', function(req, res, next) {
@@ -68,16 +44,6 @@ router.get('/get', function(req, res, next) {
   }
 });
 
-function displayReadResults(results, res) {
-  res.render(
-    'system',
-    {
-      title: 'Phanary System',
-      items: results
-    }
-  );
-}
-
 router.get('/search', function(req, res, next) {
   var query = req.query['query'];
   var selectedInfo = req.query['selectedInfo'];
@@ -96,7 +62,7 @@ router.get('/search', function(req, res, next) {
     }).
     join('|');          // Combine with regex OR
 
-  var completed = 0; // Number of collections which have been queried
+  var completed = 0;    // Number of collections which have been queried
   var allResults = [];
   // console.log('/search query: ' + query);
   models.forEach(function(model, index) {
@@ -147,7 +113,9 @@ router.get('/find', function(req, res, next) {
       return res.end(JSON.stringify({}));
   }
   doc.findById(id, function(err, result) {
-    //TODO: error handling
+    if (err || !result) {
+      return res.json({error: "Error fetching the resource."});
+    }
     return res.end(JSON.stringify(result));
   });
 
@@ -160,7 +128,6 @@ router.post('/insert', function(req, res, next) {
     filenames: parseMultilineInput(req.body.filenames),
     tags: parseMultilineInput(req.body.tags)
   };
-  console.log(item);
   var doc;
 
   switch(collection) {
@@ -178,7 +145,7 @@ router.post('/insert', function(req, res, next) {
       console.log("system.js:/insert: invalid collection: " + collection);
   }
 
-  res.redirect('/system');
+  res.sendStatus(200);
 });
 
 router.post('/update', function(req, res, next) {
@@ -188,11 +155,12 @@ router.post('/update', function(req, res, next) {
   switch(collection) {
     case 'tracks':
       TrackModel.findById(id, function(err, result) {
-        if (err) {
-          console.error('system.js:/update: error, no entry found');
+        if (err || result == null) {
+          console.error('system.js:/update: error, no entry found for id: ' + id);
         } else {
           result.name = req.body.name;
-          result.filenames = req.body.filenames;
+          result.filenames = parseMultilineInput(req.body.filenames),
+          result.tags = parseMultilineInput(req.body.tags)
           result.save();
         }
         
@@ -225,8 +193,7 @@ router.post('/update', function(req, res, next) {
     default:
       console.log("system.js:/update: invalid collection: " + collection);
   }
-
-  res.redirect('/system');
+  res.sendStatus(200);
   
 });
 
@@ -247,7 +214,7 @@ router.post('/delete', function(req, res, next) {
     default:
       console.log("system.js:/delete: invalid collection: " + collection);
   }
-  res.redirect('/system');
+  res.sendStatus(200);
 });
 
 function parseMultilineInput(textString) {

@@ -12,6 +12,15 @@
     &__title {
         color: $stormGrey;
         text-shadow: 1px 1px $deepSea;
+
+        & .system-section__subtitle {
+            margin-left: .5rem;
+            color: $deepSea;
+            text-shadow: none;
+            font-style: italic;
+            opacity: 0.7;
+            font-size: smaller;
+        }
     }
 
     & .input {
@@ -78,4 +87,45 @@
     margin-top: 1rem;
     color: $deepSea;
     text-decoration: underline;
+}
+
+#display-table {
+    width: 100%;
+    border: 1px solid transparent;
+    border-collapse: collapse;
+    border-spacing: 0;
+    color: $deepSea;
+    margin-top: 1rem;
+    overflow: hidden;
+
+    & th {
+        text-align: left;
+        background-color: $deepSea;
+        color: $whiteBlue;
+    }
+
+    & td {
+        background-color: $mediumBlue;
+        border: 1px solid $deepSea;
+    }
+
+    & th, td {
+        padding: 4px;
+    }
+
+    & thead th:first-child {
+        border-top-left-radius: 5px;
+    }
+    
+    & thead th:last-child {
+        border-top-right-radius: 5px;
+    }
+
+    & tbody tr {
+        cursor: pointer;
+    }
+
+    & tr:hover td {
+        background-color: $whiteBlue;
+    }
 }
