@@ -43,6 +43,23 @@
         width: 2rem;
         height: 2rem;
     }
+
+    &--medium-text {
+        height: 2rem;
+        font-weight: bold;
+        display: inline-block;
+        padding: 0.5rem;
+    }
+
+    &--dark {
+        background-color: $deepSea;
+        color: $lightBlue;
+    }
+
+    &--dark:hover {
+        background-color: $mediumBlue;
+        color: white;
+    }
     
     &--delete {
         position: absolute;

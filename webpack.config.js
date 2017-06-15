@@ -1,10 +1,13 @@
 const path = require('path');
 
 module.exports = {
-    entry: "./app/assets/scripts/main.js",
+    entry: {
+        main: "./app/assets/scripts/main.js",
+        system: "./app/assets/scripts/system.js"
+    },
     output: {
         path: path.resolve(__dirname, './public/scripts'),
-        filename: "main.js"
+        filename: "[name].js"
     },
     module: {
         loaders: [
