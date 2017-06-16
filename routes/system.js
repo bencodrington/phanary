@@ -77,8 +77,8 @@ router.get('/search', function(req, res, next) {
       ).
       exec(function(err, results) {
         // TODO: error handling
-        console.log("/search results: ");
-        console.log(results);
+        // console.log("/search results: ");
+        // console.log(results);
         if (results) {
           // Append results from this operation
           allResults = allResults.concat(results);
@@ -126,7 +126,9 @@ router.post('/insert', function(req, res, next) {
   var item = {
     name: req.body.name,
     filenames: parseMultilineInput(req.body.filenames),
-    tags: parseMultilineInput(req.body.tags)
+    tags: parseMultilineInput(req.body.tags),
+    tracks: parseIDs(parseMultilineInput(req.body.tracks)),
+    oneshots: parseIDs(parseMultilineInput(req.body.oneshots))
   };
   var doc;
 
@@ -138,9 +140,11 @@ router.post('/insert', function(req, res, next) {
     case 'atmospheres':
       doc = new AtmosphereModel(item);
       doc.save();
+      break;
     case 'oneshots':
       doc = new OneshotModel(item);
       doc.save();
+      break;
     default:
       console.log("system.js:/insert: invalid collection: " + collection);
   }
@@ -172,7 +176,9 @@ router.post('/update', function(req, res, next) {
           console.error('system.js:/update: error, no entry found');
         } else {
           result.name = req.body.name;
-          result.filenames = req.body.filenames;
+          result.tags = parseMultilineInput(req.body.tags);
+          result.tracks = parseIDs(parseMultilineInput(req.body.tracks));
+          result.oneshots = parseIDs(parseMultilineInput(req.body.oneshots));
           result.save();
         }
         
@@ -219,6 +225,31 @@ router.post('/delete', function(req, res, next) {
 
 function parseMultilineInput(textString) {
   return textString.replace(/\r\n/g,"\n").split('\n');
+}
+
+function parseIDs(idStringArray) {
+  var idArray = [];
+  var resourceObject;
+  idStringArray.forEach(function(value) {
+
+    // Skip if empty
+    if (value != '') {
+
+      try {
+        newID = mongoose.Types.ObjectId(value);
+      } catch (err) {
+        console.log('error: ' + err);
+        res.sendStatus(500);
+      }
+      resourceObject = {
+        'id': newID
+      };
+      idArray.push(resourceObject);
+
+    }
+    
+  });
+  return idArray;
 }
 
 module.exports = router;

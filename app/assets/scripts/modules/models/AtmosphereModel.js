@@ -3,9 +3,21 @@ var Schema = mongoose.Schema;
 
 /* Atmospheres */
 
+var childTrackSchema = new Schema({
+  id: {type: Schema.Types.ObjectId, required: true}// TODO: add volumes and other settings here
+  //volume
+});
+
+var childOneshotSchema = new Schema({
+  id: {type: Schema.Types.ObjectId, required: true}// TODO: add volumes and other settings here
+  //volume
+  //loop length
+});
+
 var atmosphereSchema = new Schema({
   name: {type: String, required: true},
-  tracks: {type: Schema.Types.ObjectId, required: true}, // TODO: add volumes and other settings here
+  tracks: [childTrackSchema],
+  oneshots: [childOneshotSchema],
   tags: [String]
 }, {collection: 'atmospheres'});
 

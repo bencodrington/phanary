@@ -122,36 +122,14 @@ class SearchBar {
 
         g.dataManager.search(g.$searchBarInput.val(), { '_id': 1 }, this.update);
 
-        // Loop through all list items, and hide those who don't match the search query
-        // results.each(function() {
-        //     var $result = $(this);
-        //     if ((filter != "") && ($result.text().toUpperCase().indexOf(filter) > -1)) {
-        //         $result.css("display", "");
-        //         enabledCount++;
-        //         //console.log("filterResults(): Showing: " + $result.text());
-        //     } else {
-        //         $result.css("display", "none");
-        //         //console.log("filterResults(): Hiding: " + $result.text());
-        //     }
-        // });
-        // //console.log("filterResults: There are " + enabledCount + " enabled list items.");
-        // results.removeClass("selected");
-        // if (enabledCount == 0) {
-        //     g.$searchResults.css("display", "none");
-        // } else {
-        //     // Select top element
-        //     g.$searchResults.css("display", "");
-        //     g.$searchResults.find("li:visible").first().addClass("selected")
-        // }
-
     }
 
     update(results) {
         var searchResults = g.$searchResults.children(),
         enabledCount = 0;
 
-        console.log("/update/results: ");
-        console.log(results);
+        // console.log("/update/results: ");
+        // console.log(results);
 
         if (results && results.length != 0) {
             var matchedIDs = [];
