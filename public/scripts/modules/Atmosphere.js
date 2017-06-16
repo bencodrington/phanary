@@ -22,6 +22,7 @@ class Atmosphere {
 
         this.createElement();
         this.instantiateTracks(atmosphereData.tracks);
+        this.handleAutoplay();
     }
 
     createElement() {
@@ -32,7 +33,7 @@ class Atmosphere {
         var atmosphereHTML = g.atmosphereTemplate(this.data);
 
         // Add to tracklist
-        var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.$atmosphereList).show('fast'); // TODO: only add to current atmosphere tracklist
+        var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.$atmosphereList).show('fast');
 
 
         this.rigTitleEditing($atmosphereHTML);
@@ -144,8 +145,10 @@ class Atmosphere {
     instantiateTracks(tracks) {
         var track;
         var that = this;
-        tracks.forEach(function(trackName) {
-            that.addTrack(g.nameToTrackData(trackName));
+        tracks.forEach(function(trackObject) {
+            g.dataManager.getData('tracks', trackObject.id, function(result) {
+                this.addTrack(result);
+            }.bind(this));
             // TODO: instantiate them with their atmosphere-defined settings (volume, loop, delay etc.)
         }, this);
     }
@@ -252,6 +255,15 @@ class Atmosphere {
 
     getVolume() {
         return this.am.volume;
+    }
+
+    handleAutoplay() {
+        if (g.$autoplayCheckbox.is(":checked")) {
+            this.$addBtn.hide();
+            this.$replaceBtn.hide();
+            this.$stopBtn.show();
+        }
+        
     }
 }
 

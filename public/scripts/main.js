@@ -11444,28 +11444,6 @@ var SearchBar = function () {
             }
 
             _GlobalVars.g.dataManager.search(_GlobalVars.g.$searchBarInput.val(), { '_id': 1 }, this.update);
-
-            // Loop through all list items, and hide those who don't match the search query
-            // results.each(function() {
-            //     var $result = $(this);
-            //     if ((filter != "") && ($result.text().toUpperCase().indexOf(filter) > -1)) {
-            //         $result.css("display", "");
-            //         enabledCount++;
-            //         //console.log("filterResults(): Showing: " + $result.text());
-            //     } else {
-            //         $result.css("display", "none");
-            //         //console.log("filterResults(): Hiding: " + $result.text());
-            //     }
-            // });
-            // //console.log("filterResults: There are " + enabledCount + " enabled list items.");
-            // results.removeClass("selected");
-            // if (enabledCount == 0) {
-            //     g.$searchResults.css("display", "none");
-            // } else {
-            //     // Select top element
-            //     g.$searchResults.css("display", "");
-            //     g.$searchResults.find("li:visible").first().addClass("selected")
-            // }
         }
     }, {
         key: 'update',
@@ -11473,8 +11451,8 @@ var SearchBar = function () {
             var searchResults = _GlobalVars.g.$searchResults.children(),
                 enabledCount = 0;
 
-            console.log("/update/results: ");
-            console.log(results);
+            // console.log("/update/results: ");
+            // console.log(results);
 
             if (results && results.length != 0) {
                 var matchedIDs = [];
@@ -11589,6 +11567,7 @@ var Atmosphere = function () {
 
         this.createElement();
         this.instantiateTracks(atmosphereData.tracks);
+        this.handleAutoplay();
     }
 
     _createClass(Atmosphere, [{
@@ -11601,8 +11580,7 @@ var Atmosphere = function () {
             var atmosphereHTML = _GlobalVars.g.atmosphereTemplate(this.data);
 
             // Add to tracklist
-            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.$atmosphereList).show('fast'); // TODO: only add to current atmosphere tracklist
-
+            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.$atmosphereList).show('fast');
 
             this.rigTitleEditing($atmosphereHTML);
 
@@ -11715,8 +11693,10 @@ var Atmosphere = function () {
         value: function instantiateTracks(tracks) {
             var track;
             var that = this;
-            tracks.forEach(function (trackName) {
-                that.addTrack(_GlobalVars.g.nameToTrackData(trackName));
+            tracks.forEach(function (trackObject) {
+                _GlobalVars.g.dataManager.getData('tracks', trackObject.id, function (result) {
+                    this.addTrack(result);
+                }.bind(this));
                 // TODO: instantiate them with their atmosphere-defined settings (volume, loop, delay etc.)
             }, this);
         }
@@ -11833,6 +11813,15 @@ var Atmosphere = function () {
         value: function getVolume() {
             return this.am.volume;
         }
+    }, {
+        key: 'handleAutoplay',
+        value: function handleAutoplay() {
+            if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
+                this.$addBtn.hide();
+                this.$replaceBtn.hide();
+                this.$stopBtn.show();
+            }
+        }
     }]);
 
     return Atmosphere;
@@ -11936,8 +11925,9 @@ var AtmosphereManager = function () {
             } else if ($selected.hasClass("result--oneshot")) {
                 this.addTrack(_GlobalVars.g.dataManager.getData($selected));
             } else if ($selected.hasClass("result--atmosphere")) {
-                _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($selected.text() //TODO:
-                ));
+                _GlobalVars.g.dataManager.getData('atmospheres', id, function (result) {
+                    this.addAtmosphere(result);
+                }.bind(this));
             }
         }
 

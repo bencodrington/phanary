@@ -62,9 +62,9 @@ class AtmosphereManager {
                 g.dataManager.getData($selected)
             )
         } else if ($selected.hasClass("result--atmosphere")) {
-            g.atmosphereManager.addAtmosphere(
-                g.nameToAtmosphereData($selected.text()) //TODO:
-            );
+            g.dataManager.getData('atmospheres', id, function(result) {
+                this.addAtmosphere(result);
+            }.bind(this));
         }
     }
 
