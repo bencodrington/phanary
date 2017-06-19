@@ -16,6 +16,8 @@ router.get('/', function(req, res, next) {
   });
 });
 
+/* Used for getting specific information from a record given a pattern to match */
+
 router.get('/get', function(req, res, next) {
   var collection = req.query['collection'];
   var selectedInfo = req.query['selectedInfo'];
@@ -43,6 +45,8 @@ router.get('/get', function(req, res, next) {
       console.log("system.js:/read: invalid collection: " + collection);
   }
 });
+
+/* Used for getting a list of search results given a search bar input string */
 
 router.get('/search', function(req, res, next) {
   var query = req.query['query'];
@@ -108,6 +112,7 @@ router.get('/find', function(req, res, next) {
       break;
     case 'oneshots':
       doc = OneshotModel;
+      break;
     default:
       console.log("system.js:/find: invalid collection: " + collection);
       return res.end(JSON.stringify({}));
@@ -128,8 +133,11 @@ router.post('/insert', function(req, res, next) {
     filenames: parseMultilineInput(req.body.filenames),
     tags: parseMultilineInput(req.body.tags),
     tracks: parseIDs(parseMultilineInput(req.body.tracks)),
-    oneshots: parseIDs(parseMultilineInput(req.body.oneshots))
+    oneshots: parseIDs(parseMultilineInput(req.body.oneshots)),
+    samples: parseSamples(parseMultilineInput(req.body.samples))
   };
+  // console.log('item');
+  // console.log(item);
   var doc;
 
   switch(collection) {
@@ -190,7 +198,8 @@ router.post('/update', function(req, res, next) {
           console.error('system.js:/update: error, no entry found');
         } else {
           result.name = req.body.name;
-          result.filenames = req.body.filenames;
+          result.tags = parseMultilineInput(req.body.tags);
+          result.samples = parseSamples(parseMultilineInput(req.body.samples));
           result.save();
         }
         
@@ -250,6 +259,21 @@ function parseIDs(idStringArray) {
     
   });
   return idArray;
+}
+
+function parseSamples(filenameStrings) {
+  var samples = []
+  var resourceObject;
+  filenameStrings.forEach(function(value) {
+    // Skip if empty
+    if (value != '') {
+      resourceObject = {
+        'filenames': value //TODO: replace with array of values w/ different file endings
+      };
+      samples.push(resourceObject);
+    }
+  });
+  return samples;
 }
 
 module.exports = router;

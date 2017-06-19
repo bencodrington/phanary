@@ -115,7 +115,15 @@ class AudioManager {
 
     unloadTrack(trackID) {
         var track = this.audio[trackID];
-        track.unload();
+        if (this.isOneShot(track)) {
+            // One-shot
+            track.forEach(function(sample) {
+                sample.unload();
+            });
+        } else {
+            // Loop
+            track.unload();
+        }
     }
 
     isOneShot(track) {

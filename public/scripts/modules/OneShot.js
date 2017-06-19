@@ -14,7 +14,7 @@ class OneShot extends Track {
 
     constructor(trackData, atmosphere) {
         super(trackData, atmosphere);
-        this.rigOneShotControls();
+        // this.rigOneShotControls();
         this.timeOut = null;
         this.minIndex = 1;
         this.maxIndex = 2;
@@ -28,17 +28,21 @@ class OneShot extends Track {
         return g.oneshotTemplate(data);
     }
 
+    createElement() {
+        super.createElement();
+        this.rigOneShotControls();
+    }
+
     createAudio(trackData) {
         
         var $playBtn = this.$trackHTML.find(".btn--play");
         var that = this;
         var samples = [];
         var paths, howl;
-        var samples = [];
-        this.data.filenames.forEach(function(filenames) {
+        this.data.samples.forEach(function(sample) {
             // For each oneshot
             // Append track prefixes to each fallback audio path
-            paths = g.appendTrackPrefixes(filenames);
+            paths = g.appendTrackPrefixes([sample.filenames]); //TODO: remove []
             // Create new howl for the sample
             howl = new Howl({
                 src: paths,
@@ -51,7 +55,7 @@ class OneShot extends Track {
                 }
             });
 
-            samples.push(howl); //TODO:
+            samples.push(howl);
 
         });
 
@@ -59,7 +63,7 @@ class OneShot extends Track {
         this.atmosphere.am.addOneShotSet(this.id, samples);
         
         if (g.$autoplayCheckbox.is(":checked")) {
-            this.play();
+            this.start();
         }
     }
 
@@ -95,6 +99,10 @@ class OneShot extends Track {
         });
     }
 
+    begin() {
+        this.start();
+    }
+
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
     }
@@ -119,6 +127,19 @@ class OneShot extends Track {
         }, timerLength);
         this.$startBtn.hide();
         this.$stopBtn.show();
+    }
+
+    delete() {
+        this.stop();
+        this.atmosphere.am.stopTrack(this.id);
+        this.atmosphere.am.unloadTrack(this.id);
+        // Unlink data object from containing atmosphere
+        this.atmosphere.removeTrack(this.id);
+
+        // Remove DOM Element
+        this.$trackHTML.slideUp('fast', function() {
+            this.remove();
+        });
     }
 
     changeRange(minmax, difference) {

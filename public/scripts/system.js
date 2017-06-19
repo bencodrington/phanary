@@ -74,7 +74,7 @@
 "use strict";
 
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -116,6 +116,7 @@ modify.$delete.on('click', deleteData);
 
 function clearFields() {
     modify.$fields.children('input, textarea').val('');
+    updateButtons('');
 }
 
 function getCollection() {
@@ -187,19 +188,39 @@ function fetchItem(collection, id) {
         if (result.oneshots) {
             modify.$fields.children('textarea[name=oneshots]').val(parseIDs(result.oneshots));
         }
+        if (result.samples) {
+            modify.$fields.children('textarea[name=samples]').val(parseSamples(result.samples));
+        }
     });
 }
 
 function parseArray(array) {
+    if (!array) {
+        return 'n/a';
+    }
     return array.toString().split(',').join('\n');
 }
 
 function parseIDs(array) {
+    if (!array) {
+        return 'n/a';
+    }
     var ids = [];
     array.forEach(function (element) {
         ids.push(element.id);
     });
     return ids.toString().split(',').join('\n');
+}
+
+function parseSamples(array) {
+    if (!array) {
+        return 'n/a';
+    }
+    var samples = [];
+    array.forEach(function (sample) {
+        samples.push(sample.filenames); //TODO: modify for multiple filenames
+    });
+    return samples.toString().split(',').join('\n');
 }
 
 function loadCollection(collection) {
@@ -212,7 +233,7 @@ function loadCollection(collection) {
 function displayCollection(results) {
     $displayTable.find('tbody tr').remove();
     _jquery2.default.each(results, function (i, result) {
-        var $tr = (0, _jquery2.default)('<tr>').append((0, _jquery2.default)('<td>').text(result._id), (0, _jquery2.default)('<td>').text(result.name), (0, _jquery2.default)('<td>').text(result.filenames), (0, _jquery2.default)('<td>').text(result.tags), (0, _jquery2.default)('<td>').text(result.tracks), (0, _jquery2.default)('<td>').text(result.oneshots)).appendTo($displayTable.find('tbody'));
+        var $tr = (0, _jquery2.default)('<tr>').append((0, _jquery2.default)('<td>').text(result._id), (0, _jquery2.default)('<td>').text(result.name), (0, _jquery2.default)('<td>').text(parseArray(result.filenames)), (0, _jquery2.default)('<td>').text(parseArray(result.tags)), (0, _jquery2.default)('<td>').text(parseIDs(result.tracks)), (0, _jquery2.default)('<td>').text(parseIDs(result.oneshots)), (0, _jquery2.default)('<td>').text(parseSamples(result.samples))).appendTo($displayTable.find('tbody'));
 
         // Rig click event
         $tr.on('click', function () {
@@ -259,10 +280,11 @@ function getProperties() {
         'filenames': getProperty('filenames'),
         'tags': getProperty('tags'),
         'tracks': getProperty('tracks'),
-        'oneshots': getProperty('oneshots')
+        'oneshots': getProperty('oneshots'),
+        'samples': getProperty('samples')
     };
-    console.log('getProperties: properties:');
-    console.log(query);
+    // console.log('getProperties: properties:');
+    // console.log(query);
     return query;
 }
 
@@ -280,12 +302,14 @@ function getProperty(property) {
             return modify.$fields.children('textarea[name=tracks]').val();
         case 'oneshots':
             return modify.$fields.children('textarea[name=oneshots]').val();
+        case 'samples':
+            return modify.$fields.children('textarea[name=samples]').val();
     }
 }
 
 /***/ }),
 
-/***/ 2:
+/***/ 3:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!

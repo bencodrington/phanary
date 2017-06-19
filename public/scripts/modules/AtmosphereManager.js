@@ -55,12 +55,12 @@ class AtmosphereManager {
         //TODO: check if ID is legit
         if ($selected.hasClass("result--track")) {
             g.dataManager.getData('tracks', id, function(result) {
-                this.addTrack(result);
+                this.addTrack(result, 'track');
             }.bind(this));
         } else if ($selected.hasClass("result--oneshot")) {
-            this.addTrack(
-                g.dataManager.getData($selected)
-            )
+            g.dataManager.getData('oneshots', id, function(result) {
+                this.addTrack(result, 'oneshot');
+            }.bind(this));
         } else if ($selected.hasClass("result--atmosphere")) {
             g.dataManager.getData('atmospheres', id, function(result) {
                 this.addAtmosphere(result);
@@ -104,14 +104,14 @@ class AtmosphereManager {
         this.activeAtmosphere = null;
     }
     // Called when enter is pressed in the search bar, while a track is highlighted.
-    addTrack(trackData) {
+    addTrack(trackData, type) {
         // console.log('AtmosphereManager: Adding track "' + trackData.name + '" to current atmosphere.')
         if (this.activeAtmosphere == null) {
             // console.log('AtmosphereManager: Current atmosphere is null. Creating new atmosphere...');
             this.newAtmosphere();
         }
 
-        this.activeAtmosphere.addTrack(trackData);
+        this.activeAtmosphere.addTrack(trackData, type);
     }
 
     switchTo(atmosphere) {

@@ -37,6 +37,7 @@ modify.$delete.on('click', deleteData);
 
 function clearFields() {
     modify.$fields.children('input, textarea').val('');
+    updateButtons('');
 }
 
 function getCollection() {
@@ -108,20 +109,40 @@ function fetchItem(collection, id) {
         if (result.oneshots) {
             modify.$fields.children('textarea[name=oneshots]').val(parseIDs(result.oneshots));
         }
+        if (result.samples) {
+            modify.$fields.children('textarea[name=samples]').val(parseSamples(result.samples));
+        }
         
     });
 }
 
 function parseArray(array) {
+    if (!array) {
+        return 'n/a';
+    }
     return array.toString().split(',').join('\n');
 }
 
 function parseIDs(array) {
+    if (!array) {
+        return 'n/a';
+    }
     var ids = [];
     array.forEach(function(element) {
         ids.push(element.id);
     });
     return ids.toString().split(',').join('\n');
+}
+
+function parseSamples(array) {
+    if (!array) {
+        return 'n/a';
+    }
+    var samples = [];
+    array.forEach(function(sample) {
+        samples.push(sample.filenames); //TODO: modify for multiple filenames
+    });
+    return samples.toString().split(',').join('\n');
 }
 
 function loadCollection(collection) {
@@ -138,10 +159,11 @@ function displayCollection(results) {
         append(
             $('<td>').text(result._id),
             $('<td>').text(result.name),
-            $('<td>').text(result.filenames),
-            $('<td>').text(result.tags),
-            $('<td>').text(result.tracks),
-            $('<td>').text(result.oneshots)
+            $('<td>').text(parseArray(result.filenames)),
+            $('<td>').text(parseArray(result.tags)),
+            $('<td>').text(parseIDs(result.tracks)),
+            $('<td>').text(parseIDs(result.oneshots)),
+            $('<td>').text(parseSamples(result.samples))
         ).
         appendTo($displayTable.find('tbody'));
 
@@ -190,10 +212,11 @@ function getProperties() {
         'filenames': getProperty('filenames'),
         'tags': getProperty('tags'),
         'tracks': getProperty('tracks'),
-        'oneshots': getProperty('oneshots')
+        'oneshots': getProperty('oneshots'),
+        'samples': getProperty('samples')
     };
-    console.log('getProperties: properties:');
-    console.log(query);
+    // console.log('getProperties: properties:');
+    // console.log(query);
     return query;
 }
 
@@ -205,5 +228,6 @@ function getProperty(property) {
         case 'tags': return modify.$fields.children('textarea[name=tags]').val();
         case 'tracks': return modify.$fields.children('textarea[name=tracks]').val();
         case 'oneshots': return modify.$fields.children('textarea[name=oneshots]').val();
+        case 'samples': return modify.$fields.children('textarea[name=samples]').val();
     }
 }
