@@ -25,7 +25,7 @@ class GlobalVars {
         
         this.dataManager = new DataManager();
 
-        this.compileTemplates();
+        // this.compileTemplates();
 
         this.events();
     }
@@ -77,16 +77,6 @@ class GlobalVars {
             that.oneshotTemplate = template;
         });
     }
-
-    // nameToAtmosphereData(name) {
-    //     if (this.atmosphereData == null) {
-    //         console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
-    //         return;
-    //     }
-    //     var atmosphereObject = this.atmosphereData.atmospheres[name];
-    //     atmosphereObject.name = name;
-    //     return atmosphereObject;
-    // }
 
     selectElementContents(el) {
         var range = document.createRange();

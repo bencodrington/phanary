@@ -1,0 +1,22 @@
+.tags {
+    &--float-right.tags {
+        white-space: nowrap;
+        position: absolute;
+        margin-left: 1rem;
+
+        & .tag {
+            background-color: rgba($mediumBlue, 0.8);
+            border: none;
+            color: $whiteBlue;
+        }
+
+    }
+
+    & .tag {
+        padding: 0 .25rem;
+        border: 1px solid $whiteBlue;
+        border-radius: 3px;
+        color: $whiteBlue;
+        font-weight: bold;
+    }
+}

@@ -21,7 +21,7 @@ gulp.task('watch', function() {
         gulp.start('scriptsRefresh');
     });
 
-    watch('./app/assets//templates/**/*.hbs', function() {
+    watch('./app/assets/templates/**/*.hbs', function() {
         gulp.start('templatesRefresh');
     })
 
@@ -37,6 +37,6 @@ gulp.task('scriptsRefresh', ['scripts'], function() {
     browserSync.reload();
 });
 
-gulp.task('templatesRefresh', ['scripts'], function() {
-    browserSync.reload();
+gulp.task('templatesRefresh', ['templates'], function() {
+    // browserSync.reload(); Not necessary, as the changed .js files will trigger scriptsrefresh
 });

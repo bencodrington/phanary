@@ -4,6 +4,7 @@ import Track from './Track.js';
 import OneShot from './OneShot.js';
 import AudioManager from './AudioManager';
 import { g } from "./GlobalVars.js";
+require('./templates/atmosphere');
 
 class Atmosphere {
 
@@ -28,10 +29,8 @@ class Atmosphere {
 
     createElement() {
         
-        // TODO: check if template is compiled or not
-        
         // Convert object to HTML
-        var atmosphereHTML = g.atmosphereTemplate(this.data);
+        var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
         // Add to tracklist
         var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.$atmosphereList).show('fast');

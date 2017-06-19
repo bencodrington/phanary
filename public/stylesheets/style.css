@@ -700,10 +700,13 @@ a {
 .search-container__results li {
             background-color: #9FB1BC;
             border-bottom: 1px rgba(6,20,35, 0.25) solid;
-            padding: 5px;
+            padding: .5rem;
             color: #2E5266;
             cursor: pointer;
             list-style: none;
+            height: 2rem;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
 .search-container__results li.result--atmosphere {
@@ -870,8 +873,6 @@ a {
     float: left;
     position: fixed;
     background-color: #2E5266;
-    -webkit-box-shadow: 0 0 10px rgba(6,20,35, 0.8);
-            box-shadow: 0 0 10px rgba(6,20,35, 0.8);
     overflow: auto;
     z-index: 5;
 }
@@ -1380,13 +1381,12 @@ input[type=range]:focus::-moz-range-track {
     font-weight: 200;
     visibility: hidden;
     opacity: 0;
-    background-color: rgba(6,20,35, 0.5);
+    background-color: rgba(6,20,35, 0.8);
     color: #fff;
     font-family: 'Roboto', sans-serif;
     text-align: center;
     padding: 5px 10px;
     border-radius: 6px;
-    white-space: pre;
  
     /* Position the tooltip text */
     position: absolute;
@@ -1406,8 +1406,12 @@ input[type=range]:focus::-moz-range-track {
         margin-left: -5px;
         border-width: 5px;
         border-style: solid;
-        border-color: rgba(6,20,35, 0.5) transparent transparent transparent;
+        border-color: rgba(6,20,35, 0.8) transparent transparent transparent;
     }
+
+.tooltip .tooltiptext--prewritten {
+    white-space: pre;
+}
 
 /* Show the tooltip text when you mouse over the tooltip container */
 
@@ -1584,4 +1588,25 @@ input[type=range]:focus::-moz-range-track {
 
 #display-table tr:hover td {
         background-color: #AFC2CD;
+    }
+
+.tags--float-right.tags {
+        white-space: nowrap;
+        position: absolute;
+        margin-left: 1rem;
+
+    }
+
+.tags--float-right.tags .tag {
+            background-color: rgba(58,105,130, 0.8);
+            border: none;
+            color: #AFC2CD;
+        }
+
+.tags .tag {
+        padding: 0 .25rem;
+        border: 1px solid #AFC2CD;
+        border-radius: 3px;
+        color: #AFC2CD;
+        font-weight: bold;
     }

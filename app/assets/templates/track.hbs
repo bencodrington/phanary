@@ -2,7 +2,11 @@
     <div class="section__heading">
         <h4 class="section__heading__title tooltip">
             <span class="section__heading__title__text">{{name}}</span>
-            <span class="tooltiptext">Tags will go here</span>
+            <span class="tooltiptext tags">Tags:
+                {{#each tags}}
+                    <span class="tag">{{this}}</span>
+                {{/each}}
+            </span>
         </h4>
         <div class="btn btn--delete btn--medium btn--inverted">
             <div class="btn__inner">

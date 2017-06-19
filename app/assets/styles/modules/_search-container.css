@@ -93,10 +93,13 @@
         & li {
             background-color: $stormGrey;
             border-bottom: 1px rgba($deepSea, 0.25) solid;
-            padding: 5px;
+            padding: .5rem;
             color: $blueberry;
             cursor: pointer;
             list-style: none;
+            height: 2rem;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         & li.result--atmosphere {

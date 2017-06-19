@@ -1,4 +1,5 @@
 import Track from './Track.js';
+require('./templates/oneshot');
 
 import { g } from "./GlobalVars.js";
 
@@ -25,7 +26,7 @@ class OneShot extends Track {
     }
 
     template(data) {
-        return g.oneshotTemplate(data);
+        return Handlebars.templates['oneshot.hbs'](data);
     }
 
     createElement() {

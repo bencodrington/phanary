@@ -12,7 +12,8 @@ class DataManager {
         var query = {
             'collection': 'tracks',
             'selectedInfo': {
-                name: true
+                name: true,
+                tags: true
             }
         };
 
@@ -40,15 +41,16 @@ class DataManager {
         var resultHTML;
         $.each(data, function(index, object) {
             // console.log("DataManager.js: populateSearchResults: object.name: " + object.name);
-            var $resultHTML = that.generateResultHTML(object._id, object.name, type);
+            var $resultHTML = that.generateResultHTML(object, type);
             that.rigResultEvents($resultHTML);
         } );
     }
 
-    generateResultHTML(id, name, type) {
+    generateResultHTML(object, type) {
         var resultObject = {
-            _id: id,
-            name: name,
+            _id: object._id,
+            name: object.name,
+            tags: object.tags,
             type: "result--" + type
         };
         var resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
@@ -60,15 +62,7 @@ class DataManager {
             g.searchBar.select($resultHTML);
         })
         $resultHTML.on('click', function() {
-            if ($resultHTML.hasClass("result--track") || $resultHTML.hasClass("result--oneshot")) {
-                g.atmosphereManager.addTrack(
-                    g.nameToTrackData($resultHTML.text())
-                );
-            } else if ($resultHTML.hasClass("result--atmosphere")) {
-                g.atmosphereManager.addAtmosphere(
-                    g.nameToAtmosphereData($resultHTML.text())
-                );
-            }
+            g.atmosphereManager.addSelected($resultHTML);
             g.searchBar.clearSearchBar();
         });
     }
