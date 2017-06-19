@@ -1,7 +1,6 @@
 import $ from 'jquery';
 
 import { g } from "./GlobalVars.js";
-import DataReader from './DataReader';
 import Atmosphere from './Atmosphere';
 
 var activeClass = 'section--atmosphere--active';
@@ -52,7 +51,6 @@ class AtmosphereManager {
     // Called when enter is pressed in the search bar, or a result is clicked
     addSelected($selected) {
         var id = $selected.data('db-id');
-        //TODO: check if ID is legit
         if ($selected.hasClass("result--track")) {
             g.dataManager.getData('tracks', id, function(result) {
                 this.addTrack(result, 'track');

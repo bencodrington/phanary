@@ -1,1 +1,10 @@
-<li class="{{type}}" data-db-id="{{_id}}"><div class="wrapper">{{name}}</div></li>
+<li class="{{type}}" data-db-id="{{_id}}">
+    <div class="wrapper">
+        {{name}}
+        <span class="tags tags--float-right">
+            {{#each tags}}
+                <span class="tag">{{this}}</span>
+            {{/each}}
+        </span>
+    </div>
+</li>

@@ -5,7 +5,6 @@
     float: left;
     position: fixed;
     background-color: $blueberry;
-    box-shadow: 0 0 10px rgba($deepSea, 0.8);
     overflow: auto;
     z-index: 5;
     &::-webkit-scrollbar {

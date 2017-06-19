@@ -1,22 +1,18 @@
 var gulp = require('gulp');
-wrap = require('gulp-wrap'),
-declare = require('gulp-declare'),
-handlebars = require('gulp-handlebars'),
-concat = require('gulp-concat');
+var exec = require('child_process').exec;
+var commands = [
+    "handlebars app/assets/templates/searchResult.hbs -f app/assets/scripts/modules/templates/searchResult.js",
+    "handlebars app/assets/templates/atmosphere.hbs -f app/assets/scripts/modules/templates/atmosphere.js",
+    "handlebars app/assets/templates/track.hbs -f app/assets/scripts/modules/templates/track.js",
+    "handlebars app/assets/templates/oneshot.hbs -f app/assets/scripts/modules/templates/oneshot.js"
+];
 
 gulp.task('templates', function() {
-    // return gulp.src('./app/assets/templates/**/*.hbs')
-    //     .pipe(handlebars({
-    //         handlebars: require('handlebars')
-    //     }))
-    //     .pipe(wrap('Handlebars.template(<%= contents %>)'))
-    //     .pipe(declare({
-    //         namespace: 'Handlebars.templates',
-    //         noRedeclare: true, // Avoid duplicate declarations
-    //     }))
-    //     .pipe(concat('templates.js'))
-    //     .pipe(gulp.dest('./app/assets/scripts/modules/templates'));
+    commands.forEach(function(cmd) {
+        exec(cmd, function(error, stdout, stderr) {
+            console.log("Running: \'" + cmd + "\'");
+            console.log("Output:\n" + stdout);
+            console.log("Error:\n" + stderr);
+        });
+    });
 });
-
-// TODO:
-// handlebars app/assets/templates/searchResult.hbs -f app/assets/scripts/modules/templates/searchResult.js

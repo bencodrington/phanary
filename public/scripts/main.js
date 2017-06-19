@@ -276,7 +276,7 @@ var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _handlebars = __webpack_require__(42);
+var _handlebars = __webpack_require__(44);
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
@@ -314,7 +314,7 @@ var GlobalVars = function () {
 
         this.dataManager = new _DataManager2.default();
 
-        this.compileTemplates();
+        // this.compileTemplates();
 
         this.events();
     }
@@ -368,17 +368,6 @@ var GlobalVars = function () {
                 that.oneshotTemplate = template;
             });
         }
-
-        // nameToAtmosphereData(name) {
-        //     if (this.atmosphereData == null) {
-        //         console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
-        //         return;
-        //     }
-        //     var atmosphereObject = this.atmosphereData.atmospheres[name];
-        //     atmosphereObject.name = name;
-        //     return atmosphereObject;
-        // }
-
     }, {
         key: 'selectElementContents',
         value: function selectElementContents(el) {
@@ -10694,11 +10683,11 @@ var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(31);
+var _helpers = __webpack_require__(33);
 
-var _decorators = __webpack_require__(29);
+var _decorators = __webpack_require__(31);
 
-var _logger = __webpack_require__(39);
+var _logger = __webpack_require__(41);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10956,7 +10945,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+__webpack_require__(19);
+
 // Track object, contains all the data associated with a given track
+
 var Track = function () {
     function Track(trackData, atmosphere) {
         _classCallCheck(this, Track);
@@ -10975,13 +10967,11 @@ var Track = function () {
     _createClass(Track, [{
         key: 'template',
         value: function template(data) {
-            return _GlobalVars.g.trackTemplate(data);
+            return Handlebars.templates['track.hbs'](data);
         }
     }, {
         key: 'createElement',
         value: function createElement() {
-
-            // TODO: check if template is compiled or not
 
             // Convert object to HTML
             var trackHTML = this.template(this.data);
@@ -11172,7 +11162,7 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(43)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ }),
 /* 9 */
@@ -11418,7 +11408,7 @@ var _Track = __webpack_require__(6);
 
 var _Track2 = _interopRequireDefault(_Track);
 
-var _OneShot = __webpack_require__(16);
+var _OneShot = __webpack_require__(15);
 
 var _OneShot2 = _interopRequireDefault(_OneShot);
 
@@ -11431,6 +11421,8 @@ var _GlobalVars = __webpack_require__(2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+__webpack_require__(16);
 
 var Atmosphere = function () {
 
@@ -11459,10 +11451,8 @@ var Atmosphere = function () {
         key: 'createElement',
         value: function createElement() {
 
-            // TODO: check if template is compiled or not
-
             // Convert object to HTML
-            var atmosphereHTML = _GlobalVars.g.atmosphereTemplate(this.data);
+            var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
             // Add to tracklist
             var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.$atmosphereList).show('fast');
@@ -11736,10 +11726,6 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _GlobalVars = __webpack_require__(2);
 
-var _DataReader = __webpack_require__(15);
-
-var _DataReader2 = _interopRequireDefault(_DataReader);
-
 var _Atmosphere = __webpack_require__(11);
 
 var _Atmosphere2 = _interopRequireDefault(_Atmosphere);
@@ -11805,7 +11791,6 @@ var AtmosphereManager = function () {
         key: 'addSelected',
         value: function addSelected($selected) {
             var id = $selected.data('db-id');
-            //TODO: check if ID is legit
             if ($selected.hasClass("result--track")) {
                 _GlobalVars.g.dataManager.getData('tracks', id, function (result) {
                     this.addTrack(result, 'track');
@@ -12110,7 +12095,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(17);
+__webpack_require__(18);
 
 var DataManager = function () {
     function DataManager() {
@@ -12125,7 +12110,8 @@ var DataManager = function () {
             var query = {
                 'collection': 'tracks',
                 'selectedInfo': {
-                    name: true
+                    name: true,
+                    tags: true
                 }
             };
 
@@ -12154,16 +12140,17 @@ var DataManager = function () {
             var resultHTML;
             _jquery2.default.each(data, function (index, object) {
                 // console.log("DataManager.js: populateSearchResults: object.name: " + object.name);
-                var $resultHTML = that.generateResultHTML(object._id, object.name, type);
+                var $resultHTML = that.generateResultHTML(object, type);
                 that.rigResultEvents($resultHTML);
             });
         }
     }, {
         key: 'generateResultHTML',
-        value: function generateResultHTML(id, name, type) {
+        value: function generateResultHTML(object, type) {
             var resultObject = {
-                _id: id,
-                name: name,
+                _id: object._id,
+                name: object.name,
+                tags: object.tags,
                 type: "result--" + type
             };
             var resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
@@ -12176,11 +12163,7 @@ var DataManager = function () {
                 _GlobalVars.g.searchBar.select($resultHTML);
             });
             $resultHTML.on('click', function () {
-                if ($resultHTML.hasClass("result--track") || $resultHTML.hasClass("result--oneshot")) {
-                    _GlobalVars.g.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($resultHTML.text()));
-                } else if ($resultHTML.hasClass("result--atmosphere")) {
-                    _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($resultHTML.text()));
-                }
+                _GlobalVars.g.atmosphereManager.addSelected($resultHTML);
                 _GlobalVars.g.searchBar.clearSearchBar();
             });
         }
@@ -12218,65 +12201,6 @@ exports.default = DataManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// import $ from 'jquery';
-// import { g } from "./GlobalVars";
-// require('./templates/searchResult');
-
-// class DataReader {
-
-//     constructor(dataURL, callback) {
-//         this.readData(dataURL, callback);
-//     }
-
-//     // Parse JSON from file
-//     readData(file, callback){
-//         var xhr = new XMLHttpRequest();
-//         xhr.onreadystatechange = function(){
-//             if(xhr.readyState === 4 && xhr.status === 200){
-//                 callback(JSON.parse(xhr.responseText));
-//             }
-//         }
-//         xhr.open('GET', file, true);
-//         xhr.send();
-//     }
-
-//     populateSearchResults(data) {
-//         var resultObject = {};
-//         var resultHTML;
-//         $.each(data, function(name, object) {
-//             // console.log("DataReader.js: populateSearchResults: type: " + object.type);
-//             resultObject['name'] = name;
-//             resultObject['type'] = "result--" + object.type;
-//             resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
-//             var $resultHTML = $(resultHTML).appendTo(g.$searchResults);
-//             $resultHTML.on('mouseover', function() {
-//                 g.searchBar.select($resultHTML);
-//             })
-//             $resultHTML.on('click', function() {
-//                 if ($resultHTML.hasClass("result--track")) {
-//                     g.atmosphereManager.addTrack(
-//                         g.nameToTrackData($resultHTML.text())
-//                     );
-//                 } else if ($resultHTML.hasClass("result--atmosphere")) {
-//                     g.atmosphereManager.addAtmosphere(
-//                         g.nameToAtmosphereData($resultHTML.text())
-//                     );
-//                 }
-//                 g.searchBar.clearSearchBar();
-//             });
-//         } );
-//     }
-
-// }
-
-// export default DataReader;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
@@ -12300,6 +12224,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+__webpack_require__(17);
 
 // Used for setting random time ranges
 var _timesteps = [1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
@@ -12333,7 +12259,7 @@ var OneShot = function (_Track) {
     _createClass(OneShot, [{
         key: 'template',
         value: function template(data) {
-            return _GlobalVars.g.oneshotTemplate(data);
+            return Handlebars.templates['oneshot.hbs'](data);
         }
     }, {
         key: 'createElement',
@@ -12510,6 +12436,23 @@ var OneShot = function (_Track) {
 exports.default = OneShot;
 
 /***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+(function () {
+  var template = Handlebars.template,
+      templates = Handlebars.templates = Handlebars.templates || {};
+  templates['atmosphere.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
+      var helper;
+
+      return "<div class=\"section section--atmosphere\">\r\n\r\n  <div class=\"section__heading\">\r\n      <h4 class=\"section__heading__title\">\r\n        <span class=\"section__heading__title__text\">" + container.escapeExpression((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        <span class=\"atmosphere__rename\">\r\n          <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\r\n        </span>\r\n      </h4>\r\n      <div class=\"btn btn--delete btn--medium\">\r\n        <div class=\"btn__inner\">\r\n          <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n        </div>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"section__body\">\r\n    <div class=\"wrapper\">\r\n      <div class=\"section__flex\">\r\n\r\n        <div class=\"volume section__flex__item\">\r\n          <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n          <label class=\"control control--custom control--checkbox volume__mute\">\r\n            <input type=\"checkbox\" class=\"btn--mute\">\r\n            <div class=\"control__indicator control__indicator--medium\"></div>\r\n            <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n            <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n          </label>\r\n        </div>\r\n        <div class=\"section__flex__item\">\r\n          <div class=\"btn-pair\">\r\n            <div class=\"atmosphere__replace btn btn--rounded btn--medium\">\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n            <div class=\"atmosphere__add btn btn--rounded btn--medium\">\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n          </div>\r\n\r\n          <div class=\"btn btn--stop btn--rounded btn--medium\">\r\n            <div class=\"btn__inner\">\r\n              <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>";
+    }, "useData": true });
+})();
+
+/***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12521,20 +12464,75 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 (function () {
   var template = Handlebars.template,
       templates = Handlebars.templates = Handlebars.templates || {};
-  templates['searchResult.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
-      var helper,
+  templates['oneshot.hbs'] = template({ "1": function _(container, depth0, helpers, partials, data) {
+      return "                    <span class=\"tag\">" + container.escapeExpression(container.lambda(depth0, depth0)) + "</span>\r\n";
+    }, "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
+      var stack1,
+          helper,
           alias1 = depth0 != null ? depth0 : container.nullContext || {},
           alias2 = helpers.helperMissing,
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\"><div class=\"wrapper\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</div></li>";
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title tooltip\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n            <span class=\"tooltiptext tags\">Tags:\r\n" + ((stack1 = helpers.each.call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "each", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            </span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n            \r\n            <div class=\"section__flex\">\r\n                <div class=\"section__flex__item\">\r\n                    <!-- TODO: disabled/enabled -->\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--medium section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 18 */,
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+(function () {
+  var template = Handlebars.template,
+      templates = Handlebars.templates = Handlebars.templates || {};
+  templates['searchResult.hbs'] = template({ "1": function _(container, depth0, helpers, partials, data) {
+      return "                <span class=\"tag\">" + container.escapeExpression(container.lambda(depth0, depth0)) + "</span>\r\n";
+    }, "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
+      var stack1,
+          helper,
+          alias1 = depth0 != null ? depth0 : container.nullContext || {},
+          alias2 = helpers.helperMissing,
+          alias3 = "function",
+          alias4 = container.escapeExpression;
+
+      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"wrapper\">\r\n        " + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "\r\n        <span class=\"tags tags--float-right\">\r\n" + ((stack1 = helpers.each.call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "each", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "        </span>\r\n    </div>\r\n</li>";
+    }, "useData": true });
+})();
+
+/***/ }),
 /* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+(function () {
+  var template = Handlebars.template,
+      templates = Handlebars.templates = Handlebars.templates || {};
+  templates['track.hbs'] = template({ "1": function _(container, depth0, helpers, partials, data) {
+      return "                    <span class=\"tag\">" + container.escapeExpression(container.lambda(depth0, depth0)) + "</span>\r\n";
+    }, "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
+      var stack1,
+          helper,
+          alias1 = depth0 != null ? depth0 : container.nullContext || {},
+          alias2 = helpers.helperMissing,
+          alias3 = "function",
+          alias4 = container.escapeExpression;
+
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title tooltip\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n            <span class=\"tooltiptext tags\">Tags:\r\n" + ((stack1 = helpers.each.call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "each", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            </span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n            <div class=\"section__flex\">\r\n\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <!-- TODO: disabled/enabled -->\r\n                <div class=\"section__flex__item\">\r\n                    <div class=\"btn--play btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+    }, "useData": true });
+})();
+
+/***/ }),
+/* 20 */,
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12545,7 +12543,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(20);
+var _handlebarsRuntime = __webpack_require__(22);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -12555,11 +12553,11 @@ var _handlebarsCompilerAst = __webpack_require__(7);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(21);
+var _handlebarsCompilerBase = __webpack_require__(23);
 
-var _handlebarsCompilerCompiler = __webpack_require__(23);
+var _handlebarsCompilerCompiler = __webpack_require__(25);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(25);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(27);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -12606,7 +12604,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12628,7 +12626,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(41);
+var _handlebarsSafeString = __webpack_require__(43);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -12640,7 +12638,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(40);
+var _handlebarsRuntime = __webpack_require__(42);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -12679,7 +12677,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12695,15 +12693,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(26);
+var _parser = __webpack_require__(28);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(28);
+var _whitespaceControl = __webpack_require__(30);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(24);
+var _helpers = __webpack_require__(26);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -12734,7 +12732,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12907,7 +12905,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13487,7 +13485,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13724,7 +13722,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13743,7 +13741,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(22);
+var _codeGen = __webpack_require__(24);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -14859,7 +14857,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15605,7 +15603,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15798,7 +15796,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16026,7 +16024,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16038,7 +16036,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(30);
+var _decoratorsInline = __webpack_require__(32);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -16049,7 +16047,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16085,7 +16083,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16097,31 +16095,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(32);
+var _helpersBlockHelperMissing = __webpack_require__(34);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(33);
+var _helpersEach = __webpack_require__(35);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(34);
+var _helpersHelperMissing = __webpack_require__(36);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(35);
+var _helpersIf = __webpack_require__(37);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(36);
+var _helpersLog = __webpack_require__(38);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(37);
+var _helpersLookup = __webpack_require__(39);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(38);
+var _helpersWith = __webpack_require__(40);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -16138,7 +16136,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16184,7 +16182,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16285,7 +16283,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16317,7 +16315,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16353,7 +16351,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16386,7 +16384,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16405,7 +16403,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16445,7 +16443,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16499,7 +16497,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16813,7 +16811,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16835,7 +16833,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -16844,9 +16842,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(19)['default'];
+var handlebars = __webpack_require__(21)['default'];
 
-var printer = __webpack_require__(27);
+var printer = __webpack_require__(29);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -16866,7 +16864,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports) {
 
 var g;

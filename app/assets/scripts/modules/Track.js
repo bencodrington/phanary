@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 import { g } from "./GlobalVars.js";
+require('./templates/track');
 
 
 // Track object, contains all the data associated with a given track
@@ -19,12 +20,10 @@ class Track {
     }
 
     template(data) {
-        return g.trackTemplate(data);
+        return Handlebars.templates['track.hbs'](data);
     }
 
     createElement() {
-        
-        // TODO: check if template is compiled or not
         
         // Convert object to HTML
         var trackHTML = this.template(this.data);

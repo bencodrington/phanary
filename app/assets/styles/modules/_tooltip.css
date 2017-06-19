@@ -10,13 +10,12 @@
     font-weight: 200;
     visibility: hidden;
     opacity: 0;
-    background-color: rgba($deepSea, 0.5);
+    background-color: rgba($deepSea, 0.8);
     color: #fff;
     font-family: 'Roboto', sans-serif;
     text-align: center;
     padding: 5px 10px;
     border-radius: 6px;
-    white-space: pre;
  
     /* Position the tooltip text */
     position: absolute;
@@ -34,8 +33,12 @@
         margin-left: -5px;
         border-width: 5px;
         border-style: solid;
-        border-color: rgba($deepSea, 0.5) transparent transparent transparent;
+        border-color: rgba($deepSea, 0.8) transparent transparent transparent;
     }
+}
+
+.tooltip .tooltiptext--prewritten {
+    white-space: pre;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
