@@ -54,6 +54,7 @@ router.get('/search', function(req, res, next) {
   if (!selectedInfo) {
     selectedInfo = {};
   }
+  selectedInfo.score = { $meta: "textScore" };
 
   if (!query || query === "") {
     return res.end(JSON.stringify([]));
@@ -67,16 +68,16 @@ router.get('/search', function(req, res, next) {
     join('|');          // Combine with regex OR
 
   var completed = 0;    // Number of collections which have been queried
-  var allResults = [];
+  var queryResults = {
+    nameResults: [],
+    tagResults: []
+  };
   // console.log('/search query: ' + query);
   models.forEach(function(model, index) {
     model.
       // Search to see if name contains search query
       find(
-        {$or: [
-          { "name": { "$regex": queryRegex, "$options": "i" } },
-          { $text: {$search: query} }
-        ]},
+        { "name": { "$regex": queryRegex, "$options": "i" } },
         selectedInfo
       ).
       exec(function(err, results) {
@@ -85,17 +86,51 @@ router.get('/search', function(req, res, next) {
         // console.log(results);
         if (results) {
           // Append results from this operation
-          allResults = allResults.concat(results);
+          queryResults.nameResults = queryResults.nameResults.concat(results);
         }
         completed++;
         // If this is the last 'find' operation to complete
-        if (completed == models.length) {
+        if (completed == 2 * models.length) {
           // Return the results
-          return res.end(JSON.stringify(allResults));
+          return res.end(sortResults(queryResults));
+        }
+      });
+    model.
+      find(
+        { $text: {$search: query} },
+        selectedInfo
+      ).
+      sort(
+        { score: { $meta: "textScore" } }
+      ).
+      exec(function(err, results) {
+        if (err) {
+          console.error('Search failed: ' + err);
+          return res.end(JSON.stringify({}));
+        }
+        // console.log("/search results: ");
+        // console.log(results);
+        if (results) {
+          // Append results from this operation
+          queryResults.tagResults = queryResults.tagResults.concat(results);
+        }
+        completed++;
+        // If this is the last 'find' operation to complete
+        if (completed == 2 * models.length) {
+          // Return the results
+          return res.end(sortResults(queryResults));
         }
       });
   });
 });
+
+function sortResults(queryResults) {
+  //TODO: If there are results common to both sets of results, display those
+  // Else, return array with tag results first and name results second
+  console.log('sortResults: queryResults:');
+  console.log(queryResults);
+  return JSON.stringify(queryResults.nameResults);
+}
 
 /* Used for getting a specific record given the id and collection */
 
