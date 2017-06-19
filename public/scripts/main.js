@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -204,6 +204,67 @@ function appendContextPath(contextPath, id) {
 "use strict";
 
 
+exports.__esModule = true;
+
+var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
+
+function Exception(message, node) {
+  var loc = node && node.loc,
+      line = undefined,
+      column = undefined;
+  if (loc) {
+    line = loc.start.line;
+    column = loc.start.column;
+
+    message += ' - ' + line + ':' + column;
+  }
+
+  var tmp = Error.prototype.constructor.call(this, message);
+
+  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
+  for (var idx = 0; idx < errorProps.length; idx++) {
+    this[errorProps[idx]] = tmp[errorProps[idx]];
+  }
+
+  /* istanbul ignore else */
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, Exception);
+  }
+
+  try {
+    if (loc) {
+      this.lineNumber = line;
+
+      // Work around issue under safari where we can't directly set the column value
+      /* istanbul ignore next */
+      if (Object.defineProperty) {
+        Object.defineProperty(this, 'column', {
+          value: column,
+          enumerable: true
+        });
+      } else {
+        this.column = column;
+      }
+    }
+  } catch (nop) {
+    /* Ignore if the browser is very particular */
+  }
+}
+
+Exception.prototype = new Error();
+
+exports['default'] = Exception;
+module.exports = exports['default'];
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL2V4Y2VwdGlvbi5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7O0FBQ0EsSUFBTSxVQUFVLEdBQUcsQ0FBQyxhQUFhLEVBQUUsVUFBVSxFQUFFLFlBQVksRUFBRSxTQUFTLEVBQUUsTUFBTSxFQUFFLFFBQVEsRUFBRSxPQUFPLENBQUMsQ0FBQzs7QUFFbkcsU0FBUyxTQUFTLENBQUMsT0FBTyxFQUFFLElBQUksRUFBRTtBQUNoQyxNQUFJLEdBQUcsR0FBRyxJQUFJLElBQUksSUFBSSxDQUFDLEdBQUc7TUFDdEIsSUFBSSxZQUFBO01BQ0osTUFBTSxZQUFBLENBQUM7QUFDWCxNQUFJLEdBQUcsRUFBRTtBQUNQLFFBQUksR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQztBQUN0QixVQUFNLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUM7O0FBRTFCLFdBQU8sSUFBSSxLQUFLLEdBQUcsSUFBSSxHQUFHLEdBQUcsR0FBRyxNQUFNLENBQUM7R0FDeEM7O0FBRUQsTUFBSSxHQUFHLEdBQUcsS0FBSyxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLElBQUksRUFBRSxPQUFPLENBQUMsQ0FBQzs7O0FBRzFELE9BQUssSUFBSSxHQUFHLEdBQUcsQ0FBQyxFQUFFLEdBQUcsR0FBRyxVQUFVLENBQUMsTUFBTSxFQUFFLEdBQUcsRUFBRSxFQUFFO0FBQ2hELFFBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxHQUFHLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7R0FDOUM7OztBQUdELE1BQUksS0FBSyxDQUFDLGlCQUFpQixFQUFFO0FBQzNCLFNBQUssQ0FBQyxpQkFBaUIsQ0FBQyxJQUFJLEVBQUUsU0FBUyxDQUFDLENBQUM7R0FDMUM7O0FBRUQsTUFBSTtBQUNGLFFBQUksR0FBRyxFQUFFO0FBQ1AsVUFBSSxDQUFDLFVBQVUsR0FBRyxJQUFJLENBQUM7Ozs7QUFJdkIsVUFBSSxNQUFNLENBQUMsY0FBYyxFQUFFO0FBQ3pCLGNBQU0sQ0FBQyxjQUFjLENBQUMsSUFBSSxFQUFFLFFBQVEsRUFBRTtBQUNwQyxlQUFLLEVBQUUsTUFBTTtBQUNiLG9CQUFVLEVBQUUsSUFBSTtTQUNqQixDQUFDLENBQUM7T0FDSixNQUFNO0FBQ0wsWUFBSSxDQUFDLE1BQU0sR0FBRyxNQUFNLENBQUM7T0FDdEI7S0FDRjtHQUNGLENBQUMsT0FBTyxHQUFHLEVBQUU7O0dBRWI7Q0FDRjs7QUFFRCxTQUFTLENBQUMsU0FBUyxHQUFHLElBQUksS0FBSyxFQUFFLENBQUM7O3FCQUVuQixTQUFTIiwiZmlsZSI6ImV4Y2VwdGlvbi5qcyIsInNvdXJjZXNDb250ZW50IjpbIlxuY29uc3QgZXJyb3JQcm9wcyA9IFsnZGVzY3JpcHRpb24nLCAnZmlsZU5hbWUnLCAnbGluZU51bWJlcicsICdtZXNzYWdlJywgJ25hbWUnLCAnbnVtYmVyJywgJ3N0YWNrJ107XG5cbmZ1bmN0aW9uIEV4Y2VwdGlvbihtZXNzYWdlLCBub2RlKSB7XG4gIGxldCBsb2MgPSBub2RlICYmIG5vZGUubG9jLFxuICAgICAgbGluZSxcbiAgICAgIGNvbHVtbjtcbiAgaWYgKGxvYykge1xuICAgIGxpbmUgPSBsb2Muc3RhcnQubGluZTtcbiAgICBjb2x1bW4gPSBsb2Muc3RhcnQuY29sdW1uO1xuXG4gICAgbWVzc2FnZSArPSAnIC0gJyArIGxpbmUgKyAnOicgKyBjb2x1bW47XG4gIH1cblxuICBsZXQgdG1wID0gRXJyb3IucHJvdG90eXBlLmNvbnN0cnVjdG9yLmNhbGwodGhpcywgbWVzc2FnZSk7XG5cbiAgLy8gVW5mb3J0dW5hdGVseSBlcnJvcnMgYXJlIG5vdCBlbnVtZXJhYmxlIGluIENocm9tZSAoYXQgbGVhc3QpLCBzbyBgZm9yIHByb3AgaW4gdG1wYCBkb2Vzbid0IHdvcmsuXG4gIGZvciAobGV0IGlkeCA9IDA7IGlkeCA8IGVycm9yUHJvcHMubGVuZ3RoOyBpZHgrKykge1xuICAgIHRoaXNbZXJyb3JQcm9wc1tpZHhdXSA9IHRtcFtlcnJvclByb3BzW2lkeF1dO1xuICB9XG5cbiAgLyogaXN0YW5idWwgaWdub3JlIGVsc2UgKi9cbiAgaWYgKEVycm9yLmNhcHR1cmVTdGFja1RyYWNlKSB7XG4gICAgRXJyb3IuY2FwdHVyZVN0YWNrVHJhY2UodGhpcywgRXhjZXB0aW9uKTtcbiAgfVxuXG4gIHRyeSB7XG4gICAgaWYgKGxvYykge1xuICAgICAgdGhpcy5saW5lTnVtYmVyID0gbGluZTtcblxuICAgICAgLy8gV29yayBhcm91bmQgaXNzdWUgdW5kZXIgc2FmYXJpIHdoZXJlIHdlIGNhbid0IGRpcmVjdGx5IHNldCB0aGUgY29sdW1uIHZhbHVlXG4gICAgICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICAgICAgaWYgKE9iamVjdC5kZWZpbmVQcm9wZXJ0eSkge1xuICAgICAgICBPYmplY3QuZGVmaW5lUHJvcGVydHkodGhpcywgJ2NvbHVtbicsIHtcbiAgICAgICAgICB2YWx1ZTogY29sdW1uLFxuICAgICAgICAgIGVudW1lcmFibGU6IHRydWVcbiAgICAgICAgfSk7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICB0aGlzLmNvbHVtbiA9IGNvbHVtbjtcbiAgICAgIH1cbiAgICB9XG4gIH0gY2F0Y2ggKG5vcCkge1xuICAgIC8qIElnbm9yZSBpZiB0aGUgYnJvd3NlciBpcyB2ZXJ5IHBhcnRpY3VsYXIgKi9cbiAgfVxufVxuXG5FeGNlcHRpb24ucHJvdG90eXBlID0gbmV3IEVycm9yKCk7XG5cbmV4cG9ydCBkZWZhdWx0IEV4Y2VwdGlvbjtcbiJdfQ==
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -211,7 +272,7 @@ exports.g = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -219,24 +280,17 @@ var _handlebars = __webpack_require__(42);
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
-var _DataReader = __webpack_require__(6);
-
-var _DataReader2 = _interopRequireDefault(_DataReader);
-
-var _DataManager = __webpack_require__(16);
+var _DataManager = __webpack_require__(14);
 
 var _DataManager2 = _interopRequireDefault(_DataManager);
 
-var _AtmosphereManager = __webpack_require__(14);
+var _AtmosphereManager = __webpack_require__(12);
 
 var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// var trackDataURL = "/data/tracks.json";
-// var atmosphereDataURL = "/data/atmospheres.json";
 
 var GlobalVars = function () {
     // Do all jquery searches here, then other classes can import this file as g and use g.$trackList for example
@@ -259,8 +313,6 @@ var GlobalVars = function () {
         this.atmosphereManager = new _AtmosphereManager2.default();
 
         this.dataManager = new _DataManager2.default();
-        // this.trackDataReader = new DataReader(trackDataURL, this.onTrackDataReadComplete.bind(this));
-        // this.atmosphereDataReader = new DataReader(atmosphereDataURL, this.onAtmosphereDataReadComplete.bind(this));
 
         this.compileTemplates();
 
@@ -297,17 +349,6 @@ var GlobalVars = function () {
                 this.$editingTitle = null;
             }
         }
-
-        // onTrackDataReadComplete(trackData) {
-        //     this.trackData = trackData;
-        //     this.trackDataReader.populateSearchResults(trackData.tracks);
-        // }
-
-        // onAtmosphereDataReadComplete(atmosphereData) {
-        //     this.atmosphereData = atmosphereData;
-        //     this.atmosphereDataReader.populateSearchResults(atmosphereData.atmospheres);
-        // }
-
     }, {
         key: 'compileTemplates',
         value: function compileTemplates() {
@@ -327,17 +368,17 @@ var GlobalVars = function () {
                 that.oneshotTemplate = template;
             });
         }
-    }, {
-        key: 'nameToAtmosphereData',
-        value: function nameToAtmosphereData(name) {
-            if (this.atmosphereData == null) {
-                console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
-                return;
-            }
-            var atmosphereObject = this.atmosphereData.atmospheres[name];
-            atmosphereObject.name = name;
-            return atmosphereObject;
-        }
+
+        // nameToAtmosphereData(name) {
+        //     if (this.atmosphereData == null) {
+        //         console.error("Atmosphere Data failed to fetch from server. Cannot add atmosphere.");
+        //         return;
+        //     }
+        //     var atmosphereObject = this.atmosphereData.atmospheres[name];
+        //     atmosphereObject.name = name;
+        //     return atmosphereObject;
+        // }
+
     }, {
         key: 'selectElementContents',
         value: function selectElementContents(el) {
@@ -375,7 +416,7 @@ var GlobalVars = function () {
 var g = exports.g = new GlobalVars();
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10635,67 +10676,6 @@ return jQuery;
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
-
-function Exception(message, node) {
-  var loc = node && node.loc,
-      line = undefined,
-      column = undefined;
-  if (loc) {
-    line = loc.start.line;
-    column = loc.start.column;
-
-    message += ' - ' + line + ':' + column;
-  }
-
-  var tmp = Error.prototype.constructor.call(this, message);
-
-  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
-  for (var idx = 0; idx < errorProps.length; idx++) {
-    this[errorProps[idx]] = tmp[errorProps[idx]];
-  }
-
-  /* istanbul ignore else */
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, Exception);
-  }
-
-  try {
-    if (loc) {
-      this.lineNumber = line;
-
-      // Work around issue under safari where we can't directly set the column value
-      /* istanbul ignore next */
-      if (Object.defineProperty) {
-        Object.defineProperty(this, 'column', {
-          value: column,
-          enumerable: true
-        });
-      } else {
-        this.column = column;
-      }
-    }
-  } catch (nop) {
-    /* Ignore if the browser is very particular */
-  }
-}
-
-Exception.prototype = new Error();
-
-exports['default'] = Exception;
-module.exports = exports['default'];
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL2V4Y2VwdGlvbi5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7O0FBQ0EsSUFBTSxVQUFVLEdBQUcsQ0FBQyxhQUFhLEVBQUUsVUFBVSxFQUFFLFlBQVksRUFBRSxTQUFTLEVBQUUsTUFBTSxFQUFFLFFBQVEsRUFBRSxPQUFPLENBQUMsQ0FBQzs7QUFFbkcsU0FBUyxTQUFTLENBQUMsT0FBTyxFQUFFLElBQUksRUFBRTtBQUNoQyxNQUFJLEdBQUcsR0FBRyxJQUFJLElBQUksSUFBSSxDQUFDLEdBQUc7TUFDdEIsSUFBSSxZQUFBO01BQ0osTUFBTSxZQUFBLENBQUM7QUFDWCxNQUFJLEdBQUcsRUFBRTtBQUNQLFFBQUksR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQztBQUN0QixVQUFNLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUM7O0FBRTFCLFdBQU8sSUFBSSxLQUFLLEdBQUcsSUFBSSxHQUFHLEdBQUcsR0FBRyxNQUFNLENBQUM7R0FDeEM7O0FBRUQsTUFBSSxHQUFHLEdBQUcsS0FBSyxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLElBQUksRUFBRSxPQUFPLENBQUMsQ0FBQzs7O0FBRzFELE9BQUssSUFBSSxHQUFHLEdBQUcsQ0FBQyxFQUFFLEdBQUcsR0FBRyxVQUFVLENBQUMsTUFBTSxFQUFFLEdBQUcsRUFBRSxFQUFFO0FBQ2hELFFBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxHQUFHLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7R0FDOUM7OztBQUdELE1BQUksS0FBSyxDQUFDLGlCQUFpQixFQUFFO0FBQzNCLFNBQUssQ0FBQyxpQkFBaUIsQ0FBQyxJQUFJLEVBQUUsU0FBUyxDQUFDLENBQUM7R0FDMUM7O0FBRUQsTUFBSTtBQUNGLFFBQUksR0FBRyxFQUFFO0FBQ1AsVUFBSSxDQUFDLFVBQVUsR0FBRyxJQUFJLENBQUM7Ozs7QUFJdkIsVUFBSSxNQUFNLENBQUMsY0FBYyxFQUFFO0FBQ3pCLGNBQU0sQ0FBQyxjQUFjLENBQUMsSUFBSSxFQUFFLFFBQVEsRUFBRTtBQUNwQyxlQUFLLEVBQUUsTUFBTTtBQUNiLG9CQUFVLEVBQUUsSUFBSTtTQUNqQixDQUFDLENBQUM7T0FDSixNQUFNO0FBQ0wsWUFBSSxDQUFDLE1BQU0sR0FBRyxNQUFNLENBQUM7T0FDdEI7S0FDRjtHQUNGLENBQUMsT0FBTyxHQUFHLEVBQUU7O0dBRWI7Q0FDRjs7QUFFRCxTQUFTLENBQUMsU0FBUyxHQUFHLElBQUksS0FBSyxFQUFFLENBQUM7O3FCQUVuQixTQUFTIiwiZmlsZSI6ImV4Y2VwdGlvbi5qcyIsInNvdXJjZXNDb250ZW50IjpbIlxuY29uc3QgZXJyb3JQcm9wcyA9IFsnZGVzY3JpcHRpb24nLCAnZmlsZU5hbWUnLCAnbGluZU51bWJlcicsICdtZXNzYWdlJywgJ25hbWUnLCAnbnVtYmVyJywgJ3N0YWNrJ107XG5cbmZ1bmN0aW9uIEV4Y2VwdGlvbihtZXNzYWdlLCBub2RlKSB7XG4gIGxldCBsb2MgPSBub2RlICYmIG5vZGUubG9jLFxuICAgICAgbGluZSxcbiAgICAgIGNvbHVtbjtcbiAgaWYgKGxvYykge1xuICAgIGxpbmUgPSBsb2Muc3RhcnQubGluZTtcbiAgICBjb2x1bW4gPSBsb2Muc3RhcnQuY29sdW1uO1xuXG4gICAgbWVzc2FnZSArPSAnIC0gJyArIGxpbmUgKyAnOicgKyBjb2x1bW47XG4gIH1cblxuICBsZXQgdG1wID0gRXJyb3IucHJvdG90eXBlLmNvbnN0cnVjdG9yLmNhbGwodGhpcywgbWVzc2FnZSk7XG5cbiAgLy8gVW5mb3J0dW5hdGVseSBlcnJvcnMgYXJlIG5vdCBlbnVtZXJhYmxlIGluIENocm9tZSAoYXQgbGVhc3QpLCBzbyBgZm9yIHByb3AgaW4gdG1wYCBkb2Vzbid0IHdvcmsuXG4gIGZvciAobGV0IGlkeCA9IDA7IGlkeCA8IGVycm9yUHJvcHMubGVuZ3RoOyBpZHgrKykge1xuICAgIHRoaXNbZXJyb3JQcm9wc1tpZHhdXSA9IHRtcFtlcnJvclByb3BzW2lkeF1dO1xuICB9XG5cbiAgLyogaXN0YW5idWwgaWdub3JlIGVsc2UgKi9cbiAgaWYgKEVycm9yLmNhcHR1cmVTdGFja1RyYWNlKSB7XG4gICAgRXJyb3IuY2FwdHVyZVN0YWNrVHJhY2UodGhpcywgRXhjZXB0aW9uKTtcbiAgfVxuXG4gIHRyeSB7XG4gICAgaWYgKGxvYykge1xuICAgICAgdGhpcy5saW5lTnVtYmVyID0gbGluZTtcblxuICAgICAgLy8gV29yayBhcm91bmQgaXNzdWUgdW5kZXIgc2FmYXJpIHdoZXJlIHdlIGNhbid0IGRpcmVjdGx5IHNldCB0aGUgY29sdW1uIHZhbHVlXG4gICAgICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICAgICAgaWYgKE9iamVjdC5kZWZpbmVQcm9wZXJ0eSkge1xuICAgICAgICBPYmplY3QuZGVmaW5lUHJvcGVydHkodGhpcywgJ2NvbHVtbicsIHtcbiAgICAgICAgICB2YWx1ZTogY29sdW1uLFxuICAgICAgICAgIGVudW1lcmFibGU6IHRydWVcbiAgICAgICAgfSk7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICB0aGlzLmNvbHVtbiA9IGNvbHVtbjtcbiAgICAgIH1cbiAgICB9XG4gIH0gY2F0Y2ggKG5vcCkge1xuICAgIC8qIElnbm9yZSBpZiB0aGUgYnJvd3NlciBpcyB2ZXJ5IHBhcnRpY3VsYXIgKi9cbiAgfVxufVxuXG5FeGNlcHRpb24ucHJvdG90eXBlID0gbmV3IEVycm9yKCk7XG5cbmV4cG9ydCBkZWZhdWx0IEV4Y2VwdGlvbjtcbiJdfQ==
-
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10710,7 +10690,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -10818,7 +10798,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -10966,89 +10946,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-__webpack_require__(8);
-
-var DataReader = function () {
-    function DataReader(dataURL, callback) {
-        _classCallCheck(this, DataReader);
-
-        this.readData(dataURL, callback);
-    }
-
-    // Parse JSON from file
-
-
-    _createClass(DataReader, [{
-        key: 'readData',
-        value: function readData(file, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    callback(JSON.parse(xhr.responseText));
-                }
-            };
-            xhr.open('GET', file, true);
-            xhr.send();
-        }
-    }, {
-        key: 'populateSearchResults',
-        value: function populateSearchResults(data) {
-            var resultObject = {};
-            var resultHTML;
-            _jquery2.default.each(data, function (name, object) {
-                // console.log("DataReader.js: populateSearchResults: type: " + object.type);
-                resultObject['name'] = name;
-                resultObject['type'] = "result--" + object.type;
-                resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
-                var $resultHTML = (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
-                $resultHTML.on('mouseover', function () {
-                    _GlobalVars.g.searchBar.select($resultHTML);
-                });
-                $resultHTML.on('click', function () {
-                    if ($resultHTML.hasClass("result--track")) {
-                        _GlobalVars.g.atmosphereManager.addTrack(_GlobalVars.g.nameToTrackData($resultHTML.text()));
-                    } else if ($resultHTML.hasClass("result--atmosphere")) {
-                        _GlobalVars.g.atmosphereManager.addAtmosphere(_GlobalVars.g.nameToAtmosphereData($resultHTML.text()));
-                    }
-                    _GlobalVars.g.searchBar.clearSearchBar();
-                });
-            });
-        }
-    }]);
-
-    return DataReader;
-}();
-
-exports.default = DataReader;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11144,6 +11046,11 @@ var Track = function () {
             }
         }
     }, {
+        key: 'begin',
+        value: function begin() {
+            this.play();
+        }
+    }, {
         key: 'play',
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
@@ -11202,30 +11109,7 @@ var Track = function () {
 exports.default = Track;
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-(function () {
-  var template = Handlebars.template,
-      templates = Handlebars.templates = Handlebars.templates || {};
-  templates['searchResult.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
-      var helper,
-          alias1 = depth0 != null ? depth0 : container.nullContext || {},
-          alias2 = helpers.helperMissing,
-          alias3 = "function",
-          alias4 = container.escapeExpression;
-
-      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\"><div class=\"wrapper\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</div></li>";
-    }, "useData": true });
-})();
-
-/***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11263,7 +11147,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 10 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11291,7 +11175,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(43)))
 
 /***/ }),
-/* 11 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11303,11 +11187,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11496,17 +11380,17 @@ var SearchBar = function () {
 exports.default = SearchBar;
 
 /***/ }),
-/* 12 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _SearchBar = __webpack_require__(11);
+var _SearchBar = __webpack_require__(9);
 
 var _SearchBar2 = _interopRequireDefault(_SearchBar);
 
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11514,7 +11398,7 @@ var searchBar = new _SearchBar2.default();
 _GlobalVars.g.searchBar = searchBar;
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11526,23 +11410,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _Track = __webpack_require__(7);
+var _Track = __webpack_require__(6);
 
 var _Track2 = _interopRequireDefault(_Track);
 
-var _OneShot = __webpack_require__(17);
+var _OneShot = __webpack_require__(16);
 
 var _OneShot2 = _interopRequireDefault(_OneShot);
 
-var _AudioManager = __webpack_require__(15);
+var _AudioManager = __webpack_require__(13);
 
 var _AudioManager2 = _interopRequireDefault(_AudioManager);
 
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11566,7 +11450,8 @@ var Atmosphere = function () {
         this.am = new _AudioManager2.default(); // Controls this atmosphere's list of audio sources
 
         this.createElement();
-        this.instantiateTracks(atmosphereData.tracks);
+        this.instantiateTracks(atmosphereData.tracks, 'tracks', 'track');
+        this.instantiateTracks(atmosphereData.oneshots, 'oneshots', 'oneshot');
         this.handleAutoplay();
     }
 
@@ -11690,19 +11575,22 @@ var Atmosphere = function () {
         }
     }, {
         key: 'instantiateTracks',
-        value: function instantiateTracks(tracks) {
+        value: function instantiateTracks(tracks, collection, type) {
+            if (!tracks) {
+                return;
+            }
             var track;
             var that = this;
             tracks.forEach(function (trackObject) {
-                _GlobalVars.g.dataManager.getData('tracks', trackObject.id, function (result) {
-                    this.addTrack(result);
+                _GlobalVars.g.dataManager.getData(collection, trackObject.id, function (result) {
+                    this.addTrack(result, type);
                 }.bind(this));
                 // TODO: instantiate them with their atmosphere-defined settings (volume, loop, delay etc.)
             }, this);
         }
     }, {
         key: 'addTrack',
-        value: function addTrack(trackObject) {
+        value: function addTrack(trackObject, type) {
             // console.log("Adding track: " + trackObject.name);
             // Get track information
             trackObject.id = this.idCounter;
@@ -11711,7 +11599,7 @@ var Atmosphere = function () {
 
             // Create track data object
             var track;
-            if (trackObject.type === "oneshot") {
+            if (type === "oneshot") {
                 // OneShot
                 track = new _OneShot2.default(trackObject, this);
             } else {
@@ -11770,7 +11658,7 @@ var Atmosphere = function () {
             // console.log('playing tracks');
             this.tracks.forEach(function (element) {
                 if (element != null) {
-                    element.play();
+                    element.begin();
                 }
             });
 
@@ -11830,7 +11718,7 @@ var Atmosphere = function () {
 exports.default = Atmosphere;
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11842,17 +11730,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
-var _DataReader = __webpack_require__(6);
+var _DataReader = __webpack_require__(15);
 
 var _DataReader2 = _interopRequireDefault(_DataReader);
 
-var _Atmosphere = __webpack_require__(13);
+var _Atmosphere = __webpack_require__(11);
 
 var _Atmosphere2 = _interopRequireDefault(_Atmosphere);
 
@@ -11920,10 +11808,12 @@ var AtmosphereManager = function () {
             //TODO: check if ID is legit
             if ($selected.hasClass("result--track")) {
                 _GlobalVars.g.dataManager.getData('tracks', id, function (result) {
-                    this.addTrack(result);
+                    this.addTrack(result, 'track');
                 }.bind(this));
             } else if ($selected.hasClass("result--oneshot")) {
-                this.addTrack(_GlobalVars.g.dataManager.getData($selected));
+                _GlobalVars.g.dataManager.getData('oneshots', id, function (result) {
+                    this.addTrack(result, 'oneshot');
+                }.bind(this));
             } else if ($selected.hasClass("result--atmosphere")) {
                 _GlobalVars.g.dataManager.getData('atmospheres', id, function (result) {
                     this.addAtmosphere(result);
@@ -11975,14 +11865,14 @@ var AtmosphereManager = function () {
 
     }, {
         key: 'addTrack',
-        value: function addTrack(trackData) {
+        value: function addTrack(trackData, type) {
             // console.log('AtmosphereManager: Adding track "' + trackData.name + '" to current atmosphere.')
             if (this.activeAtmosphere == null) {
                 // console.log('AtmosphereManager: Current atmosphere is null. Creating new atmosphere...');
                 this.newAtmosphere();
             }
 
-            this.activeAtmosphere.addTrack(trackData);
+            this.activeAtmosphere.addTrack(trackData, type);
         }
     }, {
         key: 'switchTo',
@@ -12037,7 +11927,7 @@ var AtmosphereManager = function () {
 exports.default = AtmosphereManager;
 
 /***/ }),
-/* 15 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12049,7 +11939,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12175,7 +12065,15 @@ var AudioManager = function () {
         key: 'unloadTrack',
         value: function unloadTrack(trackID) {
             var track = this.audio[trackID];
-            track.unload();
+            if (this.isOneShot(track)) {
+                // One-shot
+                track.forEach(function (sample) {
+                    sample.unload();
+                });
+            } else {
+                // Loop
+                track.unload();
+            }
         }
     }, {
         key: 'isOneShot',
@@ -12190,7 +12088,7 @@ var AudioManager = function () {
 exports.default = AudioManager;
 
 /***/ }),
-/* 16 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12202,17 +12100,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(8);
+__webpack_require__(17);
 
 var DataManager = function () {
     function DataManager() {
@@ -12232,19 +12130,19 @@ var DataManager = function () {
             };
 
             _jquery2.default.getJSON('/system/get', query, function (data) {
-                console.log('tracks retrieved');
+                console.log('track names retrieved');
                 console.log(data);
                 this.populateSearchResults(data, 'track');
             }.bind(this));
             query.collection = 'atmospheres';
             _jquery2.default.getJSON('/system/get', query, function (data) {
-                console.log('atmospheres retrieved');
+                console.log('atmosphere names retrieved');
                 console.log(data);
                 this.populateSearchResults(data, 'atmosphere');
             }.bind(this));
             query.collection = 'oneshots';
             _jquery2.default.getJSON('/system/get', query, function (data) {
-                console.log('oneshots retrieved');
+                console.log('oneshot names retrieved');
                 console.log(data);
                 this.populateSearchResults(data, 'oneshot');
             }.bind(this));
@@ -12316,7 +12214,66 @@ var DataManager = function () {
 exports.default = DataManager;
 
 /***/ }),
-/* 17 */
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+// import $ from 'jquery';
+// import { g } from "./GlobalVars";
+// require('./templates/searchResult');
+
+// class DataReader {
+
+//     constructor(dataURL, callback) {
+//         this.readData(dataURL, callback);
+//     }
+
+//     // Parse JSON from file
+//     readData(file, callback){
+//         var xhr = new XMLHttpRequest();
+//         xhr.onreadystatechange = function(){
+//             if(xhr.readyState === 4 && xhr.status === 200){
+//                 callback(JSON.parse(xhr.responseText));
+//             }
+//         }
+//         xhr.open('GET', file, true);
+//         xhr.send();
+//     }
+
+//     populateSearchResults(data) {
+//         var resultObject = {};
+//         var resultHTML;
+//         $.each(data, function(name, object) {
+//             // console.log("DataReader.js: populateSearchResults: type: " + object.type);
+//             resultObject['name'] = name;
+//             resultObject['type'] = "result--" + object.type;
+//             resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
+//             var $resultHTML = $(resultHTML).appendTo(g.$searchResults);
+//             $resultHTML.on('mouseover', function() {
+//                 g.searchBar.select($resultHTML);
+//             })
+//             $resultHTML.on('click', function() {
+//                 if ($resultHTML.hasClass("result--track")) {
+//                     g.atmosphereManager.addTrack(
+//                         g.nameToTrackData($resultHTML.text())
+//                     );
+//                 } else if ($resultHTML.hasClass("result--atmosphere")) {
+//                     g.atmosphereManager.addAtmosphere(
+//                         g.nameToAtmosphereData($resultHTML.text())
+//                     );
+//                 }
+//                 g.searchBar.clearSearchBar();
+//             });
+//         } );
+//     }
+
+// }
+
+// export default DataReader;
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12326,13 +12283,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Track2 = __webpack_require__(7);
+var _Track2 = __webpack_require__(6);
 
 var _Track3 = _interopRequireDefault(_Track2);
 
-var _GlobalVars = __webpack_require__(1);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12358,9 +12317,9 @@ var OneShot = function (_Track) {
     function OneShot(trackData, atmosphere) {
         _classCallCheck(this, OneShot);
 
+        // this.rigOneShotControls();
         var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere));
 
-        _this.rigOneShotControls();
         _this.timeOut = null;
         _this.minIndex = 1;
         _this.maxIndex = 2;
@@ -12377,6 +12336,12 @@ var OneShot = function (_Track) {
             return _GlobalVars.g.oneshotTemplate(data);
         }
     }, {
+        key: 'createElement',
+        value: function createElement() {
+            _get(OneShot.prototype.__proto__ || Object.getPrototypeOf(OneShot.prototype), 'createElement', this).call(this);
+            this.rigOneShotControls();
+        }
+    }, {
         key: 'createAudio',
         value: function createAudio(trackData) {
 
@@ -12384,11 +12349,10 @@ var OneShot = function (_Track) {
             var that = this;
             var samples = [];
             var paths, howl;
-            var samples = [];
-            this.data.filenames.forEach(function (filenames) {
+            this.data.samples.forEach(function (sample) {
                 // For each oneshot
                 // Append track prefixes to each fallback audio path
-                paths = _GlobalVars.g.appendTrackPrefixes(filenames);
+                paths = _GlobalVars.g.appendTrackPrefixes([sample.filenames]); //TODO: remove []
                 // Create new howl for the sample
                 howl = new Howl({
                     src: paths,
@@ -12401,14 +12365,14 @@ var OneShot = function (_Track) {
                     }
                 });
 
-                samples.push(howl); //TODO:
+                samples.push(howl);
             });
 
             // Add to audio manager
             this.atmosphere.am.addOneShotSet(this.id, samples);
 
             if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
-                this.play();
+                this.start();
             }
         }
     }, {
@@ -12445,6 +12409,11 @@ var OneShot = function (_Track) {
             });
         }
     }, {
+        key: 'begin',
+        value: function begin() {
+            this.start();
+        }
+    }, {
         key: 'play',
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
@@ -12472,6 +12441,20 @@ var OneShot = function (_Track) {
             }, timerLength);
             this.$startBtn.hide();
             this.$stopBtn.show();
+        }
+    }, {
+        key: 'delete',
+        value: function _delete() {
+            this.stop();
+            this.atmosphere.am.stopTrack(this.id);
+            this.atmosphere.am.unloadTrack(this.id);
+            // Unlink data object from containing atmosphere
+            this.atmosphere.removeTrack(this.id);
+
+            // Remove DOM Element
+            this.$trackHTML.slideUp('fast', function () {
+                this.remove();
+            });
         }
     }, {
         key: 'changeRange',
@@ -12527,6 +12510,29 @@ var OneShot = function (_Track) {
 exports.default = OneShot;
 
 /***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+(function () {
+  var template = Handlebars.template,
+      templates = Handlebars.templates = Handlebars.templates || {};
+  templates['searchResult.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
+      var helper,
+          alias1 = depth0 != null ? depth0 : container.nullContext || {},
+          alias2 = helpers.helperMissing,
+          alias3 = "function",
+          alias4 = container.escapeExpression;
+
+      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\"><div class=\"wrapper\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</div></li>";
+    }, "useData": true });
+})();
+
+/***/ }),
 /* 18 */,
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -12545,7 +12551,7 @@ var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
 // Compiler imports
 
-var _handlebarsCompilerAst = __webpack_require__(9);
+var _handlebarsCompilerAst = __webpack_require__(7);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
@@ -12561,7 +12567,7 @@ var _handlebarsCompilerVisitor = __webpack_require__(5);
 
 var _handlebarsCompilerVisitor2 = _interopRequireDefault(_handlebarsCompilerVisitor);
 
-var _handlebarsNoConflict = __webpack_require__(10);
+var _handlebarsNoConflict = __webpack_require__(8);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -12626,7 +12632,7 @@ var _handlebarsSafeString = __webpack_require__(41);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
-var _handlebarsException = __webpack_require__(3);
+var _handlebarsException = __webpack_require__(1);
 
 var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 
@@ -12638,7 +12644,7 @@ var _handlebarsRuntime = __webpack_require__(40);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
-var _handlebarsNoConflict = __webpack_require__(10);
+var _handlebarsNoConflict = __webpack_require__(8);
 
 var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -12917,13 +12923,13 @@ exports.compile = compile;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _ast = __webpack_require__(9);
+var _ast = __webpack_require__(7);
 
 var _ast2 = _interopRequireDefault(_ast);
 
@@ -13502,7 +13508,7 @@ exports.preparePartialBlock = preparePartialBlock;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -13731,7 +13737,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _base = __webpack_require__(4);
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16191,7 +16197,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16290,7 +16296,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16518,7 +16524,7 @@ var _utils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_utils);
 
-var _exception = __webpack_require__(3);
+var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 

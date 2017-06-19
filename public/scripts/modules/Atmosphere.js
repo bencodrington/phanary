@@ -21,7 +21,8 @@ class Atmosphere {
         this.am = new AudioManager();         // Controls this atmosphere's list of audio sources
 
         this.createElement();
-        this.instantiateTracks(atmosphereData.tracks);
+        this.instantiateTracks(atmosphereData.tracks, 'tracks', 'track');
+        this.instantiateTracks(atmosphereData.oneshots, 'oneshots', 'oneshot');
         this.handleAutoplay();
     }
 
@@ -142,18 +143,21 @@ class Atmosphere {
         });
     }
 
-    instantiateTracks(tracks) {
+    instantiateTracks(tracks, collection, type) {
+        if (!tracks) {
+            return;
+        }
         var track;
         var that = this;
         tracks.forEach(function(trackObject) {
-            g.dataManager.getData('tracks', trackObject.id, function(result) {
-                this.addTrack(result);
+            g.dataManager.getData(collection, trackObject.id, function(result) {
+                this.addTrack(result, type);
             }.bind(this));
             // TODO: instantiate them with their atmosphere-defined settings (volume, loop, delay etc.)
         }, this);
     }
 
-    addTrack(trackObject) {
+    addTrack(trackObject, type) {
         // console.log("Adding track: " + trackObject.name);
         // Get track information
         trackObject.id = this.idCounter;
@@ -162,7 +166,7 @@ class Atmosphere {
         
         // Create track data object
         var track;
-        if (trackObject.type === "oneshot") {
+        if (type === "oneshot") {
             // OneShot
             track = new OneShot(trackObject, this);
         } else {
@@ -216,7 +220,7 @@ class Atmosphere {
         // console.log('playing tracks');
         this.tracks.forEach(function(element) {
             if (element != null) {
-                element.play();
+                element.begin();
             }
         });
 

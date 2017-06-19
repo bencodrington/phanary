@@ -92,6 +92,10 @@ class Track {
         }
     }
 
+    begin() {
+        this.play();
+    }
+
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
         // Disable/hide play button
