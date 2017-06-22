@@ -25,6 +25,9 @@ gulp.task('watch', function() {
         gulp.start('templatesRefresh');
     })
 
+    watch('./app/assets/audio/*', function() {
+        gulp.start('audioRefresh');
+    });
 
 });
 
@@ -39,4 +42,8 @@ gulp.task('scriptsRefresh', ['scripts'], function() {
 
 gulp.task('templatesRefresh', ['templates'], function() {
     // browserSync.reload(); Not necessary, as the changed .js files will trigger scriptsrefresh
+});
+
+gulp.task('audioRefresh', function() {
+    browserSync.reload();
 });

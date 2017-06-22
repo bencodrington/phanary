@@ -124,12 +124,13 @@ router.get('/search', function(req, res, next) {
   });
 });
 
+//TODO:
 function sortResults(queryResults) {
   //TODO: If there are results common to both sets of results, display those
   // Else, return array with tag results first and name results second
   console.log('sortResults: queryResults:');
   console.log(queryResults);
-  return JSON.stringify(queryResults.nameResults);
+  return JSON.stringify(queryResults.tagResults.concat(queryResults.nameResults));
 }
 
 /* Used for getting a specific record given the id and collection */
@@ -165,11 +166,12 @@ router.post('/insert', function(req, res, next) {
   var collection = req.body.collection;
   var item = {
     name: req.body.name,
-    filenames: parseMultilineInput(req.body.filenames),
+    filename: req.body.filename,
     tags: parseMultilineInput(req.body.tags),
     tracks: parseIDs(parseMultilineInput(req.body.tracks)),
     oneshots: parseIDs(parseMultilineInput(req.body.oneshots)),
-    samples: parseSamples(parseMultilineInput(req.body.samples))
+    samples: parseSamples(parseMultilineInput(req.body.samples)),
+    source: req.body.source
   };
   // console.log('item');
   // console.log(item);
@@ -206,8 +208,9 @@ router.post('/update', function(req, res, next) {
           console.error('system.js:/update: error, no entry found for id: ' + id);
         } else {
           result.name = req.body.name;
-          result.filenames = parseMultilineInput(req.body.filenames),
+          result.filename = req.body.filename,
           result.tags = parseMultilineInput(req.body.tags)
+          result.source = req.body.source;
           result.save();
         }
         
@@ -235,6 +238,7 @@ router.post('/update', function(req, res, next) {
           result.name = req.body.name;
           result.tags = parseMultilineInput(req.body.tags);
           result.samples = parseSamples(parseMultilineInput(req.body.samples));
+          result.source = req.body.source;
           result.save();
         }
         
@@ -303,7 +307,7 @@ function parseSamples(filenameStrings) {
     // Skip if empty
     if (value != '') {
       resourceObject = {
-        'filenames': value //TODO: replace with array of values w/ different file endings
+        'filename': value 
       };
       samples.push(resourceObject);
     }

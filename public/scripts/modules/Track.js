@@ -8,6 +8,11 @@ require('./templates/track');
 class Track {
 
     constructor(trackData, atmosphere) {
+
+        if (trackData == undefined) {
+            console.error('No accessible data for selected track.')
+        }
+
         this.data = trackData;
 
         this.id = trackData.id;
@@ -67,7 +72,7 @@ class Track {
         // console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
 
         // Append prefix to filenames
-        var filenames = g.appendTrackPrefixes(this.data.filenames);
+        var filenames = g.convertToFilenames(this.data.filename);
         // console.log(filenames);
 
         var $playBtn = this.$playBtn;

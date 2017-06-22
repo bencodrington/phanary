@@ -5,8 +5,9 @@ var Schema = mongoose.Schema;
 
 var trackSchema = new Schema({
   name: {type: String, required: true},
-  filenames: {type: [String], required: true},
-  tags: [String]
+  filename: {type: String, required: true},
+  tags: [String],
+  source: String
 }, {collection: 'tracks'});
 
 var TrackModel = mongoose.model('TrackModel', trackSchema);
