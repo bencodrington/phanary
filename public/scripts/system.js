@@ -176,20 +176,23 @@ function fetchItem(collection, id) {
             return;
         }
         modify.$fields.children('input[name=name]').val(result.name);
-        if (result.filenames) {
-            modify.$fields.children('textarea[name=filenames]').val(parseArray(result.filenames));
+        if (result.filename) {
+            modify.$fields.children('input[name=filename]').val(result.filename);
         }
         if (result.tags) {
             modify.$fields.children('textarea[name=tags]').val(parseArray(result.tags));
         }
         if (result.tracks) {
-            modify.$fields.children('textarea[name=tracks]').val(parseIDs(result.tracks));
+            modify.$fields.children('textarea[name=tracks]').val(parseIDs(result.tracks, 'tracks', false));
         }
         if (result.oneshots) {
-            modify.$fields.children('textarea[name=oneshots]').val(parseIDs(result.oneshots));
+            modify.$fields.children('textarea[name=oneshots]').val(parseIDs(result.oneshots, 'oneshots', false));
         }
         if (result.samples) {
             modify.$fields.children('textarea[name=samples]').val(parseSamples(result.samples));
+        }
+        if (result.source) {
+            modify.$fields.children('input[name=source]').val(result.source);
         }
     });
 }
@@ -201,13 +204,18 @@ function parseArray(array) {
     return array.toString().split(',').join('\n');
 }
 
-function parseIDs(array) {
+function parseIDs(array, collection, showNames) {
     if (!array) {
         return 'n/a';
     }
     var ids = [];
+    var idWithName;
     array.forEach(function (element) {
-        ids.push(element.id);
+        idWithName = element.id;
+        if (showNames) {
+            idWithName += '(' + getResourceName(element.id, collection) + ')';
+        }
+        ids.push(idWithName);
     });
     return ids.toString().split(',').join('\n');
 }
@@ -218,7 +226,7 @@ function parseSamples(array) {
     }
     var samples = [];
     array.forEach(function (sample) {
-        samples.push(sample.filenames); //TODO: modify for multiple filenames
+        samples.push(sample.filename);
     });
     return samples.toString().split(',').join('\n');
 }
@@ -233,7 +241,7 @@ function loadCollection(collection) {
 function displayCollection(results) {
     $displayTable.find('tbody tr').remove();
     _jquery2.default.each(results, function (i, result) {
-        var $tr = (0, _jquery2.default)('<tr>').append((0, _jquery2.default)('<td>').text(result._id), (0, _jquery2.default)('<td>').text(result.name), (0, _jquery2.default)('<td>').text(parseArray(result.filenames)), (0, _jquery2.default)('<td>').text(parseArray(result.tags)), (0, _jquery2.default)('<td>').text(parseIDs(result.tracks)), (0, _jquery2.default)('<td>').text(parseIDs(result.oneshots)), (0, _jquery2.default)('<td>').text(parseSamples(result.samples))).appendTo($displayTable.find('tbody'));
+        var $tr = (0, _jquery2.default)('<tr>').append((0, _jquery2.default)('<td>').text(result._id), (0, _jquery2.default)('<td>').text(result.name), (0, _jquery2.default)('<td>').text(result.filename), (0, _jquery2.default)('<td>').text(parseArray(result.tags)), (0, _jquery2.default)('<td>').text(parseIDs(result.tracks, 'tracks', true)), (0, _jquery2.default)('<td>').text(parseIDs(result.oneshots, 'oneshots', true)), (0, _jquery2.default)('<td>').text(parseSamples(result.samples)), (0, _jquery2.default)('<td>').text(result.source)).appendTo($displayTable.find('tbody'));
 
         // Rig click event
         $tr.on('click', function () {
@@ -256,7 +264,6 @@ function insertData() {
 function updateData() {
     var query = getProperties();
     query.id = getProperty('id');
-    console.log(query);
     _jquery2.default.post('/system/update', query, function () {
         loadCollection(getCollection());
     });
@@ -277,11 +284,12 @@ function getProperties() {
     var query = {
         'collection': getCollection(),
         'name': getProperty('name'),
-        'filenames': getProperty('filenames'),
+        'filename': getProperty('filename'),
         'tags': getProperty('tags'),
         'tracks': getProperty('tracks'),
         'oneshots': getProperty('oneshots'),
-        'samples': getProperty('samples')
+        'samples': getProperty('samples'),
+        'source': getProperty('source')
     };
     // console.log('getProperties: properties:');
     // console.log(query);
@@ -294,8 +302,8 @@ function getProperty(property) {
             return modify.$id.val();
         case 'name':
             return modify.$fields.children('input[name=name]').val();
-        case 'filenames':
-            return modify.$fields.children('textarea[name=filenames]').val();
+        case 'filename':
+            return modify.$fields.children('input[name=filename]').val();
         case 'tags':
             return modify.$fields.children('textarea[name=tags]').val();
         case 'tracks':
@@ -304,7 +312,36 @@ function getProperty(property) {
             return modify.$fields.children('textarea[name=oneshots]').val();
         case 'samples':
             return modify.$fields.children('textarea[name=samples]').val();
+        case 'source':
+            return modify.$fields.children('input[name=source]').val();
     }
+}
+
+function getResourceName(id, collection) {
+
+    var query = {
+        'collection': collection,
+        'id': id
+    };
+    var returnText;
+
+    _jquery2.default.ajaxSetup({
+        async: false
+    });
+
+    _jquery2.default.getJSON('/system/find', query, function (result) {
+        if (result.error) {
+            returnText = 'Not Defined';
+        } else {
+            returnText = result.name;
+        }
+    });
+
+    _jquery2.default.ajaxSetup({
+        async: true
+    });
+
+    return returnText;
 }
 
 /***/ }),

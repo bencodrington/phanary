@@ -2,107 +2,6 @@
     <script>var system = true;</script>
     <h1 class="system-section-title">Access Database</h1>
 
-    {{!--<div class="system-sections">
-        <div class="system-section">
-            <h2 class="system-section__title">Create</h2>
-            <form action="/system/insert" method="POST">
-                <div class="input">
-                    <label for="name">Name</label>
-                    <input type="text" name="name">
-                </div>
-                <div class="input">
-                    <label for="filenames">File Names (separate by newline)</label>
-                    <textarea name="filenames"></textarea>
-                </div>
-                <div class="input">
-                    <label for="tags">Tags (separate by newline)</label>
-                    <textarea name="tags"></textarea>
-                </div>
-                <div class="input">
-                    <label for="collection">Collection</label>
-                    <select name="collection">
-                        <option value="tracks">Tracks</option>
-                        <option value="atmospheres">Atmospheres</option>
-                        <option value="oneshots">One-Shots</option>
-                    </select>
-                </div>
-                <button type="submit">Insert</button>
-            </form>
-        </div>
-
-        <div class="system-section">
-            <h2 class="system-section__title">Read</h2>
-            <form action="/system/read" method="get">
-                <div class="input">
-                    <label for="collection">Collection</label>
-                    <select name="collection">
-                        <option value="tracks">Tracks</option>
-                        <option value="atmospheres">Atmospheres</option>
-                        <option value="oneshots">One-Shots</option>
-                    </select>
-                </div>
-                <button type="submit">Display</button>
-                <div>
-                    <h3 class="collection-title">{{ this.collection }}</h3>
-                    {{# each items}}
-                        <article class="item">
-                            <div>Name: {{ this.name }}</div>
-                            <div>File Names: [ {{ this.filenames }} ]</div>
-                            <div>Tags: [ {{ this.tags }} ]</div>
-                            <div>ID: {{ this._id }}</div>
-                        </article>
-                    {{/each}}
-                </div>
-            </form>
-        </div>
-
-        <div class="system-section">
-            <h2 class="system-section__title">Update</h2>
-            <form action="/system/update" method="POST">
-                <div class="input">
-                    <label for="id">ID</label>
-                    <input type="text" name="id" id="modify__id">
-                </div>
-                <div class="input">
-                    <label for="name">Name</label>
-                    <input type="text" name="name">
-                </div>
-                <div class="input">
-                    <label for="filenames">File Names (separate by newline)</label>
-                    <textarea name="filenames"></textarea>
-                </div>
-                <div class="input">
-                    <label for="collection">Collection</label>
-                    <select name="collection">
-                        <option value="tracks">Tracks</option>
-                        <option value="atmospheres">Atmospheres</option>
-                        <option value="oneshots">One-Shots</option>
-                    </select>
-                </div>
-                <button type="submit">Change</button>
-            </form>
-        </div>
-
-        <div class="system-section">
-            <h2 class="system-section__title">Delete</h2>
-            <form action="/system/delete" method="POST">
-                <div class="input">
-                    <label for="id">ID</label>
-                    <input type="text" name="id">
-                </div>
-                <div class="input">
-                    <label for="collection">Collection</label>
-                    <select name="collection">
-                        <option value="tracks">Tracks</option>
-                        <option value="atmospheres">Atmospheres</option>
-                        <option value="oneshots">One-Shots</option>
-                    </select>
-                </div>
-                <button type="submit">Remove</button>
-            </form>
-        </div>
-    </div>--}}
-
     <div class="system-sections">
         <div class="system-section modify">
             <h2 class="system-section__title">Modify<span class="system-section__subtitle"></span></h2>
@@ -126,8 +25,8 @@
                     <textarea name="tags"></textarea>
                 </div>
                 <div class="input modify__field track-field">
-                    <label for="filenames">File Names (separate by newline)</label>
-                    <textarea name="filenames"></textarea>
+                    <label for="filename">File Name</label>
+                    <input name="filename"></input>
                 </div>
                 <div class="input modify__field atmosphere-field">
                     <label for="tracks">Track IDs (separate by newline)</label>
@@ -140,6 +39,10 @@
                 <div class="input modify__field oneshot-field">
                     <label for="samples">Samples (separate by newline)</label>
                     <textarea name="samples"></textarea>
+                </div>
+                <div class="input modify__field track-field oneshot-field">
+                    <label for="source">Source</label>
+                    <input name="source"></input>
                 </div>
                 <div class="btn-group">
                     <div class="btn btn--dark btn--medium-text btn--rounded modify__btn">
@@ -165,11 +68,12 @@
                 <thead>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Filenames</th>
+                    <th>Filename</th>
                     <th>Tags</th>
                     <th>Tracks</th>
                     <th>Oneshots</th>
                     <th>Samples</th>
+                    <th>Source</th>
                 </thead>
 
                 <tbody>

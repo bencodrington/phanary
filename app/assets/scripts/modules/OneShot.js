@@ -43,7 +43,7 @@ class OneShot extends Track {
         this.data.samples.forEach(function(sample) {
             // For each oneshot
             // Append track prefixes to each fallback audio path
-            paths = g.appendTrackPrefixes([sample.filenames]); //TODO: remove []
+            paths = g.convertToFilenames(sample.filename);
             // Create new howl for the sample
             howl = new Howl({
                 src: paths,

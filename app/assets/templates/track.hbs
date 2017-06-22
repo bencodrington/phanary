@@ -1,12 +1,7 @@
 <div class="section section--track" data-atmosphere="{{atmosphereId}}">
     <div class="section__heading">
-        <h4 class="section__heading__title tooltip">
+        <h4 class="section__heading__title">
             <span class="section__heading__title__text">{{name}}</span>
-            <span class="tooltiptext tags">Tags:
-                {{#each tags}}
-                    <span class="tag">{{this}}</span>
-                {{/each}}
-            </span>
         </h4>
         <div class="btn btn--delete btn--medium btn--inverted">
             <div class="btn__inner">
@@ -16,8 +11,19 @@
     </div>
     <div class="section__body">
         <div class="wrapper">
+            {{#if source}}
+            <span>Source:
+                <span>{{source}}</span>
+            </span>
+            {{/if}}
+            {{#if tags}}
+            <span class="tags">Tags:
+                {{#each tags}}
+                    <span class="tag">{{this}}</span>
+                {{/each}}
+            </span>
+            {{/if}}
             <div class="section__flex">
-
                 <div class="volume section__flex__item">
                     <input type="range" min="0" max="1" value="1" step="0.05">
                     <label class="control control--checkbox control--custom volume__mute">

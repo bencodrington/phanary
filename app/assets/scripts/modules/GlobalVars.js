@@ -18,7 +18,8 @@ class GlobalVars {
         this.$searchBarClearBtn = $("#searchBarClearBtn");
         this.$editingTitle      = null;
         
-        this.trackPrefix        = "/audio/tracks/";
+        this.trackPrefix        = "/audio/converted/";
+        this.fileTypes          = ['.webm', '.mp3'];
 
         
         this.atmosphereManager = new AtmosphereManager();
@@ -86,11 +87,14 @@ class GlobalVars {
         sel.addRange(range);
     }
 
-    appendTrackPrefixes(filenames) {
-        var that = this;
-        filenames = filenames.map(function(filename) {
-            return that.trackPrefix + filename;
+    convertToFilenames(filename) {
+        var filenames = [],
+        that = this;
+        this.fileTypes.forEach( (fileType) => {
+            filenames.push(that.trackPrefix + filename + fileType);
         });
+        // console.log('GlobalVars.js:convertToFilenames:filenames:');
+        // console.log(filenames);
         return filenames;
     }
 
