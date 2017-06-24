@@ -11044,11 +11044,6 @@ var Track = function () {
             }
         }
     }, {
-        key: 'begin',
-        value: function begin() {
-            this.play();
-        }
-    }, {
         key: 'play',
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
@@ -12254,13 +12249,12 @@ var OneShot = function (_Track) {
         // this.rigOneShotControls();
         var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere));
 
-        _this.timeOut = null;
+        _this.interval = null;
+        _this.frameLength = 10; // Milliseconds between progress bar updates
         _this.minIndex = 1;
         _this.maxIndex = 2;
         // Update labels
-        // TODO: just make updateLabels function
-        _this.changeRange('min', 0);
-        _this.changeRange('max', 0);
+        _this.updateLabels();
         return _this;
     }
 
@@ -12322,6 +12316,7 @@ var OneShot = function (_Track) {
             this.$playText = this.$trackHTML.find('.oneshot-play-text');
             this.$minLabel = this.$trackHTML.find('.oneshot-min-label');
             this.$maxLabel = this.$trackHTML.find('.oneshot-max-label');
+            this.$progressBar = this.$trackHTML.find('.progress__bar');
             $startBtn.on('click', function () {
                 that.start();
                 that.togglePlayText();
@@ -12343,11 +12338,6 @@ var OneShot = function (_Track) {
             });
         }
     }, {
-        key: 'begin',
-        value: function begin() {
-            this.start();
-        }
-    }, {
         key: 'play',
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
@@ -12355,8 +12345,10 @@ var OneShot = function (_Track) {
     }, {
         key: 'stop',
         value: function stop() {
-            if (this.timeOut != null) {
-                clearTimeout(this.timeOut);
+            console.log('stop():this.interval:' + this.interval);
+            if (this.interval != null && this.interval != undefined) {
+                console.log('this.interval != null');
+                clearInterval(this.interval);
             }
             this.$startBtn.toggle();
             this.$stopBtn.toggle();
@@ -12364,17 +12356,36 @@ var OneShot = function (_Track) {
     }, {
         key: 'start',
         value: function start() {
-            var that = this;
-            var timerLength = this.getTimerLength() * 1000;
+            if (!this.minIndex || !this.maxIndex) {
+                console.log('setting indexes');
+                this.minIndex = 1;
+                this.maxIndex = 2;
+            }
+            this.timerLength = this.getTimerLength() * 1000;
+            console.log('this.timerLength: ' + this.timerLength);
+            this.timerProgress = 0;
+            this.updateProgressBar();
             // Clear previous timeout
             this.stop();
             // Play after delay
-            this.timeOut = setTimeout(function () {
-                that.play();
-                that.start();
-            }, timerLength);
+            this.interval = setInterval(this.progressFrame.bind(this), 10);
+            console.log('this.interval!!!: ' + this.interval);
             this.$startBtn.hide();
             this.$stopBtn.show();
+        }
+    }, {
+        key: 'progressFrame',
+        value: function progressFrame() {
+            if (this.timerProgress >= this.timerLength) {
+                console.log('timerprogress: ' + this.timerProgress + ', timerlength: ' + this.timerLength);
+                // Play sound
+                // this.play();
+                // Restart loop
+                this.start();
+            } else {
+                this.timerProgress += this.frameLength;
+                this.updateProgressBar();
+            }
         }
     }, {
         key: 'delete',
@@ -12396,7 +12407,7 @@ var OneShot = function (_Track) {
 
             if (minmax === 'min') {
                 this.minIndex = _GlobalVars.g.clamp(0, this.minIndex + difference, OneShot.timesteps.length - 1);
-                this.$minLabel.text(OneShot.getTimeStep(this.minIndex));
+                this.updateLabels();
                 if (this.minIndex > this.maxIndex) {
                     // Increase max
                     // console.log("OneShot:changeRange(): " + this.minIndex + " is greater than " + this.maxIndex);
@@ -12405,7 +12416,7 @@ var OneShot = function (_Track) {
             } else {
                 // 'max'
                 this.maxIndex = _GlobalVars.g.clamp(0, this.maxIndex + difference, OneShot.timesteps.length - 1);
-                this.$maxLabel.text(OneShot.getTimeStep(this.maxIndex));
+                this.updateLabels();
                 if (this.maxIndex < this.minIndex) {
                     // Decrease min
                     // console.log("OneShot:changeRange(): " + this.maxIndex + " is less than " + this.minIndex);
@@ -12414,12 +12425,30 @@ var OneShot = function (_Track) {
             }
         }
     }, {
+        key: 'updateLabels',
+        value: function updateLabels() {
+            this.$minLabel.text(OneShot.getTimeStep(this.minIndex));
+            this.$maxLabel.text(OneShot.getTimeStep(this.maxIndex));
+        }
+    }, {
+        key: 'updateProgressBar',
+        value: function updateProgressBar() {
+            if (this.timerLength <= 0) {
+                console.error('OneShot.js: Timer length <= 0: ' + this.timerLength);
+                return;
+            }
+            var percentage = this.timerProgress / this.timerLength;
+            percentage = 1 - percentage;
+            percentage *= 100;
+            this.$progressBar.width(percentage + "%");
+        }
+    }, {
         key: 'getTimerLength',
         value: function getTimerLength() {
             var min = OneShot.getTimeStep(this.minIndex);
             var max = OneShot.getTimeStep(this.maxIndex);
+            console.log(min + ', ' + max + ', ' + this.minIndex + ', ' + this.maxIndex);
             var length = min + _GlobalVars.g.getRandomInt(max - min + 1);
-            // console.log("OneShot:getTimerLength(): " + length);
             return length;
         }
     }, {
@@ -12490,7 +12519,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            \r\n            <div class=\"section__flex\">\r\n                <div class=\"section__flex__item\">\r\n                    <!-- TODO: disabled/enabled -->\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--medium section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "\r\n            <div class=\"progress\">\r\n                <div class=\"progress__bar\"></div>\r\n            </div>\r\n            \r\n            <div class=\"section__flex\">\r\n                <div class=\"section__flex__item\">\r\n                    <!-- TODO: disabled/enabled -->\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--medium section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
     }, "useData": true });
 })();
 

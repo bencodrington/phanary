@@ -16,13 +16,12 @@ class OneShot extends Track {
     constructor(trackData, atmosphere) {
         super(trackData, atmosphere);
         // this.rigOneShotControls();
-        this.timeOut = null;
+        this.interval = null;
+        this.frameLength = 10; // Milliseconds between progress bar updates
         this.minIndex = 1;
         this.maxIndex = 2;
         // Update labels
-        // TODO: just make updateLabels function
-        this.changeRange('min', 0);
-        this.changeRange('max', 0);
+        this.updateLabels();
     }
 
     template(data) {
@@ -79,6 +78,7 @@ class OneShot extends Track {
         this.$playText = this.$trackHTML.find('.oneshot-play-text');
         this.$minLabel = this.$trackHTML.find('.oneshot-min-label');
         this.$maxLabel = this.$trackHTML.find('.oneshot-max-label');
+        this.$progressBar = this.$trackHTML.find('.progress__bar');
         $startBtn.on('click', function() {
             that.start();
             that.togglePlayText();
@@ -100,34 +100,50 @@ class OneShot extends Track {
         });
     }
 
-    begin() {
-        this.start();
-    }
-
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
     }
 
     stop() {
-        if (this.timeOut != null) {
-            clearTimeout(this.timeOut);
+        console.log('stop():this.interval:' + this.interval);
+        if (this.interval != null && this.interval != undefined) {
+            console.log('this.interval != null');
+            clearInterval(this.interval);
         }
         this.$startBtn.toggle();
         this.$stopBtn.toggle();
     }
 
     start() {
-        var that = this;
-        var timerLength = this.getTimerLength() * 1000;
+        if (!this.minIndex || !this.maxIndex) {
+            console.log('setting indexes');
+            this.minIndex = 1;
+            this.maxIndex = 2;
+        }
+        this.timerLength = this.getTimerLength() * 1000;
+        console.log('this.timerLength: ' + this.timerLength);
+        this.timerProgress = 0;
+        this.updateProgressBar();
         // Clear previous timeout
         this.stop();
         // Play after delay
-        this.timeOut = setTimeout(function() {
-            that.play();
-            that.start();
-        }, timerLength);
+        this.interval = setInterval(this.progressFrame.bind(this), 10);
+        console.log('this.interval!!!: ' + this.interval);
         this.$startBtn.hide();
         this.$stopBtn.show();
+    }
+
+    progressFrame() {
+        if (this.timerProgress >= this.timerLength) {
+            console.log('timerprogress: ' + this.timerProgress + ', timerlength: ' + this.timerLength);
+            // Play sound
+            // this.play();
+            // Restart loop
+            this.start();
+        } else {
+            this.timerProgress += this.frameLength;
+            this.updateProgressBar();
+        }
     }
 
     delete() {
@@ -147,7 +163,7 @@ class OneShot extends Track {
 
         if (minmax === 'min') {
             this.minIndex = g.clamp(0, this.minIndex + difference, OneShot.timesteps.length - 1);
-            this.$minLabel.text(OneShot.getTimeStep(this.minIndex));
+            this.updateLabels();
             if (this.minIndex > this.maxIndex) {
                 // Increase max
                 // console.log("OneShot:changeRange(): " + this.minIndex + " is greater than " + this.maxIndex);
@@ -155,7 +171,7 @@ class OneShot extends Track {
             }
         } else { // 'max'
             this.maxIndex = g.clamp(0, this.maxIndex + difference, OneShot.timesteps.length - 1);
-            this.$maxLabel.text(OneShot.getTimeStep(this.maxIndex));
+            this.updateLabels();
             if (this.maxIndex < this.minIndex) {
                 // Decrease min
                 // console.log("OneShot:changeRange(): " + this.maxIndex + " is less than " + this.minIndex);
@@ -164,11 +180,27 @@ class OneShot extends Track {
         }
     }
 
+    updateLabels() {
+        this.$minLabel.text(OneShot.getTimeStep(this.minIndex));
+        this.$maxLabel.text(OneShot.getTimeStep(this.maxIndex));
+    }
+
+    updateProgressBar() {
+        if (this.timerLength <= 0) {
+            console.error('OneShot.js: Timer length <= 0: ' + this.timerLength);
+            return;
+        }
+        var percentage = this.timerProgress / this.timerLength;
+        percentage = 1 - percentage;
+        percentage *= 100;
+        this.$progressBar.width(percentage + "%");
+    }
+
     getTimerLength() {
         var min = OneShot.getTimeStep(this.minIndex)
         var max = OneShot.getTimeStep(this.maxIndex)
+        console.log(min + ', ' + max + ', ' + this.minIndex + ', ' + this.maxIndex);
         var length = min + g.getRandomInt(max - min + 1);
-        // console.log("OneShot:getTimerLength(): " + length);
         return length;
     }
 
