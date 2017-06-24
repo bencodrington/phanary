@@ -14,9 +14,9 @@
 
     & .tag {
         padding: 0 .25rem;
-        border: 1px solid $whiteBlue;
+        border: 1px solid $mediumBlue;
         border-radius: 3px;
-        color: $whiteBlue;
+        color: $mediumBlue;
         font-weight: bold;
     }
 }
