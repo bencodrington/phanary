@@ -1658,3 +1658,54 @@ input[type=range]:focus::-moz-range-track {
     padding: 0 .25rem;
     display: inline;
 }
+
+.about {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #2E5266;
+    overflow: scroll;
+
+}
+
+.about .navbar__brand {
+        float: none;
+        margin-bottom: 1rem;
+        font-size: 3rem;
+        text-align: center;
+    }
+
+.about .navbar__brand img {
+            float: none;
+            margin-right: .5rem;
+            height: 3rem;
+        }
+
+.about__close {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+    }
+
+.about__content h2 {
+            color: #9FB1BC;
+            text-shadow: -1px -1px #061423;
+            margin: 1.5rem auto .5rem;
+            font-size: 1.75rem;
+        }
+
+.about__content p {
+            color: #061423;
+            font-size: 1.25rem;
+            margin-top: .5rem;
+        }
+
+.about hr {
+        margin: 1.5rem auto 0;
+        width: 50%;
+        text-align: center;
+        border: 0;
+        border-top: 1px solid #AFC2CD;
+    }
