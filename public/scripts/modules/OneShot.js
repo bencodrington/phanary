@@ -16,7 +16,7 @@ class OneShot extends Track {
     constructor(trackData, atmosphere) {
         super(trackData, atmosphere);
         // this.rigOneShotControls();
-        this.interval = null;
+        // this.interval = null; // Runs after start has already been called, nullifying the first clearInterval() call
         this.frameLength = 10; // Milliseconds between progress bar updates
         this.minIndex = 1;
         this.maxIndex = 2;
@@ -63,7 +63,7 @@ class OneShot extends Track {
         this.atmosphere.am.addOneShotSet(this.id, samples);
         
         if (g.$autoplayCheckbox.is(":checked")) {
-            this.start();
+            this.begin();
         }
     }
 
@@ -81,10 +81,6 @@ class OneShot extends Track {
         this.$progressBar = this.$trackHTML.find('.progress__bar');
         $startBtn.on('click', function() {
             that.start();
-            that.togglePlayText();
-        });
-        $stopBtn.on('click', function() {
-            that.togglePlayText();
         });
         $minLess.on('click', function() {
             that.changeRange('min', -1);
@@ -100,49 +96,57 @@ class OneShot extends Track {
         });
     }
 
+    // Called by the containing atmosphere on its play event
+    begin() {
+        this.start();
+    }
+
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
     }
 
     stop() {
-        console.log('stop():this.interval:' + this.interval);
-        if (this.interval != null && this.interval != undefined) {
-            console.log('this.interval != null');
-            clearInterval(this.interval);
+        // console.log('stop():this.interval:' + this.interval);
+        if (this.interval === null || this.interval === undefined) {
+            return;
         }
+        clearInterval(this.interval);
+        this.interval = null;
+        this.updateProgressBar(100);
         this.$startBtn.toggle();
         this.$stopBtn.toggle();
+        this.togglePlayText();
     }
 
     start() {
+        // Make sure min and max indexes are defined
         if (!this.minIndex || !this.maxIndex) {
-            console.log('setting indexes');
             this.minIndex = 1;
             this.maxIndex = 2;
         }
         this.timerLength = this.getTimerLength() * 1000;
-        console.log('this.timerLength: ' + this.timerLength);
         this.timerProgress = 0;
-        this.updateProgressBar();
+        this.updateProgressBar(this.calculateProgressBar());
         // Clear previous timeout
         this.stop();
         // Play after delay
         this.interval = setInterval(this.progressFrame.bind(this), 10);
-        console.log('this.interval!!!: ' + this.interval);
+        // console.log('start():this.interval: ' + this.interval);
         this.$startBtn.hide();
         this.$stopBtn.show();
+        this.togglePlayText();
     }
 
     progressFrame() {
         if (this.timerProgress >= this.timerLength) {
-            console.log('timerprogress: ' + this.timerProgress + ', timerlength: ' + this.timerLength);
-            // Play sound
-            // this.play();
+            // console.log('timerprogress: ' + this.timerProgress + ', timerlength: ' + this.timerLength);
             // Restart loop
             this.start();
+            // Play sound
+            this.play();
         } else {
             this.timerProgress += this.frameLength;
-            this.updateProgressBar();
+            this.updateProgressBar(this.calculateProgressBar());
         }
     }
 
@@ -185,21 +189,24 @@ class OneShot extends Track {
         this.$maxLabel.text(OneShot.getTimeStep(this.maxIndex));
     }
 
-    updateProgressBar() {
+    calculateProgressBar() {
         if (this.timerLength <= 0) {
             console.error('OneShot.js: Timer length <= 0: ' + this.timerLength);
-            return;
+            return 100;
         }
         var percentage = this.timerProgress / this.timerLength;
         percentage = 1 - percentage;
         percentage *= 100;
+        return percentage;
+    }
+
+    updateProgressBar(percentage) {
         this.$progressBar.width(percentage + "%");
     }
 
     getTimerLength() {
         var min = OneShot.getTimeStep(this.minIndex)
         var max = OneShot.getTimeStep(this.maxIndex)
-        console.log(min + ', ' + max + ', ' + this.minIndex + ', ' + this.maxIndex);
         var length = min + g.getRandomInt(max - min + 1);
         return length;
     }
@@ -210,6 +217,7 @@ class OneShot extends Track {
         } else {
             this.$playText.text("Play");
         }
+        console.log('setting text to: ' + this.$playText.text());
     }
 
     static getTimeStep(index) {

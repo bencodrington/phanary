@@ -11,6 +11,7 @@
     </div>
     <div class="section__body">
         <div class="wrapper">
+
             {{#if source}}
             <span>Source:
                 <span>{{source}}</span>
@@ -23,24 +24,10 @@
                 {{/each}}
             </span>
             {{/if}}
-
-            <div class="progress">
-                <div class="progress__bar"></div>
-            </div>
             
-            <div class="section__flex">
-                <div class="section__flex__item">
-                    <!-- TODO: disabled/enabled -->
-                    <div class="btn--start btn btn--rounded btn--medium">
-                        <div class="btn__inner">
-                            <i class="fa fa-play-circle-o" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="btn--stop btn btn--rounded btn--medium">
-                        <div class="btn__inner">
-                            <i class="fa fa-stop-circle-o" aria-hidden="true"></i>
-                        </div>
-                    </div>
+            <div class="section__flex section__flex--spacing section__flex--wrap">
+                <div class="section__flex__item section__flex__item--grow progress">
+                    <div class="progress__bar"></div>
                 </div>
 
                 <span class="section__flex__item"><span class="oneshot-play-text">Play</span> every</span>
@@ -89,9 +76,22 @@
                         <div class="control--custom__off"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
                     </label>
                 </div>
-                <div class="btn--play btn btn--rounded btn--medium section__flex__item">
+                <div class="btn--play btn btn--rounded btn--medium-text section__flex__item">
                     <div class="btn__inner">
-                        <i class="fa fa-play" aria-hidden="true"></i>
+                        <span>Play Once</span>
+                    </div>
+                </div>
+                <div class="section__flex__item">
+                    <!-- TODO: disabled/enabled -->
+                    <div class="btn--start btn btn--rounded btn--medium">
+                        <div class="btn__inner">
+                            <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="btn--stop btn btn--rounded btn--medium">
+                        <div class="btn__inner">
+                            <i class="fa fa-stop-circle-o" aria-hidden="true"></i>
+                        </div>
                     </div>
                 </div>
             </div>

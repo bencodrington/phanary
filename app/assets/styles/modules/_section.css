@@ -27,6 +27,7 @@
             max-width: 100%;
             overflow: hidden;
             border: 1px solid transparent;
+            font-size: 1.15rem;
         }
 
         &__title__text.editable {
@@ -134,9 +135,13 @@
         display: flex;
         align-items: center;
         /*justify-content: space-around;*/
+
+        &--wrap {
+            flex-wrap: wrap;
+        }
         
         &__item:not(:first-child) {
-            margin-left: 1rem;
+            margin-left: 0.5rem;
         }
 
         &--spacing {
@@ -146,6 +151,10 @@
         &__item--half {
             width: 50%;
             flex-grow: 0;
+        }
+
+        &__item--grow {
+            flex-grow: 1;
         }
     }
 
