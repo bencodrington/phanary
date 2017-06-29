@@ -100,7 +100,6 @@ class SearchBar {
         $result.addClass('selected');
     }
 
-    // TODO: move to helper class
     blockArrowKeys(e) {
             var keyCode = (e.keyCode ? e.keyCode : e.which);
             if (keyCode == 38 || keyCode == 40) {
@@ -164,6 +163,14 @@ class SearchBar {
             // Select top element
             g.$searchResults.find("li:visible").first().addClass("selected")
         }
+    }
+
+    appendToSearchBar(text) {
+        var newText = g.$searchBarInput.val();
+        newText += text + " ";
+        g.$searchBarInput.val(newText);
+        g.$searchBarInput.focus();
+        this.filterResults();
     }
 
 }

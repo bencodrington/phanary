@@ -1,5 +1,5 @@
 .tags {
-    
+
     line-height: 1.5rem;
 
     &--float-right.tags {
@@ -22,5 +22,6 @@
         border-radius: 3px;
         color: $mediumBlue;
         font-weight: bold;
+        cursor: pointer;
     }
 }

@@ -10992,6 +10992,7 @@ var Track = function () {
             var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
             var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
             var $delBtn = $trackHTML.find(".btn--delete");
+            var $tags = $trackHTML.find(".tag");
             $playBtn.on('click', function () {
                 that.play();
             });
@@ -11012,6 +11013,16 @@ var Track = function () {
             var $muteBtn = $trackHTML.find(".btn--mute");
             $muteBtn.on('click', function () {
                 that.toggleMute();
+            });
+
+            // Rig tags to modify search bar
+            $tags.each(function (index, element) {
+                // console.log('ELEMENT: ');
+                // console.log(element);
+                var $element = (0, _jquery2.default)(element);
+                $element.on('click', function () {
+                    _GlobalVars.g.searchBar.appendToSearchBar($element.text());
+                });
             });
 
             this.$trackHTML = $trackHTML;
@@ -11299,9 +11310,6 @@ var SearchBar = function () {
             this.deselect();
             $result.addClass('selected');
         }
-
-        // TODO: move to helper class
-
     }, {
         key: 'blockArrowKeys',
         value: function blockArrowKeys(e) {
@@ -11369,6 +11377,15 @@ var SearchBar = function () {
                 // Select top element
                 _GlobalVars.g.$searchResults.find("li:visible").first().addClass("selected");
             }
+        }
+    }, {
+        key: 'appendToSearchBar',
+        value: function appendToSearchBar(text) {
+            var newText = _GlobalVars.g.$searchBarInput.val();
+            newText += text + " ";
+            _GlobalVars.g.$searchBarInput.val(newText);
+            _GlobalVars.g.$searchBarInput.focus();
+            this.filterResults();
         }
     }]);
 
@@ -12521,7 +12538,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   templates['oneshot.hbs'] = template({ "1": function _(container, depth0, helpers, partials, data) {
       var helper;
 
-      return "            <span>Source:\r\n                <span>" + container.escapeExpression((helper = (helper = helpers.source || (depth0 != null ? depth0.source : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "source", "hash": {}, "data": data }) : helper)) + "</span>\r\n            </span>\r\n";
+      return "            <span>Source:\r\n                <span class=\"source\">" + container.escapeExpression((helper = (helper = helpers.source || (depth0 != null ? depth0.source : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "source", "hash": {}, "data": data }) : helper)) + "</span>\r\n            </span>\r\n";
     }, "3": function _(container, depth0, helpers, partials, data) {
       var stack1;
 
@@ -12581,7 +12598,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   templates['track.hbs'] = template({ "1": function _(container, depth0, helpers, partials, data) {
       var helper;
 
-      return "            <span>Source:\r\n                <span>" + container.escapeExpression((helper = (helper = helpers.source || (depth0 != null ? depth0.source : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "source", "hash": {}, "data": data }) : helper)) + "</span>\r\n            </span>\r\n";
+      return "            <span>Source:\r\n                <span class=\"source\">" + container.escapeExpression((helper = (helper = helpers.source || (depth0 != null ? depth0.source : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "source", "hash": {}, "data": data }) : helper)) + "</span>\r\n            </span>\r\n";
     }, "3": function _(container, depth0, helpers, partials, data) {
       var stack1;
 
