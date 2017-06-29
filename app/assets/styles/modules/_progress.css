@@ -2,12 +2,16 @@
     margin: 10px 0;
     border: 1px solid $blueberry;
     border-radius: 5px;
-    width: 100%;
     height: 2rem;
+    width: 100%;
+
+    @mixin atMedium {
+        width: 50%;
+    }
 
     &__bar {
         height: 100%;
-        width: 10%;
+        width: 100%;
         background-color: $mediumBlue;
     }
 }

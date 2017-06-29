@@ -92,8 +92,12 @@ class Track {
             })
         );
         if (g.$autoplayCheckbox.is(":checked")) {
-            this.play();
+            this.begin();
         }
+    }
+
+    begin() {
+        this.play();
     }
 
     play() {

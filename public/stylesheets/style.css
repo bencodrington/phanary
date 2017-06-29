@@ -1125,6 +1125,7 @@ a {
             max-width: 100%;
             overflow: hidden;
             border: 1px solid transparent;
+            font-size: 1.15rem;
         }
 
 .section__heading__title__text.editable {
@@ -1248,8 +1249,13 @@ a {
 
 /*justify-content: space-around;*/
 
+.section__flex--wrap {
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+        }
+
 .section__flex__item:not(:first-child) {
-            margin-left: 1rem;
+            margin-left: 0.5rem;
         }
 
 .section__flex--spacing {
@@ -1261,6 +1267,12 @@ a {
             -webkit-box-flex: 0;
                 -ms-flex-positive: 0;
                     flex-grow: 0;
+        }
+
+.section__flex__item--grow {
+            -webkit-box-flex: 1;
+                -ms-flex-positive: 1;
+                    flex-grow: 1;
         }
 
 input[type=range] {
@@ -1590,10 +1602,16 @@ input[type=range]:focus::-moz-range-track {
         background-color: #AFC2CD;
     }
 
+.tags {
+    
+    line-height: 1.5rem;
+}
+
 .tags--float-right.tags {
         white-space: nowrap;
         position: absolute;
         margin-left: 1rem;
+        line-height: 1rem;
 
     }
 
@@ -1615,12 +1633,19 @@ input[type=range]:focus::-moz-range-track {
     margin: 10px 0;
     border: 1px solid #2E5266;
     border-radius: 5px;
-    width: 100%;
     height: 2rem;
+    width: 100%;
 }
+
+@media (min-width: 800px) {
+
+.progress {
+        width: 50%
+}
+    }
 
 .progress__bar {
         height: 100%;
-        width: 10%;
+        width: 100%;
         background-color: #3A6982;
     }
