@@ -1603,7 +1603,7 @@ input[type=range]:focus::-moz-range-track {
     }
 
 .tags {
-    
+
     line-height: 1.5rem;
 }
 
@@ -1627,6 +1627,7 @@ input[type=range]:focus::-moz-range-track {
         border-radius: 3px;
         color: #3A6982;
         font-weight: bold;
+        cursor: pointer;
     }
 
 .progress {
@@ -1649,3 +1650,11 @@ input[type=range]:focus::-moz-range-track {
         width: 100%;
         background-color: #3A6982;
     }
+
+.source {
+    color: #AFC2CD;
+    background-color: #3A6982;
+    border-radius: 3px;
+    padding: 0 .25rem;
+    display: inline;
+}

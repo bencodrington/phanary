@@ -41,6 +41,7 @@ class Track {
         var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
         var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
         var $delBtn = $trackHTML.find(".btn--delete");
+        var $tags = $trackHTML.find(".tag");
         $playBtn.on('click', function() {
             that.play();
         });
@@ -61,6 +62,16 @@ class Track {
         var $muteBtn = $trackHTML.find(".btn--mute");
         $muteBtn.on('click', function() {
             that.toggleMute();
+        });
+
+        // Rig tags to modify search bar
+        $tags.each( (index, element) => {
+            // console.log('ELEMENT: ');
+            // console.log(element);
+            var $element = $(element);
+            $element.on('click', () => {
+                g.searchBar.appendToSearchBar($element.text());
+            });
         });
 
         this.$trackHTML = $trackHTML;
