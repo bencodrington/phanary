@@ -18,6 +18,67 @@
 </head>
 
 <body>
+
+  <!-- About -->
+
+  <div class="about about--closed">
+    <div class="btn btn--medium btn--rounded btn--yellow about__close">
+      <div class="btn__inner">
+        <i class="fa fa-close"></i>
+      </div>
+    </div>
+    <div class="wrapper wrapper--top-margin wrapper--bottom-margin">
+      <h1 class="navbar__brand"><img src="/images/svg/logo_solid.svg"><span>Phanary</span></h1>
+      <h3 class="about__phonetics">(fuh-NAIR-ee)</h3>
+      <div class="about__content">
+        <h2>About</h2>
+        <p>
+          Phanary allows tabletop RPG game masters to quickly and easily switch between premade and custom soundscapes, to bring that extra level of immersion to their tables.
+        </p>
+        <p>
+          Each atmosphere is made up of soundscapes, background music, and looping samples, which can be customized in advance. This allows GM's to transition smoothly to an entirely new sonic landscape with the click of a button. 
+        </p>
+
+        <hr>
+
+        <h2>Quick Start</h2>
+        <p>
+          Just start typing words related to the mood or location that you're trying to convey in the search bar, and hit enter.
+        </p>
+        <p>
+          <span class="type-circle type-circle--inline"></span>
+          <strong>Loops</strong>
+          (like background music) repeat smoothly and indefinitely.
+        </p>
+        <p>
+          <span class="result--oneshot"><span class="type-circle type-circle--inline"></span></span>
+          <strong>One-Shots</strong>
+          (like the sound of a stalactite dripping water) can be fired manually, or set to play automatically in a specified range of time.
+        </p>
+        <p>
+          <span class="result--atmosphere"><span class="type-circle type-circle--inline"></span></span>
+          <strong>Atmospheres</strong>
+          (like that of a tavern) contain pre-configured combinations of tracks and one-shots, and can also be created and modified from the 'Atmospheres' section.
+        </p>
+
+        <hr>
+
+        <h2>Hope you enjoy!</h2>
+        <p>
+          Thanks for checking out this app!
+        </p>
+        <p>
+          I really hope Phanary added some extra flavour to your game!
+        </p>
+        <p>
+          Please send any comments, bugs, or ideas for improvement to <strong>benvenda at gmail.com</strong>.
+        </p>
+      </div>
+      <img class="about__footer-logo" src="/images/svg/logo_solid.svg">
+    </div>
+  </div> <!-- /.about -->
+  
+  <!-- Navbar -->
   <div class="navbar">
     <div class="wrapper">
       <div class="navbar__content">
@@ -46,52 +107,15 @@
           </div>
         </div>
 
-        <h2 class="navbar__brand"><img src="/images/svg/logo_solid.svg"><span class="navbar__brand__text">Phanary</span></h2>
-        <div class="about">
-          <div class="btn btn--medium btn--rounded btn--yellow about__close">
-            <div class="btn__inner">
-              <i class="fa fa-close"></i>
-            </div>
-          </div>
-          <div class="wrapper wrapper--top-margin wrapper--bottom-margin">
-            <h1 class="navbar__brand"><img src="/images/svg/logo_solid.svg"><span>Phanary</span></h1>
-            <div class="about__content">
-              <h2>What is Phanary?</h2>
-              <p>
-                Phanary allows tabletop RPG game masters to quickly and easily switch between premade and custom atmospheres, to bring that extra level of immersion to their tables.
-              </p>
-              <p>
-                Each atmosphere is made up of soundscapes, background music, and looping samples, which can be customized in advance. This allows GM's to transition smoothly to an entirely new sonic landscape with the click of a button. 
-              </p>
-
-              <hr>
-
-              <h2>Quick Start</h2>
-              <p>
-                Lorem ipsum dolor sit amet, ius et dicant persecuti constituto, vis eu eripuit reprimique, tale alia id quo. Eu virtute omittantur mel, cu qui veritus voluptatibus. Te his errem everti recusabo, meliore docendi maluisset pri id. Sit omittam intellegam id, te congue tation pro, nusquam commune ea mei. Quo ne aeterno iracundia, tation praesent mnesarchum vix ex. Nullam menandri efficiantur his eu.
-
-    Rebum nihil ea pro. Mei movet utinam consectetuer et, cetero conclusionemque vix in. Et has laudem nullam, officiis qualisque theophrastus qui ne. Mel sumo ancillae an, veritus vituperata dissentiunt est ne.
-              </p>
-              <p>
-                Lorem ipsum dolor sit amet, ius et dicant persecuti constituto, vis eu eripuit reprimique, tale alia id quo. Eu virtute omittantur mel, cu qui veritus voluptatibus. Te his errem everti recusabo, meliore docendi maluisset pri id. Sit omittam intellegam id, te congue tation pro, nusquam commune ea mei. Quo ne aeterno iracundia, tation praesent mnesarchum vix ex. Nullam menandri efficiantur his eu.
-
-    Rebum nihil ea pro. Mei movet utinam consectetuer et, cetero conclusionemque vix in. Et has laudem nullam, officiis qualisque theophrastus qui ne. Mel sumo ancillae an, veritus vituperata dissentiunt est ne.
-              </p>
-              <p>
-                Lorem ipsum dolor sit amet, ius et dicant persecuti constituto, vis eu eripuit reprimique, tale alia id quo. Eu virtute omittantur mel, cu qui veritus voluptatibus. Te his errem everti recusabo, meliore docendi maluisset pri id. Sit omittam intellegam id, te congue tation pro, nusquam commune ea mei. Quo ne aeterno iracundia, tation praesent mnesarchum vix ex. Nullam menandri efficiantur his eu.
-
-    Rebum nihil ea pro. Mei movet utinam consectetuer et, cetero conclusionemque vix in. Et has laudem nullam, officiis qualisque theophrastus qui ne. Mel sumo ancillae an, veritus vituperata dissentiunt est ne.
-              </p>
-            </div>
-          </div>
-        </div>
+        <h2 class="navbar__brand about__open"><img src="/images/svg/logo_solid.svg"><span class="navbar__brand__text">Phanary</span></h2>
+  
       </div>
     </div>
 
     <ul class="search-container__results" id="searchResults" style="display: none">
-      {{# each searchResults}}
-        <li class="{{this.type}}"><div class="wrapper">{{this.name}}</div></li>
-      {{/each}}
+      
+        <!-- Search Results Go Here! -->
+
     </ul>
   </div> <!-- /.navbar -->
 
@@ -136,8 +160,7 @@
       </div>
     </div>
 
-  </div>
-  <!-- /.sidebar -->
+  </div> <!-- /.sidebar -->
 
   <!-- Main Content-->
   <div class="main-content">
@@ -149,8 +172,7 @@
 
       </div>
     </div>
-  </div>
-  <!-- /.main-content -->
+  </div> <!-- /.main-content -->
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.3/howler.core.min.js"></script>
   <script src="https://use.fontawesome.com/075d51e5f2.js"></script>

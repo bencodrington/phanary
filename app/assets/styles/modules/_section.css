@@ -1,5 +1,4 @@
 .section {
-    border: 1px solid $blueberry;
     border-radius: 5px;
     margin-bottom: 20px;
     position: relative;
@@ -10,6 +9,8 @@
         position: relative;
         display: block;
         width: 100%;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
 
         &__title {
             margin: 0;
@@ -40,7 +41,7 @@
     }
 
     &--atmosphere {
-        border-color: $blackPurple;
+        border: 1px solid transparent;
         transition: border-color 0.5s ease-out;
 
         & .section__heading {
@@ -82,7 +83,6 @@
         }
 
         &--active {
-            border-color: $darkPurple;
 
             & .section__heading {
                 background-color: $darkPurple;
@@ -104,31 +104,19 @@
             transition: background-color 0.5s ease-out;
 
             &__title {
-                color: $lightBlue;
+                color: $whiteBlue;
             }
         }
 
         & .section__body {
             background-color: $whiteBlue;
         }
-
-        &::before {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            border-radius: 5px;
-            box-shadow: 0 2px 15px rgba($deepSea, 1);
-            transition: opacity 0.7s ease-out;
-        }
     }
 
     &__body {
         padding: 0.5rem 0;
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
     }
 
     &__flex {

@@ -114,6 +114,7 @@ class Atmosphere {
             if (e.keyCode == "13") {
                 // Exit edit mode
                 $titleText.prop('contenteditable', false).toggleClass('editable');
+                g.$editingTitle = null;
             }
         });
 

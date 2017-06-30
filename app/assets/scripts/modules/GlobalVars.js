@@ -61,23 +61,23 @@ class GlobalVars {
         }
     }
 
-    compileTemplates() {
-        var that = this;
-        var template;
-        // TODO: move paths to variable
-        $.get("/templates/track.html", function(rawTemplate) {
-            template = Handlebars.compile(rawTemplate);
-            that.trackTemplate = template;
-        });
-        $.get("/templates/atmosphere.html", function(rawTemplate) {
-            template = Handlebars.compile(rawTemplate);
-            that.atmosphereTemplate = template;
-        });
-        $.get("/templates/oneshot.html", function(rawTemplate) {
-            template = Handlebars.compile(rawTemplate);
-            that.oneshotTemplate = template;
-        });
-    }
+    // compileTemplates() {
+    //     var that = this;
+    //     var template;
+    //     // TODO: move paths to variable
+    //     $.get("/templates/track.html", function(rawTemplate) {
+    //         template = Handlebars.compile(rawTemplate);
+    //         that.trackTemplate = template;
+    //     });
+    //     $.get("/templates/atmosphere.html", function(rawTemplate) {
+    //         template = Handlebars.compile(rawTemplate);
+    //         that.atmosphereTemplate = template;
+    //     });
+    //     $.get("/templates/oneshot.html", function(rawTemplate) {
+    //         template = Handlebars.compile(rawTemplate);
+    //         that.oneshotTemplate = template;
+    //     });
+    // }
 
     selectElementContents(el) {
         var range = document.createRange();
