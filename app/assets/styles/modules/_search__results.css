@@ -1,0 +1,59 @@
+.search-container__results {
+    position: absolute;
+    top: 3.25rem;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 5px $deepSea;
+
+    & li {
+        background-color: $stormGrey;
+        border-bottom: 1px rgba($deepSea, 0.25) solid;
+        padding: .5rem;
+        color: $blueberry;
+        cursor: pointer;
+        list-style: none;
+        height: 2rem;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    & li.selected {
+        background-color: $blueberry;
+        font-weight: 500;
+        color: $whiteBlue;
+
+    }
+
+    & li.selected .type-circle {
+        border: 1px solid white;
+    }
+
+}
+
+.result--oneshot .type-circle {
+    background-color: $phanary;
+}
+
+.result--atmosphere .type-circle {
+    background-color: $darkPurple;
+}
+
+.type-circle {
+    display: inline-block;
+    position: absolute;
+    left: .25rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background-color: $mediumBlue;
+
+    &--inline {
+        position: relative;
+        left: 0;
+        margin-right: .5rem;
+    }
+}

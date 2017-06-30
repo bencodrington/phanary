@@ -87,6 +87,13 @@
         top: 50%;
         transform: translateY(-50%);
     }
+
+    &__bottom-right {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        transform: scale(.75);
+    }
 }
 
 .section--atmosphere .btn {

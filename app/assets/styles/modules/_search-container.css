@@ -8,10 +8,9 @@
         width: 100%;
         height: 2rem;
         display: flex;
-        border: none;
         border-radius: 5px;
         overflow: hidden;
-        box-shadow: 0 0 5px rgba($deepSea, 1) ; /* TODO: expand when textbox has focus */
+        box-shadow: 0 0 5px rgba($deepSea, 1);
     }
 
     &__search-bar {
@@ -64,10 +63,6 @@
         }
     }
 
-    &__addon:last-child {
-        /*border-left: 1px solid black;*/
-    }
-
     &__addon label {
         transition: color 0.3s ease-out;
         font-weight: 300;
@@ -79,54 +74,4 @@
         transform: translateY(-50%);
     }
 
-    &__results {
-        position: absolute;
-        top: 3.25rem;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        overflow: hidden;
-        box-shadow: 0 0 5px $deepSea;
-
-        & li {
-            background-color: $stormGrey;
-            border-bottom: 1px rgba($deepSea, 0.25) solid;
-            padding: .5rem;
-            color: $blueberry;
-            cursor: pointer;
-            list-style: none;
-            height: 2rem;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        & li.result--atmosphere {
-            background-color: $lightPurple;
-            color: $darkPurple;
-            &.selected {
-                background-color: $darkPurple;
-                color: $lightPurple;
-            }
-        }
-
-        & li.result--oneshot {
-            /* TODO: */
-            background-color: $offWhite;
-            color: $peru;
-            &.selected {
-                background-color: $vanilla;
-                color: $coconut;
-            }
-        }
-
-        & li.selected {
-            background-color: $blueberry;
-            font-weight: 500;
-            color: $stormGrey;
-        }
-
-
-    }
 }

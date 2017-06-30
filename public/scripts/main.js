@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -199,217 +199,6 @@ function appendContextPath(contextPath, id) {
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
-
-function Exception(message, node) {
-  var loc = node && node.loc,
-      line = undefined,
-      column = undefined;
-  if (loc) {
-    line = loc.start.line;
-    column = loc.start.column;
-
-    message += ' - ' + line + ':' + column;
-  }
-
-  var tmp = Error.prototype.constructor.call(this, message);
-
-  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
-  for (var idx = 0; idx < errorProps.length; idx++) {
-    this[errorProps[idx]] = tmp[errorProps[idx]];
-  }
-
-  /* istanbul ignore else */
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, Exception);
-  }
-
-  try {
-    if (loc) {
-      this.lineNumber = line;
-
-      // Work around issue under safari where we can't directly set the column value
-      /* istanbul ignore next */
-      if (Object.defineProperty) {
-        Object.defineProperty(this, 'column', {
-          value: column,
-          enumerable: true
-        });
-      } else {
-        this.column = column;
-      }
-    }
-  } catch (nop) {
-    /* Ignore if the browser is very particular */
-  }
-}
-
-Exception.prototype = new Error();
-
-exports['default'] = Exception;
-module.exports = exports['default'];
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL2V4Y2VwdGlvbi5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7O0FBQ0EsSUFBTSxVQUFVLEdBQUcsQ0FBQyxhQUFhLEVBQUUsVUFBVSxFQUFFLFlBQVksRUFBRSxTQUFTLEVBQUUsTUFBTSxFQUFFLFFBQVEsRUFBRSxPQUFPLENBQUMsQ0FBQzs7QUFFbkcsU0FBUyxTQUFTLENBQUMsT0FBTyxFQUFFLElBQUksRUFBRTtBQUNoQyxNQUFJLEdBQUcsR0FBRyxJQUFJLElBQUksSUFBSSxDQUFDLEdBQUc7TUFDdEIsSUFBSSxZQUFBO01BQ0osTUFBTSxZQUFBLENBQUM7QUFDWCxNQUFJLEdBQUcsRUFBRTtBQUNQLFFBQUksR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQztBQUN0QixVQUFNLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUM7O0FBRTFCLFdBQU8sSUFBSSxLQUFLLEdBQUcsSUFBSSxHQUFHLEdBQUcsR0FBRyxNQUFNLENBQUM7R0FDeEM7O0FBRUQsTUFBSSxHQUFHLEdBQUcsS0FBSyxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLElBQUksRUFBRSxPQUFPLENBQUMsQ0FBQzs7O0FBRzFELE9BQUssSUFBSSxHQUFHLEdBQUcsQ0FBQyxFQUFFLEdBQUcsR0FBRyxVQUFVLENBQUMsTUFBTSxFQUFFLEdBQUcsRUFBRSxFQUFFO0FBQ2hELFFBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxHQUFHLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7R0FDOUM7OztBQUdELE1BQUksS0FBSyxDQUFDLGlCQUFpQixFQUFFO0FBQzNCLFNBQUssQ0FBQyxpQkFBaUIsQ0FBQyxJQUFJLEVBQUUsU0FBUyxDQUFDLENBQUM7R0FDMUM7O0FBRUQsTUFBSTtBQUNGLFFBQUksR0FBRyxFQUFFO0FBQ1AsVUFBSSxDQUFDLFVBQVUsR0FBRyxJQUFJLENBQUM7Ozs7QUFJdkIsVUFBSSxNQUFNLENBQUMsY0FBYyxFQUFFO0FBQ3pCLGNBQU0sQ0FBQyxjQUFjLENBQUMsSUFBSSxFQUFFLFFBQVEsRUFBRTtBQUNwQyxlQUFLLEVBQUUsTUFBTTtBQUNiLG9CQUFVLEVBQUUsSUFBSTtTQUNqQixDQUFDLENBQUM7T0FDSixNQUFNO0FBQ0wsWUFBSSxDQUFDLE1BQU0sR0FBRyxNQUFNLENBQUM7T0FDdEI7S0FDRjtHQUNGLENBQUMsT0FBTyxHQUFHLEVBQUU7O0dBRWI7Q0FDRjs7QUFFRCxTQUFTLENBQUMsU0FBUyxHQUFHLElBQUksS0FBSyxFQUFFLENBQUM7O3FCQUVuQixTQUFTIiwiZmlsZSI6ImV4Y2VwdGlvbi5qcyIsInNvdXJjZXNDb250ZW50IjpbIlxuY29uc3QgZXJyb3JQcm9wcyA9IFsnZGVzY3JpcHRpb24nLCAnZmlsZU5hbWUnLCAnbGluZU51bWJlcicsICdtZXNzYWdlJywgJ25hbWUnLCAnbnVtYmVyJywgJ3N0YWNrJ107XG5cbmZ1bmN0aW9uIEV4Y2VwdGlvbihtZXNzYWdlLCBub2RlKSB7XG4gIGxldCBsb2MgPSBub2RlICYmIG5vZGUubG9jLFxuICAgICAgbGluZSxcbiAgICAgIGNvbHVtbjtcbiAgaWYgKGxvYykge1xuICAgIGxpbmUgPSBsb2Muc3RhcnQubGluZTtcbiAgICBjb2x1bW4gPSBsb2Muc3RhcnQuY29sdW1uO1xuXG4gICAgbWVzc2FnZSArPSAnIC0gJyArIGxpbmUgKyAnOicgKyBjb2x1bW47XG4gIH1cblxuICBsZXQgdG1wID0gRXJyb3IucHJvdG90eXBlLmNvbnN0cnVjdG9yLmNhbGwodGhpcywgbWVzc2FnZSk7XG5cbiAgLy8gVW5mb3J0dW5hdGVseSBlcnJvcnMgYXJlIG5vdCBlbnVtZXJhYmxlIGluIENocm9tZSAoYXQgbGVhc3QpLCBzbyBgZm9yIHByb3AgaW4gdG1wYCBkb2Vzbid0IHdvcmsuXG4gIGZvciAobGV0IGlkeCA9IDA7IGlkeCA8IGVycm9yUHJvcHMubGVuZ3RoOyBpZHgrKykge1xuICAgIHRoaXNbZXJyb3JQcm9wc1tpZHhdXSA9IHRtcFtlcnJvclByb3BzW2lkeF1dO1xuICB9XG5cbiAgLyogaXN0YW5idWwgaWdub3JlIGVsc2UgKi9cbiAgaWYgKEVycm9yLmNhcHR1cmVTdGFja1RyYWNlKSB7XG4gICAgRXJyb3IuY2FwdHVyZVN0YWNrVHJhY2UodGhpcywgRXhjZXB0aW9uKTtcbiAgfVxuXG4gIHRyeSB7XG4gICAgaWYgKGxvYykge1xuICAgICAgdGhpcy5saW5lTnVtYmVyID0gbGluZTtcblxuICAgICAgLy8gV29yayBhcm91bmQgaXNzdWUgdW5kZXIgc2FmYXJpIHdoZXJlIHdlIGNhbid0IGRpcmVjdGx5IHNldCB0aGUgY29sdW1uIHZhbHVlXG4gICAgICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICAgICAgaWYgKE9iamVjdC5kZWZpbmVQcm9wZXJ0eSkge1xuICAgICAgICBPYmplY3QuZGVmaW5lUHJvcGVydHkodGhpcywgJ2NvbHVtbicsIHtcbiAgICAgICAgICB2YWx1ZTogY29sdW1uLFxuICAgICAgICAgIGVudW1lcmFibGU6IHRydWVcbiAgICAgICAgfSk7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICB0aGlzLmNvbHVtbiA9IGNvbHVtbjtcbiAgICAgIH1cbiAgICB9XG4gIH0gY2F0Y2ggKG5vcCkge1xuICAgIC8qIElnbm9yZSBpZiB0aGUgYnJvd3NlciBpcyB2ZXJ5IHBhcnRpY3VsYXIgKi9cbiAgfVxufVxuXG5FeGNlcHRpb24ucHJvdG90eXBlID0gbmV3IEVycm9yKCk7XG5cbmV4cG9ydCBkZWZhdWx0IEV4Y2VwdGlvbjtcbiJdfQ==
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.g = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(3);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _handlebars = __webpack_require__(44);
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
-var _DataManager = __webpack_require__(14);
-
-var _DataManager2 = _interopRequireDefault(_DataManager);
-
-var _AtmosphereManager = __webpack_require__(12);
-
-var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var GlobalVars = function () {
-    // Do all jquery searches here, then other classes can import this file as g and use g.$trackList for example
-
-    function GlobalVars() {
-        _classCallCheck(this, GlobalVars);
-
-        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
-        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
-        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
-        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
-        this.$sideBar = (0, _jquery2.default)(".sidebar");
-        this.$sideBarFooter = (0, _jquery2.default)(".sidebar__footer");
-        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
-        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
-        this.$editingTitle = null;
-
-        this.trackPrefix = "/audio/converted/";
-        this.fileTypes = ['.webm', '.mp3'];
-
-        this.atmosphereManager = new _AtmosphereManager2.default();
-
-        this.dataManager = new _DataManager2.default();
-
-        // this.compileTemplates();
-
-        this.events();
-    }
-
-    _createClass(GlobalVars, [{
-        key: 'events',
-        value: function events() {
-            // Stop editing title upon mouse click outside the title
-            var that = this;
-            (0, _jquery2.default)(document).click(function (event) {
-                if (that.$editingTitle != null && !that.$editingTitle.is(event.target) && that.$editingTitle.has(event.target).length === 0) {
-                    that.stopEditingTitle();
-                }
-            });
-
-            // Toggle hidden class on sidebar upon hide button click
-            (0, _jquery2.default)(".navbar__hide").click(function () {
-                that.hideSidebar();
-            });
-        }
-    }, {
-        key: 'hideSidebar',
-        value: function hideSidebar() {
-            this.$sideBar.toggleClass("mobile-hidden");
-            this.$sideBarFooter.toggleClass("mobile-hidden");
-        }
-    }, {
-        key: 'stopEditingTitle',
-        value: function stopEditingTitle() {
-            if (g.$editingTitle != null) {
-                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
-                this.$editingTitle = null;
-            }
-        }
-    }, {
-        key: 'compileTemplates',
-        value: function compileTemplates() {
-            var that = this;
-            var template;
-            // TODO: move paths to variable
-            _jquery2.default.get("/templates/track.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.trackTemplate = template;
-            });
-            _jquery2.default.get("/templates/atmosphere.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.atmosphereTemplate = template;
-            });
-            _jquery2.default.get("/templates/oneshot.html", function (rawTemplate) {
-                template = _handlebars2.default.compile(rawTemplate);
-                that.oneshotTemplate = template;
-            });
-        }
-    }, {
-        key: 'selectElementContents',
-        value: function selectElementContents(el) {
-            var range = document.createRange();
-            range.selectNodeContents(el);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
-    }, {
-        key: 'convertToFilenames',
-        value: function convertToFilenames(filename) {
-            var filenames = [],
-                that = this;
-            this.fileTypes.forEach(function (fileType) {
-                filenames.push(that.trackPrefix + filename + fileType);
-            });
-            // console.log('GlobalVars.js:convertToFilenames:filenames:');
-            // console.log(filenames);
-            return filenames;
-        }
-    }, {
-        key: 'getRandomInt',
-        value: function getRandomInt(max) {
-            max = Math.floor(max);
-            return Math.floor(Math.random() * max);
-        }
-    }, {
-        key: 'clamp',
-        value: function clamp(min, number, max) {
-            return Math.min(Math.max(number, min), max);
-        }
-    }]);
-
-    return GlobalVars;
-}();
-
-var g = exports.g = new GlobalVars();
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10669,6 +10458,217 @@ return jQuery;
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
+
+function Exception(message, node) {
+  var loc = node && node.loc,
+      line = undefined,
+      column = undefined;
+  if (loc) {
+    line = loc.start.line;
+    column = loc.start.column;
+
+    message += ' - ' + line + ':' + column;
+  }
+
+  var tmp = Error.prototype.constructor.call(this, message);
+
+  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
+  for (var idx = 0; idx < errorProps.length; idx++) {
+    this[errorProps[idx]] = tmp[errorProps[idx]];
+  }
+
+  /* istanbul ignore else */
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, Exception);
+  }
+
+  try {
+    if (loc) {
+      this.lineNumber = line;
+
+      // Work around issue under safari where we can't directly set the column value
+      /* istanbul ignore next */
+      if (Object.defineProperty) {
+        Object.defineProperty(this, 'column', {
+          value: column,
+          enumerable: true
+        });
+      } else {
+        this.column = column;
+      }
+    }
+  } catch (nop) {
+    /* Ignore if the browser is very particular */
+  }
+}
+
+Exception.prototype = new Error();
+
+exports['default'] = Exception;
+module.exports = exports['default'];
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL2V4Y2VwdGlvbi5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7O0FBQ0EsSUFBTSxVQUFVLEdBQUcsQ0FBQyxhQUFhLEVBQUUsVUFBVSxFQUFFLFlBQVksRUFBRSxTQUFTLEVBQUUsTUFBTSxFQUFFLFFBQVEsRUFBRSxPQUFPLENBQUMsQ0FBQzs7QUFFbkcsU0FBUyxTQUFTLENBQUMsT0FBTyxFQUFFLElBQUksRUFBRTtBQUNoQyxNQUFJLEdBQUcsR0FBRyxJQUFJLElBQUksSUFBSSxDQUFDLEdBQUc7TUFDdEIsSUFBSSxZQUFBO01BQ0osTUFBTSxZQUFBLENBQUM7QUFDWCxNQUFJLEdBQUcsRUFBRTtBQUNQLFFBQUksR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQztBQUN0QixVQUFNLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUM7O0FBRTFCLFdBQU8sSUFBSSxLQUFLLEdBQUcsSUFBSSxHQUFHLEdBQUcsR0FBRyxNQUFNLENBQUM7R0FDeEM7O0FBRUQsTUFBSSxHQUFHLEdBQUcsS0FBSyxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLElBQUksRUFBRSxPQUFPLENBQUMsQ0FBQzs7O0FBRzFELE9BQUssSUFBSSxHQUFHLEdBQUcsQ0FBQyxFQUFFLEdBQUcsR0FBRyxVQUFVLENBQUMsTUFBTSxFQUFFLEdBQUcsRUFBRSxFQUFFO0FBQ2hELFFBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxHQUFHLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7R0FDOUM7OztBQUdELE1BQUksS0FBSyxDQUFDLGlCQUFpQixFQUFFO0FBQzNCLFNBQUssQ0FBQyxpQkFBaUIsQ0FBQyxJQUFJLEVBQUUsU0FBUyxDQUFDLENBQUM7R0FDMUM7O0FBRUQsTUFBSTtBQUNGLFFBQUksR0FBRyxFQUFFO0FBQ1AsVUFBSSxDQUFDLFVBQVUsR0FBRyxJQUFJLENBQUM7Ozs7QUFJdkIsVUFBSSxNQUFNLENBQUMsY0FBYyxFQUFFO0FBQ3pCLGNBQU0sQ0FBQyxjQUFjLENBQUMsSUFBSSxFQUFFLFFBQVEsRUFBRTtBQUNwQyxlQUFLLEVBQUUsTUFBTTtBQUNiLG9CQUFVLEVBQUUsSUFBSTtTQUNqQixDQUFDLENBQUM7T0FDSixNQUFNO0FBQ0wsWUFBSSxDQUFDLE1BQU0sR0FBRyxNQUFNLENBQUM7T0FDdEI7S0FDRjtHQUNGLENBQUMsT0FBTyxHQUFHLEVBQUU7O0dBRWI7Q0FDRjs7QUFFRCxTQUFTLENBQUMsU0FBUyxHQUFHLElBQUksS0FBSyxFQUFFLENBQUM7O3FCQUVuQixTQUFTIiwiZmlsZSI6ImV4Y2VwdGlvbi5qcyIsInNvdXJjZXNDb250ZW50IjpbIlxuY29uc3QgZXJyb3JQcm9wcyA9IFsnZGVzY3JpcHRpb24nLCAnZmlsZU5hbWUnLCAnbGluZU51bWJlcicsICdtZXNzYWdlJywgJ25hbWUnLCAnbnVtYmVyJywgJ3N0YWNrJ107XG5cbmZ1bmN0aW9uIEV4Y2VwdGlvbihtZXNzYWdlLCBub2RlKSB7XG4gIGxldCBsb2MgPSBub2RlICYmIG5vZGUubG9jLFxuICAgICAgbGluZSxcbiAgICAgIGNvbHVtbjtcbiAgaWYgKGxvYykge1xuICAgIGxpbmUgPSBsb2Muc3RhcnQubGluZTtcbiAgICBjb2x1bW4gPSBsb2Muc3RhcnQuY29sdW1uO1xuXG4gICAgbWVzc2FnZSArPSAnIC0gJyArIGxpbmUgKyAnOicgKyBjb2x1bW47XG4gIH1cblxuICBsZXQgdG1wID0gRXJyb3IucHJvdG90eXBlLmNvbnN0cnVjdG9yLmNhbGwodGhpcywgbWVzc2FnZSk7XG5cbiAgLy8gVW5mb3J0dW5hdGVseSBlcnJvcnMgYXJlIG5vdCBlbnVtZXJhYmxlIGluIENocm9tZSAoYXQgbGVhc3QpLCBzbyBgZm9yIHByb3AgaW4gdG1wYCBkb2Vzbid0IHdvcmsuXG4gIGZvciAobGV0IGlkeCA9IDA7IGlkeCA8IGVycm9yUHJvcHMubGVuZ3RoOyBpZHgrKykge1xuICAgIHRoaXNbZXJyb3JQcm9wc1tpZHhdXSA9IHRtcFtlcnJvclByb3BzW2lkeF1dO1xuICB9XG5cbiAgLyogaXN0YW5idWwgaWdub3JlIGVsc2UgKi9cbiAgaWYgKEVycm9yLmNhcHR1cmVTdGFja1RyYWNlKSB7XG4gICAgRXJyb3IuY2FwdHVyZVN0YWNrVHJhY2UodGhpcywgRXhjZXB0aW9uKTtcbiAgfVxuXG4gIHRyeSB7XG4gICAgaWYgKGxvYykge1xuICAgICAgdGhpcy5saW5lTnVtYmVyID0gbGluZTtcblxuICAgICAgLy8gV29yayBhcm91bmQgaXNzdWUgdW5kZXIgc2FmYXJpIHdoZXJlIHdlIGNhbid0IGRpcmVjdGx5IHNldCB0aGUgY29sdW1uIHZhbHVlXG4gICAgICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICAgICAgaWYgKE9iamVjdC5kZWZpbmVQcm9wZXJ0eSkge1xuICAgICAgICBPYmplY3QuZGVmaW5lUHJvcGVydHkodGhpcywgJ2NvbHVtbicsIHtcbiAgICAgICAgICB2YWx1ZTogY29sdW1uLFxuICAgICAgICAgIGVudW1lcmFibGU6IHRydWVcbiAgICAgICAgfSk7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICB0aGlzLmNvbHVtbiA9IGNvbHVtbjtcbiAgICAgIH1cbiAgICB9XG4gIH0gY2F0Y2ggKG5vcCkge1xuICAgIC8qIElnbm9yZSBpZiB0aGUgYnJvd3NlciBpcyB2ZXJ5IHBhcnRpY3VsYXIgKi9cbiAgfVxufVxuXG5FeGNlcHRpb24ucHJvdG90eXBlID0gbmV3IEVycm9yKCk7XG5cbmV4cG9ydCBkZWZhdWx0IEV4Y2VwdGlvbjtcbiJdfQ==
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.g = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _handlebars = __webpack_require__(45);
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+var _DataManager = __webpack_require__(15);
+
+var _DataManager2 = _interopRequireDefault(_DataManager);
+
+var _AtmosphereManager = __webpack_require__(13);
+
+var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GlobalVars = function () {
+    // Do all jquery searches here, then other classes can import this file as g and use g.$trackList for example
+
+    function GlobalVars() {
+        _classCallCheck(this, GlobalVars);
+
+        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
+        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
+        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
+        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
+        this.$sideBar = (0, _jquery2.default)(".sidebar");
+        this.$sideBarFooter = (0, _jquery2.default)(".sidebar__footer");
+        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
+        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
+        this.$editingTitle = null;
+
+        this.trackPrefix = "/audio/converted/";
+        this.fileTypes = ['.webm', '.mp3'];
+
+        this.atmosphereManager = new _AtmosphereManager2.default();
+
+        this.dataManager = new _DataManager2.default();
+
+        // this.compileTemplates();
+
+        this.events();
+    }
+
+    _createClass(GlobalVars, [{
+        key: 'events',
+        value: function events() {
+            // Stop editing title upon mouse click outside the title
+            var that = this;
+            (0, _jquery2.default)(document).click(function (event) {
+                if (that.$editingTitle != null && !that.$editingTitle.is(event.target) && that.$editingTitle.has(event.target).length === 0) {
+                    that.stopEditingTitle();
+                }
+            });
+
+            // Toggle hidden class on sidebar upon hide button click
+            (0, _jquery2.default)(".navbar__hide").click(function () {
+                that.hideSidebar();
+            });
+        }
+    }, {
+        key: 'hideSidebar',
+        value: function hideSidebar() {
+            this.$sideBar.toggleClass("mobile-hidden");
+            this.$sideBarFooter.toggleClass("mobile-hidden");
+        }
+    }, {
+        key: 'stopEditingTitle',
+        value: function stopEditingTitle() {
+            if (g.$editingTitle != null) {
+                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
+                this.$editingTitle = null;
+            }
+        }
+
+        // compileTemplates() {
+        //     var that = this;
+        //     var template;
+        //     // TODO: move paths to variable
+        //     $.get("/templates/track.html", function(rawTemplate) {
+        //         template = Handlebars.compile(rawTemplate);
+        //         that.trackTemplate = template;
+        //     });
+        //     $.get("/templates/atmosphere.html", function(rawTemplate) {
+        //         template = Handlebars.compile(rawTemplate);
+        //         that.atmosphereTemplate = template;
+        //     });
+        //     $.get("/templates/oneshot.html", function(rawTemplate) {
+        //         template = Handlebars.compile(rawTemplate);
+        //         that.oneshotTemplate = template;
+        //     });
+        // }
+
+    }, {
+        key: 'selectElementContents',
+        value: function selectElementContents(el) {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }, {
+        key: 'convertToFilenames',
+        value: function convertToFilenames(filename) {
+            var filenames = [],
+                that = this;
+            this.fileTypes.forEach(function (fileType) {
+                filenames.push(that.trackPrefix + filename + fileType);
+            });
+            // console.log('GlobalVars.js:convertToFilenames:filenames:');
+            // console.log(filenames);
+            return filenames;
+        }
+    }, {
+        key: 'getRandomInt',
+        value: function getRandomInt(max) {
+            max = Math.floor(max);
+            return Math.floor(Math.random() * max);
+        }
+    }, {
+        key: 'clamp',
+        value: function clamp(min, number, max) {
+            return Math.min(Math.max(number, min), max);
+        }
+    }]);
+
+    return GlobalVars;
+}();
+
+var g = exports.g = new GlobalVars();
+
+/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10683,15 +10683,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(33);
+var _helpers = __webpack_require__(34);
 
-var _decorators = __webpack_require__(31);
+var _decorators = __webpack_require__(32);
 
-var _logger = __webpack_require__(41);
+var _logger = __webpack_require__(42);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10791,7 +10791,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -10939,17 +10939,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(19);
+__webpack_require__(20);
 
 // Track object, contains all the data associated with a given track
 
@@ -11181,7 +11181,7 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
 
 /***/ }),
 /* 9 */
@@ -11196,11 +11196,68 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(2);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var About = function () {
+    function About() {
+        _classCallCheck(this, About);
+
+        this.$about = (0, _jquery2.default)('.about');
+        this.rigOpen();
+        this.rigClose();
+    }
+
+    _createClass(About, [{
+        key: 'rigOpen',
+        value: function rigOpen() {
+            (0, _jquery2.default)('.about__open').on('click', this.open.bind(this));
+        }
+    }, {
+        key: 'rigClose',
+        value: function rigClose() {
+            (0, _jquery2.default)('.about__close').on('click', this.close.bind(this));
+        }
+    }, {
+        key: 'open',
+        value: function open() {
+            this.$about.removeClass('about--closed');
+        }
+    }, {
+        key: 'close',
+        value: function close() {
+            this.$about.addClass('about--closed');
+        }
+    }]);
+
+    return About;
+}();
+
+exports.default = About;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _GlobalVars = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11395,25 +11452,30 @@ var SearchBar = function () {
 exports.default = SearchBar;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _SearchBar = __webpack_require__(9);
+var _SearchBar = __webpack_require__(10);
 
 var _SearchBar2 = _interopRequireDefault(_SearchBar);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(3);
+
+var _About = __webpack_require__(9);
+
+var _About2 = _interopRequireDefault(_About);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var searchBar = new _SearchBar2.default();
 _GlobalVars.g.searchBar = searchBar;
+_GlobalVars.g.about = new _About2.default();
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11425,7 +11487,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -11433,21 +11495,21 @@ var _Track = __webpack_require__(6);
 
 var _Track2 = _interopRequireDefault(_Track);
 
-var _OneShot = __webpack_require__(15);
+var _OneShot = __webpack_require__(16);
 
 var _OneShot2 = _interopRequireDefault(_OneShot);
 
-var _AudioManager = __webpack_require__(13);
+var _AudioManager = __webpack_require__(14);
 
 var _AudioManager2 = _interopRequireDefault(_AudioManager);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(16);
+__webpack_require__(17);
 
 var Atmosphere = function () {
 
@@ -11560,6 +11622,7 @@ var Atmosphere = function () {
                 if (e.keyCode == "13") {
                     // Exit edit mode
                     $titleText.prop('contenteditable', false).toggleClass('editable');
+                    _GlobalVars.g.$editingTitle = null;
                 }
             });
 
@@ -11733,7 +11796,7 @@ var Atmosphere = function () {
 exports.default = Atmosphere;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11745,13 +11808,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(3);
 
-var _Atmosphere = __webpack_require__(11);
+var _Atmosphere = __webpack_require__(12);
 
 var _Atmosphere2 = _interopRequireDefault(_Atmosphere);
 
@@ -11937,7 +12000,7 @@ var AtmosphereManager = function () {
 exports.default = AtmosphereManager;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11949,7 +12012,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(3);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12098,7 +12161,7 @@ var AudioManager = function () {
 exports.default = AudioManager;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12110,17 +12173,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(18);
+__webpack_require__(19);
 
 var DataManager = function () {
     function DataManager() {
@@ -12178,6 +12241,15 @@ var DataManager = function () {
                 tags: object.tags,
                 type: "result--" + type
             };
+
+            if (type === "oneshot") {
+                resultObject.isOneshot = true;
+            } else if (type === "atmosphere") {
+                resultObject.isAtmosphere = true;
+            } else {
+                resultObject.isLoop = true;
+            }
+
             var resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
             return (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
         }
@@ -12222,7 +12294,7 @@ var DataManager = function () {
 exports.default = DataManager;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12240,7 +12312,7 @@ var _Track2 = __webpack_require__(6);
 
 var _Track3 = _interopRequireDefault(_Track2);
 
-var _GlobalVars = __webpack_require__(2);
+var _GlobalVars = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12250,7 +12322,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-__webpack_require__(17);
+__webpack_require__(18);
 
 // Used for setting random time ranges
 var _timesteps = [1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
@@ -12507,7 +12579,7 @@ var OneShot = function (_Track) {
 exports.default = OneShot;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12519,12 +12591,12 @@ exports.default = OneShot;
   templates['atmosphere.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
       var helper;
 
-      return "<div class=\"section section--atmosphere\">\r\n\r\n  <div class=\"section__heading\">\r\n      <h4 class=\"section__heading__title\">\r\n        <span class=\"section__heading__title__text\">" + container.escapeExpression((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        <span class=\"atmosphere__rename\">\r\n          <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\r\n        </span>\r\n      </h4>\r\n      <div class=\"btn btn--delete btn--medium\">\r\n        <div class=\"btn__inner\">\r\n          <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n        </div>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"section__body\">\r\n    <div class=\"wrapper\">\r\n      <div class=\"section__flex\">\r\n\r\n        <div class=\"volume section__flex__item\">\r\n          <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n          <label class=\"control control--custom control--checkbox volume__mute\">\r\n            <input type=\"checkbox\" class=\"btn--mute\">\r\n            <div class=\"control__indicator control__indicator--medium\"></div>\r\n            <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n            <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n          </label>\r\n        </div>\r\n        <div class=\"section__flex__item\">\r\n          <div class=\"btn-pair\">\r\n            <div class=\"atmosphere__replace btn btn--rounded btn--medium\">\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n            <div class=\"atmosphere__add btn btn--rounded btn--medium\">\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n          </div>\r\n\r\n          <div class=\"btn btn--stop btn--rounded btn--medium\">\r\n            <div class=\"btn__inner\">\r\n              <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>";
+      return "<div class=\"section section--atmosphere\">\r\n\r\n  <div class=\"section__heading\">\r\n      <h4 class=\"section__heading__title\">\r\n        <span class=\"section__heading__title__text\">" + container.escapeExpression((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        <span class=\"atmosphere__rename\">\r\n          <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\r\n        </span>\r\n      </h4>\r\n      <div class=\"btn btn--delete btn--medium\">\r\n        <div class=\"btn__inner\">\r\n          <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n        </div>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"section__body\">\r\n    <div class=\"wrapper\">\r\n      <div class=\"section__flex\">\r\n\r\n        <div class=\"volume section__flex__item\">\r\n          <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n          <label class=\"control control--custom control--checkbox volume__mute\">\r\n            <input type=\"checkbox\" class=\"btn--mute\">\r\n            <div class=\"control__indicator control__indicator--medium\"></div>\r\n            <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n            <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n          </label>\r\n        </div>\r\n        <div class=\"section__flex__item\">\r\n          <div class=\"btn-pair\">\r\n            <div class=\"atmosphere__replace btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Replace</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n            <div class=\"atmosphere__add btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Add</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n                <i class=\"fa fa-plus btn__bottom-right\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n\r\n          <div class=\"btn btn--stop btn--rounded btn--medium\">\r\n            <div class=\"btn__inner\">\r\n              <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12558,7 +12630,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12579,12 +12651,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"wrapper\">\r\n        " + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "\r\n        <span class=\"tags tags--float-right\">\r\n" + ((stack1 = helpers.each.call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "each", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "        </span>\r\n    </div>\r\n</li>";
+      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"wrapper\">\r\n        <span class=\"type-circle\"></span>\r\n        " + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "\r\n        <span class=\"tags tags--float-right\">\r\n" + ((stack1 = helpers.each.call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "each", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "        </span>\r\n    </div>\r\n</li>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12618,8 +12690,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 20 */,
-/* 21 */
+/* 21 */,
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12630,7 +12702,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(22);
+var _handlebarsRuntime = __webpack_require__(23);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -12640,11 +12712,11 @@ var _handlebarsCompilerAst = __webpack_require__(7);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(23);
+var _handlebarsCompilerBase = __webpack_require__(24);
 
-var _handlebarsCompilerCompiler = __webpack_require__(25);
+var _handlebarsCompilerCompiler = __webpack_require__(26);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(27);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(28);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -12691,7 +12763,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12713,11 +12785,11 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(43);
+var _handlebarsSafeString = __webpack_require__(44);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
-var _handlebarsException = __webpack_require__(1);
+var _handlebarsException = __webpack_require__(2);
 
 var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 
@@ -12725,7 +12797,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(42);
+var _handlebarsRuntime = __webpack_require__(43);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -12764,7 +12836,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12780,15 +12852,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(28);
+var _parser = __webpack_require__(29);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(30);
+var _whitespaceControl = __webpack_require__(31);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(26);
+var _helpers = __webpack_require__(27);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -12819,7 +12891,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12992,7 +13064,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13008,7 +13080,7 @@ exports.compile = compile;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -13572,7 +13644,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13593,7 +13665,7 @@ exports.preparePartialBlock = preparePartialBlock;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -13809,7 +13881,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13822,13 +13894,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _base = __webpack_require__(4);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(24);
+var _codeGen = __webpack_require__(25);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -14944,7 +15016,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15690,7 +15762,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15883,7 +15955,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16111,7 +16183,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16123,7 +16195,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(32);
+var _decoratorsInline = __webpack_require__(33);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -16134,7 +16206,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16170,7 +16242,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16182,31 +16254,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(34);
+var _helpersBlockHelperMissing = __webpack_require__(35);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(35);
+var _helpersEach = __webpack_require__(36);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(36);
+var _helpersHelperMissing = __webpack_require__(37);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(37);
+var _helpersIf = __webpack_require__(38);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(38);
+var _helpersLog = __webpack_require__(39);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(39);
+var _helpersLookup = __webpack_require__(40);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(40);
+var _helpersWith = __webpack_require__(41);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -16223,7 +16295,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16269,7 +16341,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16282,7 +16354,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16370,7 +16442,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16381,7 +16453,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16402,7 +16474,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16438,7 +16510,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16471,7 +16543,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16490,7 +16562,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16530,7 +16602,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16584,7 +16656,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16609,7 +16681,7 @@ var _utils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_utils);
 
-var _exception = __webpack_require__(1);
+var _exception = __webpack_require__(2);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16898,7 +16970,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16920,7 +16992,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -16929,9 +17001,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(21)['default'];
+var handlebars = __webpack_require__(22)['default'];
 
-var printer = __webpack_require__(29);
+var printer = __webpack_require__(30);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -16951,7 +17023,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports) {
 
 var g;

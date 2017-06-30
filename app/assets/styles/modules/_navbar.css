@@ -1,12 +1,12 @@
 .navbar {
     position: fixed;
     background-color: $blueberry;
-    border: none;
+    border-bottom: 1px solid $mediumBlue;
     width: 100%;
     padding: .5rem 0;
     top: 0;
     z-index: 10;
-    box-shadow: 0 5px 10px rgba(#000, 0.2);
+    /*box-shadow: 0 5px 10px rgba(#000, 0.2);*/
 
     &__content {
         display: flex;
@@ -30,6 +30,7 @@
         float: right;
         box-sizing: content-box;
         flex-shrink: 0;
+        cursor: help;
 
         & img {
             float: left;

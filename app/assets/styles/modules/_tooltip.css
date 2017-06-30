@@ -35,6 +35,18 @@
         border-style: solid;
         border-color: rgba($deepSea, 0.8) transparent transparent transparent;
     }
+
+    &--right {
+        left: auto;
+        right: 0;
+    }
+
+    &--right::after {
+        left: auto;
+        right: 1rem;
+        margin-right: -5px;
+        margin-left: 0;
+    }
 }
 
 .tooltip .tooltiptext--prewritten {

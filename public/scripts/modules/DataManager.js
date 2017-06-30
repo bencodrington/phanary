@@ -53,6 +53,15 @@ class DataManager {
             tags: object.tags,
             type: "result--" + type
         };
+
+        if (type === "oneshot") {
+            resultObject.isOneshot = true;
+        } else if (type === "atmosphere") {
+            resultObject.isAtmosphere = true;
+        } else {
+            resultObject.isLoop = true;
+        }
+
         var resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
         return $(resultHTML).appendTo(g.$searchResults);
     }

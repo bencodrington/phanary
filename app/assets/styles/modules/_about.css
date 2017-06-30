@@ -4,14 +4,28 @@
     left: 0;
     right: 0;
     bottom: 0;
+    transform: scale(1);
     background-color: $blueberry;
     overflow: scroll;
+    overflow-x: hidden;
+    transition: all 0.3s ease-in-out;
+    z-index: 50;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &--closed {
+        opacity: 0;
+        transform: scale(1.2);
+        visibility: hidden;
+    }
 
     & .navbar__brand {
         float: none;
-        margin-bottom: 1rem;
         font-size: 3rem;
         text-align: center;
+        cursor: default;
 
         & img {
             float: none;
@@ -29,9 +43,10 @@
     &__content {
         & h2 {
             color: $lightBlue;
-            text-shadow: -1px -1px $deepSea;
             margin: 1.5rem auto .5rem;
             font-size: 1.75rem;
+            font-weight: 600;
+            font-family: 'Slabo 27px', serif;
         }
 
         & p {
@@ -41,12 +56,29 @@
         }
     }
 
+    &__phonetics {
+        color: $lightBlue;
+        opacity: .7;
+        font-weight: 400;
+        font-style: italic;
+        text-align: center;
+        font-family: 'Slabo 27px', serif;
+    }
+
     & hr {
         margin: 1.5rem auto 0;
-        width: 50%;
+        width: 80%;
         text-align: center;
         border: 0;
-        border-top: 1px solid $whiteBlue;
+        border-top: 1px solid $mediumBlue;
+    }
+
+    &__footer-logo {
+        width: 2rem;
+        height: 2rem;
+        margin: 2rem auto 0;
+        text-align: center;
+        display: block;
     }
 
 }

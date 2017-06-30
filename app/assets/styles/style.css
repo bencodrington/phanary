@@ -5,11 +5,11 @@
 @import "modules/_navbar";
 @import "modules/_wrapper";
 @import "modules/_search-container";
+@import "modules/_search__results";
 @import "modules/_btn";
 @import "modules/_sidebar";
 @import "modules/_main-content";
 @import "modules/_control";
-@import "modules/_atmosphere";
 @import "modules/_section";
 @import "modules/_range";
 @import "modules/_btn-group";
