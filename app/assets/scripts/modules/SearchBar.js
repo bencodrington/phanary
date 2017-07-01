@@ -119,7 +119,7 @@ class SearchBar {
             return;
         }
 
-        g.dataManager.search(g.$searchBarInput.val(), { '_id': 1 }, this.update);
+        g.dataManager.search(g.$searchBarInput.val(), { '_id': 1 }, this.update.bind(this));
 
     }
 
@@ -130,38 +130,33 @@ class SearchBar {
         // console.log("/update/results: ");
         // console.log(results);
 
-        if (results && results.length != 0) {
-            var matchedIDs = [];
-            results.forEach(function(result) {
-                matchedIDs.push(result._id);
-            });
-            // console.log('Searchbar.js/update/matchedIDs: ');
-            // console.log(matchedIDs);
+        // Hide all search results
+        searchResults.css('display', 'none');
 
-            // Loop through all list items, and hide those who don't match the search query
-            searchResults.each(function() {
-                var $result = $(this);
-                // If current result was selected by the search query
-                if ( $.inArray($result.data('db-id'), matchedIDs) >= 0 ) {
-                    // Display the item
-                    $result.css("display", "");
-                    enabledCount++;
-                    //console.log("filterResults(): Showing: " + $result.text());
+        if (results && results.length != 0) {
+
+            for (var i = 0; i < results.length; i++) {
+                var result = results[i];
+                // Find search result with matching ID
+                var resultListItem = this.findSearchResult(result._id);
+                if (resultListItem === null) {
+                    console.error('Client has no list item with ID #' + result._id);
                 } else {
-                    $result.css("display", "none");
-                    //console.log("filterResults(): Hiding: " + $result.text());
+                    // Move to the i'th position in the list
+                    enabledCount++;
+                    this.moveResultToIndex(i, resultListItem);
+                    $(resultListItem).css('display', '');
                 }
-            });
+            }
         }
 
-        //console.log("filterResults: There are " + enabledCount + " enabled list items.");
         searchResults.removeClass("selected");
         if (enabledCount == 0) {
             g.$searchResults.css("display", "none");
         } else {
             g.$searchResults.css("display", "");
             // Select top element
-            g.$searchResults.find("li:visible").first().addClass("selected")
+            g.$searchResults.find("li:visible").first().addClass("selected");
         }
     }
 
@@ -172,6 +167,32 @@ class SearchBar {
         g.$searchBarInput.focus();
         this.filterResults();
     }
+
+    findSearchResult(id) {
+        //TODO: Store all search results in a map, and then just get the one at key[id]?
+        var $result = g.$searchResults.children().filter('[data-db-id="' + id + '"]');
+
+        if ($result.length > 0) {
+            return $result[0];
+        }
+        return null;
+    }
+
+    moveResultToIndex(index, searchResult) {
+        // The element to be moved
+        var $result = $(searchResult);
+        // The element currently at the desired location
+        var $target = g.$searchResults.children().eq(index);
+
+        // If element will be moving left...
+        if ($result.index() > index) {
+            // Place on the left
+            $target.before($result);
+        } else {
+            // Place on the right
+            $target.after($result);
+        }
+    };
 
 }
 

@@ -117,6 +117,7 @@ router.get('/search', function(req, res, next) {
         completed++;
         // If this is the last 'find' operation to complete
         if (completed == 2 * models.length) {
+          console.log(queryResults.tagResults);
           // Return the results
           return res.end(sortResults(queryResults));
         }
@@ -124,12 +125,26 @@ router.get('/search', function(req, res, next) {
   });
 });
 
-//TODO:
 function sortResults(queryResults) {
-  //TODO: If there are results common to both sets of results, display those
+  // console.log('sortResults: queryResults:');
+  // console.log(queryResults);
+
+  // If there are results common to both sets of results, display those
+  var returnResults = [];
+  for (var i = 0; i < queryResults.tagResults.length; i++) {
+    var result = queryResults.tagResults[i];
+    for (var j = 0; j < queryResults.nameResults.length; j++) {
+      // Can't compare the objects for equality, had to use toString
+      if (queryResults.nameResults[j]._id.toString() == result._id.toString()) {
+        returnResults.push(result);
+      }
+    }
+  }
+  if (returnResults.length > 0) {
+    return JSON.stringify(returnResults);
+  }
+
   // Else, return array with tag results first and name results second
-  console.log('sortResults: queryResults:');
-  console.log(queryResults);
   return JSON.stringify(queryResults.tagResults.concat(queryResults.nameResults));
 }
 
