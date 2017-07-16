@@ -12482,7 +12482,7 @@ var OneShot = function (_Track) {
         key: 'start',
         value: function start() {
             // Make sure min and max indexes are defined
-            if (!this.minIndex || !this.maxIndex) {
+            if (this.minIndex === undefined || this.maxIndex === undefined) {
                 this.minIndex = 1;
                 this.maxIndex = 2;
             }
@@ -12588,7 +12588,6 @@ var OneShot = function (_Track) {
             } else {
                 this.$playText.text("Play");
             }
-            console.log('setting text to: ' + this.$playText.text());
         }
     }], [{
         key: 'getTimeStep',
