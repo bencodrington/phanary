@@ -8,12 +8,71 @@ var AtmosphereModel = require('../public/scripts/modules/models/AtmosphereModel'
 var OneshotModel = require('../public/scripts/modules/models/OneshotModel').OneshotModel;
 var models = [TrackModel, AtmosphereModel, OneshotModel];
 
+var AdminModel = require('../public/scripts/modules/models/AdminModel').AdminModel;
+
 /* GET system page. */
 
 router.get('/', function(req, res, next) {
-  res.render('system', {
-    title: 'Phanary System'
+  if (req.session && req.session.admin) {
+    AdminModel.findOne({ user: req.session.admin.user }, function(err, admin) {
+      if (!admin) {
+        // Stored admin data doesn't match any user in db
+        req.session.reset();
+        res.redirect('/system/login');
+      } else {
+        // Stored admin data is valid
+        res.locals.admin = admin;
+        res.render('system', {
+          title: 'Phanary System'
+        });
+      }
+    });
+  } else {
+    res.redirect('/system/login');
+  }
+  
+});
+
+/* GET login page. */
+
+router.get('/login', function(req, res, next) {
+  res.render('login', {
+    title: 'Phanary System Login'
   });
+});
+
+router.post('/login', function(req, res, next) {
+  AdminModel.findOne({ user: req.body.user }, function(err, admin) {
+    
+    if (!admin) {
+      // Invalid username
+      res.render('login', {
+        title: 'Phanary System Login',
+        error: 'Invalid username or password.'
+      });
+
+    } else {
+      // Admin found with matching username
+      if (req.body.pass === admin.pass) {
+        // Login success
+        req.session.admin = admin;
+        res.redirect('/system');
+      } else {
+        // Invalid password
+        res.render('login', {
+          title: 'Phanary System Login',
+          error: 'Invalid username or password.'
+        });
+      }
+    }
+  });
+});
+
+/* Logout to dashboard. */
+
+router.get('/logout', function(req, res, next) {
+  req.session.reset();
+  res.redirect('/system');
 });
 
 /* Used for getting specific information from a record given a pattern to match */

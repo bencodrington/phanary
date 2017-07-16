@@ -1,0 +1,19 @@
+.login__info {
+    float: right; 
+    padding: .5rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+
+    &__user {
+        font-weight: bold;
+        color: $deepSea;
+    }
+}
+
+.login__header {
+    & .system-section-title {
+        display: inline-block;
+    }
+}

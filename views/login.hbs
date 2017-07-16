@@ -1,0 +1,46 @@
+<div class="wrapper">
+    <h1 class="system-section-title">Administration Dashboard</h1>
+
+    {{#if error}}
+    <div class="system-sections">
+        <div class="system-section">
+            <span class="system-section__title">Error: {{ error }}</span>
+        </div>
+    </div>
+    {{/if}}
+
+    <div class="system-sections">
+        <div class="system-section">
+            <div class="login">
+                <h2 class="system-section__title">Login</h1>
+                <form method="POST" id="login-form">
+                    <div class="input">
+                        <span>
+                            <label for="user">User:</label>
+                            <input type="text" name="user", required="true">
+                            <br>
+                        </span>
+                    </div>
+                    <div class="input">
+                        <span>
+                            <label for="pass">Password:</label>
+                            <input type="password" name="pass", required="true">
+                            <br>
+                        </span>
+                    </div>
+                    <div id="login-submit" class="btn btn--dark btn--medium-text btn--rounded modify__btn">
+                        <div class="btn__inner">
+                            <span>Submit</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+var form = document.getElementById("login-form");
+document.getElementById("login-submit").addEventListener("click", () => {
+    form.submit();
+});
+</script>

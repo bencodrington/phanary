@@ -1752,3 +1752,21 @@ input[type=range]:focus::-moz-range-track {
         text-align: center;
         display: block;
     }
+
+.login__info {
+    float: right; 
+    padding: .5rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+}
+
+.login__info__user {
+        font-weight: bold;
+        color: #061423;
+    }
+
+.login__header .system-section-title {
+        display: inline-block;
+    }

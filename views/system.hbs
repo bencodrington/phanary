@@ -1,6 +1,22 @@
 <div class="wrapper">
     <script>var system = true;</script>
-    <h1 class="system-section-title">Access Database</h1>
+
+    <div class="login__header">
+        <h1 class="system-section-title">Administration Dashboard</h1>
+
+        {{#if admin}}
+        <div class="login__info">
+            <span class="login__info__user">Username: {{ admin.user }}</span><br>
+            <a href="/system/logout">
+                    <div class="btn btn--dark btn--medium-text btn--rounded">
+                    <div class="btn__inner">
+                        <span>Log Out</span>
+                    </div>
+                </div> 
+            </a>
+        </div>
+        {{/if}}
+    </div>
 
     <div class="system-sections">
         <div class="system-section modify">
