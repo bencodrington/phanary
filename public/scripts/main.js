@@ -11042,6 +11042,7 @@ var Track = function () {
             var that = this;
             this.atmosphere.am.addTrack(this.id, new Howl({
                 src: filenames,
+                volume: 0,
                 buffer: true,
                 autoplay: false,
                 loop: true,
