@@ -7,7 +7,10 @@
   },
   "dependencies": {
     "body-parser": "~1.17.1",
+<<<<<<< HEAD
     "client-sessions": "^0.8.0",
+=======
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "~4.15.2",

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- About -->
 
 <div class="about about--closed">
@@ -157,3 +158,187 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.3/howler.core.min.js"></script>
 <script src="https://use.fontawesome.com/075d51e5f2.js"></script>
 <script src="/scripts/main.js"></script>
+=======
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700|Slabo+27px" rel="stylesheet">
+  {{!--<link href="temp/styles/styles.css" rel="stylesheet">--}}
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f7ce38">
+  <meta name="theme-color" content="#2e5266">
+  <script src="/scripts/lib/handlebars.runtime.js"></script>
+</head>
+
+<body>
+
+  <!-- About -->
+
+  <div class="about about--closed">
+    <div class="btn btn--medium btn--rounded btn--yellow about__close">
+      <div class="btn__inner">
+        <i class="fa fa-close"></i>
+      </div>
+    </div>
+    <div class="wrapper wrapper--top-margin wrapper--bottom-margin">
+      <h1 class="navbar__brand"><img src="/images/svg/logo_solid.svg"><span>Phanary</span></h1>
+      <h3 class="about__phonetics">(fuh-NAIR-ee)</h3>
+      <div class="about__content">
+        <h2>About</h2>
+        <p>
+          Phanary allows tabletop RPG game masters to quickly and easily switch between premade and custom soundscapes, to bring that extra level of immersion to their tables.
+        </p>
+        <p>
+          Each atmosphere is made up of soundscapes, background music, and looping samples, which can be customized in advance. This allows GM's to transition smoothly to an entirely new sonic landscape with the click of a button. 
+        </p>
+
+        <hr>
+
+        <h2>Quick Start</h2>
+        <p>
+          Just start typing words related to the mood or location that you're trying to convey in the search bar, and hit enter.
+        </p>
+        <p>
+          <span class="type-circle type-circle--inline"></span>
+          <strong>Loops</strong>
+          (like background music) repeat smoothly and indefinitely.
+        </p>
+        <p>
+          <span class="result--oneshot"><span class="type-circle type-circle--inline"></span></span>
+          <strong>One-Shots</strong>
+          (like the sound of a stalactite dripping water) can be fired manually, or set to play automatically in a specified range of time.
+        </p>
+        <p>
+          <span class="result--atmosphere"><span class="type-circle type-circle--inline"></span></span>
+          <strong>Atmospheres</strong>
+          (like that of a tavern) contain pre-configured combinations of tracks and one-shots, and can also be created and modified from the 'Atmospheres' section.
+        </p>
+
+        <hr>
+
+        <h2>Hope you enjoy!</h2>
+        <p>
+          Thanks for checking out this app!
+        </p>
+        <p>
+          I really hope Phanary added some extra flavour to your game!
+        </p>
+        <p>
+          Please send any comments, bugs, or ideas for improvement to <strong>benvenda at gmail.com</strong>.
+        </p>
+      </div>
+      <img class="about__footer-logo" src="/images/svg/logo_solid.svg">
+    </div>
+  </div> <!-- /.about -->
+  
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="wrapper">
+      <div class="navbar__content">
+
+        <div class="btn btn--yellow btn--rounded btn--medium navbar__hide">
+          <div class="btn__inner">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <div class="search-container">
+          <div class="search-container__search-controls">
+            <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="'rain', 'one-shot', 'rain atmosphere', etc.">
+            <div id="searchBarClearBtn" class="btn search-container__addon">
+              x
+            </div>
+            <div class="search-container__addon search-container__addon--inverted">
+              <div class="search-container__addon__inner">
+                <label class="control control--checkbox">
+                  <i class="fa fa-play" aria-hidden="true"></i>
+                  <input type="checkbox" checked="checked" id="autoplayCheckbox">
+                  <div class="control__indicator"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="navbar__brand about__open"><img src="/images/svg/logo_solid.svg"><span class="navbar__brand__text">Phanary</span></h2>
+  
+      </div>
+    </div>
+
+    <ul class="search-container__results" id="searchResults" style="display: none">
+      
+        <!-- Search Results Go Here! -->
+
+    </ul>
+  </div> <!-- /.navbar -->
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <div class="wrapper wrapper--top-margin wrapper--bottom-margin">
+      <h2 class="content-title">Atmospheres</h2>
+      <div id="atmosphereList">
+
+        <!-- Atmospheres go here-->
+        
+      </div>
+    </div>
+
+    <div class="sidebar__footer">
+      <div class="wrapper">
+
+        <div class="sidebar__footer__controls">
+
+          
+          <div id="newAtmosphereBtn" class="btn btn--yellow btn--rounded btn--medium sidebar__footer__btn-new tooltip">
+            <span class="tooltiptext tooltiptext--prewritten">Create custom atmosphere</span>
+            <div class="btn__inner">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </div>
+          </div>
+          
+
+          <div class="volume">
+            <input class="volume__range-global" type="range" min="0" max="1" value="1" step="0.05">
+            <label class="control control--custom control--checkbox volume__mute">
+              <input type="checkbox" class="volume__mute-btn-global">
+              <div class="control__indicator control__indicator--medium"></div>
+              <div class="control--custom__on"><i class="fa fa-volume-off" aria-hidden="true"></i></div>
+              <div class="control--custom__off"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
+            </label>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div> <!-- /.sidebar -->
+
+  <!-- Main Content-->
+  <div class="main-content">
+    <div class="wrapper wrapper--top-margin">
+      <h2 class="content-title content-title--inverted">Tracks</h2>
+      <div id="trackList">
+
+        <!-- Tracks go here -->
+
+      </div>
+    </div>
+  </div> <!-- /.main-content -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.3/howler.core.min.js"></script>
+  <script src="https://use.fontawesome.com/075d51e5f2.js"></script>
+  <script src="/scripts/main.js"></script>
+</body>
+
+</html>
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68

@@ -21,5 +21,9 @@
 @import "modules/_tags";
 @import "modules/_progress";
 @import "modules/_source";
+<<<<<<< HEAD
 @import "modules/_about";
 @import "modules/_login";
+=======
+@import "modules/_about";
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68

@@ -5,19 +5,29 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var hbs = require('express-handlebars');
+<<<<<<< HEAD
 var sessions = require('client-sessions');
+=======
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 
 var index = require('./routes/index');
 var system = require('./routes/system');
 
 var app = express();
 
+<<<<<<< HEAD
 // View engine setup
+=======
+// view engine setup
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views'}));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+<<<<<<< HEAD
 // Middleware
+=======
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -25,6 +35,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+<<<<<<< HEAD
 app.use(sessions({
   cookieName: 'session',
   secret: 'sadfasdfasd45bhj2kg34jh5jkhvo87ahs',
@@ -33,6 +44,8 @@ app.use(sessions({
   httpOnly: true, // Don't let browser JS access cookies ever
   ephemeral: true // Delete this cookie when the browser is closed
 }));
+=======
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 
 app.use('/', index);
 app.use('/system', system);

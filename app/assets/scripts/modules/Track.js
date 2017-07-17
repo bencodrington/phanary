@@ -93,7 +93,10 @@ class Track {
             this.id,
             new Howl({
                 src: filenames,
+<<<<<<< HEAD
                 volume: 0,
+=======
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
                 buffer: true,
                 autoplay: false,
                 loop: true,

@@ -11,12 +11,36 @@
         color: $blueberry;
     }
 
+<<<<<<< HEAD
+=======
+    &--stop {
+        background-color: red;
+    }
+
+    &--play {
+        background-color: green;
+    }
+
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
     &--inverted {
         background-color: $blueberry;
         border: 1px solid $stormGrey;
         color: $stormGrey;
     }
 
+<<<<<<< HEAD
+=======
+    &--yellow {
+        background-color: $phanary;
+        color: $coconut;
+    }
+
+    &--yellow:hover {
+        background-color: $vanilla;
+        color: $peru;
+    }
+
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
     &--yellow.btn--delete:hover {
         color: $peru;
     }
@@ -112,6 +136,7 @@
     &--delete:hover {
         background-color: transparent;
     }
+<<<<<<< HEAD
 }
 
 .btn--yellow, .section--track .btn--yellow {
@@ -122,4 +147,6 @@
 .btn--yellow:hover, .section--track .btn--yellow:hover {
     background-color: $vanilla;
     color: $peru;
+=======
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 }

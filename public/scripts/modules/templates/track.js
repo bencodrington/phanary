@@ -5,7 +5,11 @@ templates['track.hbs'] = template({"1":function(container,depth0,helpers,partial
 
   return "            <span>Source:\r\n                <span class=\"source\">"
     + container.escapeExpression(((helper = (helper = helpers.source || (depth0 != null ? depth0.source : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"source","hash":{},"data":data}) : helper)))
+<<<<<<< HEAD
     + "</span>\r\n            </span>\r\n            <br>\r\n";
+=======
+    + "</span>\r\n            </span>\r\n";
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1;
 

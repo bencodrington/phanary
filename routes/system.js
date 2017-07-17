@@ -8,6 +8,7 @@ var AtmosphereModel = require('../public/scripts/modules/models/AtmosphereModel'
 var OneshotModel = require('../public/scripts/modules/models/OneshotModel').OneshotModel;
 var models = [TrackModel, AtmosphereModel, OneshotModel];
 
+<<<<<<< HEAD
 var AdminModel = require('../public/scripts/modules/models/AdminModel').AdminModel;
 
 /* GET system page. */
@@ -75,6 +76,16 @@ router.get('/logout', function(req, res, next) {
   res.redirect('/system');
 });
 
+=======
+/* GET system page. */
+
+router.get('/', function(req, res, next) {
+  res.render('system', {
+    title: 'Phanary System'
+  });
+});
+
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 /* Used for getting specific information from a record given a pattern to match */
 
 router.get('/get', function(req, res, next) {

@@ -120,7 +120,11 @@ class OneShot extends Track {
 
     start() {
         // Make sure min and max indexes are defined
+<<<<<<< HEAD
         if (this.minIndex === undefined || this.maxIndex === undefined) {
+=======
+        if (!this.minIndex || !this.maxIndex) {
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
             this.minIndex = 1;
             this.maxIndex = 2;
         }
@@ -217,6 +221,10 @@ class OneShot extends Track {
         } else {
             this.$playText.text("Play");
         }
+<<<<<<< HEAD
+=======
+        console.log('setting text to: ' + this.$playText.text());
+>>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
     }
 
     static getTimeStep(index) {
