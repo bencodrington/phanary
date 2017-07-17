@@ -11,28 +11,10 @@
         color: $blueberry;
     }
 
-    &--stop {
-        background-color: red;
-    }
-
-    &--play {
-        background-color: green;
-    }
-
     &--inverted {
         background-color: $blueberry;
         border: 1px solid $stormGrey;
         color: $stormGrey;
-    }
-
-    &--yellow {
-        background-color: $phanary;
-        color: $coconut;
-    }
-
-    &--yellow:hover {
-        background-color: $vanilla;
-        color: $peru;
     }
 
     &--yellow.btn--delete:hover {
@@ -130,4 +112,14 @@
     &--delete:hover {
         background-color: transparent;
     }
+}
+
+.btn--yellow, .section--track .btn--yellow {
+    background-color: $phanary;
+    color: $coconut;
+}
+
+.btn--yellow:hover, .section--track .btn--yellow:hover {
+    background-color: $vanilla;
+    color: $peru;
 }

@@ -755,28 +755,10 @@ a {
         color: #2E5266;
     }
 
-.btn--stop {
-        background-color: red;
-    }
-
-.btn--play {
-        background-color: green;
-    }
-
 .btn--inverted {
         background-color: #2E5266;
         border: 1px solid #849AA8;
         color: #849AA8;
-    }
-
-.btn--yellow {
-        background-color: #F7CE38;
-        color: #995835;
-    }
-
-.btn--yellow:hover {
-        background-color: #F4E2A1;
-        color: #C68343;
     }
 
 .btn--yellow.btn--delete:hover {
@@ -876,6 +858,16 @@ a {
 .section--track .btn--delete:hover {
         background-color: transparent;
     }
+
+.btn--yellow, .section--track .btn--yellow {
+    background-color: #F7CE38;
+    color: #995835;
+}
+
+.btn--yellow:hover, .section--track .btn--yellow:hover {
+    background-color: #F4E2A1;
+    color: #C68343;
+}
 
 .sidebar {
     width: 100%;
