@@ -25,7 +25,7 @@ gulp.task('watch', function() {
         gulp.start('templatesRefresh');
     })
 
-    watch('./app/assets/audio/*', function() {
+    watch('./public/audio/converted/*', function() {
         gulp.start('audioRefresh');
     });
 
