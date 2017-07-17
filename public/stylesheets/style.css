@@ -755,36 +755,12 @@ a {
         color: #2E5266;
     }
 
-<<<<<<< HEAD
-=======
-.btn--stop {
-        background-color: red;
-    }
-
-.btn--play {
-        background-color: green;
-    }
-
->>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 .btn--inverted {
         background-color: #2E5266;
         border: 1px solid #849AA8;
         color: #849AA8;
     }
 
-<<<<<<< HEAD
-=======
-.btn--yellow {
-        background-color: #F7CE38;
-        color: #995835;
-    }
-
-.btn--yellow:hover {
-        background-color: #F4E2A1;
-        color: #C68343;
-    }
-
->>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 .btn--yellow.btn--delete:hover {
         color: #C68343;
     }
@@ -883,7 +859,6 @@ a {
         background-color: transparent;
     }
 
-<<<<<<< HEAD
 .btn--yellow, .section--track .btn--yellow {
     background-color: #F7CE38;
     color: #995835;
@@ -894,8 +869,6 @@ a {
     color: #C68343;
 }
 
-=======
->>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
 .sidebar {
     width: 100%;
     -webkit-transition: width 0.3s ease-out;
@@ -1770,7 +1743,6 @@ input[type=range]:focus::-moz-range-track {
         margin: 2rem auto 0;
         text-align: center;
         display: block;
-<<<<<<< HEAD
     }
 
 .login__info {
@@ -1789,6 +1761,4 @@ input[type=range]:focus::-moz-range-track {
 
 .login__header .system-section-title {
         display: inline-block;
-=======
->>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
     }

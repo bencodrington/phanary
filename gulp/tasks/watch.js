@@ -25,11 +25,7 @@ gulp.task('watch', function() {
         gulp.start('templatesRefresh');
     })
 
-<<<<<<< HEAD
     watch('./public/audio/converted/*', function() {
-=======
-    watch('./app/assets/audio/*', function() {
->>>>>>> f2b932bba69ee7bf60ac881a73c698cccf800a68
         gulp.start('audioRefresh');
     });
 
