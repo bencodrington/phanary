@@ -45,5 +45,5 @@ gulp.task('templatesRefresh', ['templates'], function() {
 });
 
 gulp.task('audioRefresh', function() {
-    browserSync.reload();
+    // browserSync.reload();
 });
