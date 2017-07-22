@@ -42,7 +42,7 @@
 
     &__content {
         & h2 {
-            color: $lightBlue;
+            color: $whiteBlue;
             margin: 1.5rem auto .5rem;
             font-size: 1.75rem;
             font-weight: 600;
@@ -50,7 +50,7 @@
         }
 
         & p {
-            color: $deepSea;
+            color: $lightBlue;
             font-size: 1.25rem;
             margin-top: .5rem;
         }
