@@ -11064,6 +11064,7 @@ var Track = function () {
         key: 'play',
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
+            this.atmosphere.hidePlayButtons();
             // Disable/hide play button
             this.$playBtn.hide();
             this.$stopBtn.show();
@@ -11764,6 +11765,11 @@ var Atmosphere = function () {
                 }
             });
 
+            this.hidePlayButtons();
+        }
+    }, {
+        key: 'hidePlayButtons',
+        value: function hidePlayButtons() {
             this.$addBtn.hide();
             this.$replaceBtn.hide();
             this.$stopBtn.show();

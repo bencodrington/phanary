@@ -114,6 +114,7 @@ class Track {
 
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
+        this.atmosphere.hidePlayButtons();
         // Disable/hide play button
         this.$playBtn.hide();
         this.$stopBtn.show();

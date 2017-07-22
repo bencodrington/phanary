@@ -73,6 +73,11 @@
         border-top: 1px solid $mediumBlue;
     }
 
+    &__coffee {
+        margin: 1.5rem 0;
+        text-align: center;
+    }
+
     &__footer-logo {
         width: 2rem;
         height: 2rem;

@@ -1757,6 +1757,11 @@ input[type=range]:focus::-moz-range-track {
         border-top: 1px solid #3A6982;
     }
 
+.about__coffee {
+        margin: 1.5rem 0;
+        text-align: center;
+    }
+
 .about__footer-logo {
         width: 2rem;
         height: 2rem;

@@ -224,6 +224,10 @@ class Atmosphere {
             }
         });
 
+        this.hidePlayButtons();
+    }
+
+    hidePlayButtons() {
         this.$addBtn.hide();
         this.$replaceBtn.hide();
         this.$stopBtn.show();
