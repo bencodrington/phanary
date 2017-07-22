@@ -93,7 +93,7 @@
             height: 100%;
             opacity: 0;  
             border-radius: 5px;
-            border-top: 1px solid white;
+            border-top: 1px solid $offWhite;
             transition: opacity 0.1s ease-out;
             pointer-events: none;
         }

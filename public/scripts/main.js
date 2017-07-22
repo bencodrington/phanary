@@ -11065,16 +11065,16 @@ var Track = function () {
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
             // Disable/hide play button
-            this.$playBtn.toggle();
-            this.$stopBtn.toggle();
+            this.$playBtn.hide();
+            this.$stopBtn.show();
         }
     }, {
         key: 'stop',
         value: function stop() {
             this.atmosphere.am.stopTrack(this.id);
-            // TODO: enable/show play button=
-            this.$playBtn.toggle();
-            this.$stopBtn.toggle();
+            // Enable/show play button
+            this.$playBtn.show();
+            this.$stopBtn.hide();
         }
     }, {
         key: 'toggleMute',
