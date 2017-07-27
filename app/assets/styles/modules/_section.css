@@ -33,7 +33,7 @@
 
         &__title__text.editable {
             background-color: $darkPurple;
-            color: $whitePurple;
+            color: $offWhite;
             border-color: $darkPurple;
             border-radius: 2px;
             outline: none;
@@ -51,6 +51,7 @@
 
             &__title {
                 color: $lightPurple;
+                transition: color 0.3s ease-out;
             }
         }
 
@@ -93,20 +94,34 @@
             height: 100%;
             opacity: 0;  
             border-radius: 5px;
-            border-top: 1px solid $offWhite;
-            transition: opacity 0.1s ease-out;
+            border: 1px solid $vanilla;
+            transition: opacity 0.3s ease-out;
             pointer-events: none;
+            box-sizing: border-box;
+            
         }
 
         &--active {
 
             & .section__heading {
                 background-color: $darkPurple;
-                /* border-top: 1px solid white; */
+            }
+
+            & .section__heading .section__heading__title {
+                color: $vanilla;
             }
             
             &::before, &::after {
                 opacity: 100;
+            }
+
+            & .atmosphere__rename:hover {
+                 color: $offWhite;
+            }
+
+            & .section__heading__title__text.editable {
+                background-color: $blackPurple;
+                border-color: $blackPurple;
             }
             
         }

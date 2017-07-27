@@ -1148,7 +1148,7 @@ a {
 
 .section__heading__title__text.editable {
             background-color: #442D49;
-            color: #C7B1D8;
+            color: #FFFFDD;
             border-color: #442D49;
             border-radius: 2px;
             outline: none;
@@ -1169,6 +1169,8 @@ a {
 
 .section--atmosphere .section__heading__title {
                 color: #A489BF;
+                -webkit-transition: color 0.3s ease-out;
+                transition: color 0.3s ease-out;
             }
 
 .section--atmosphere .atmosphere__rename {
@@ -1216,19 +1218,34 @@ a {
             height: 100%;
             opacity: 0;  
             border-radius: 5px;
-            border-top: 1px solid #FFFFDD;
-            -webkit-transition: opacity 0.1s ease-out;
-            transition: opacity 0.1s ease-out;
+            border: 1px solid #F4E2A1;
+            -webkit-transition: opacity 0.3s ease-out;
+            transition: opacity 0.3s ease-out;
             pointer-events: none;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            
         }
 
 .section--atmosphere--active .section__heading {
                 background-color: #442D49;
-                /* border-top: 1px solid white; */
+            }
+
+.section--atmosphere--active .section__heading .section__heading__title {
+                color: #F4E2A1;
             }
 
 .section--atmosphere--active::before, .section--atmosphere--active::after {
                 opacity: 100;
+            }
+
+.section--atmosphere--active .atmosphere__rename:hover {
+                 color: #FFFFDD;
+            }
+
+.section--atmosphere--active .section__heading__title__text.editable {
+                background-color: #2D1B33;
+                border-color: #2D1B33;
             }
 
 .section--track {
