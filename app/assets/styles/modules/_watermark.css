@@ -4,6 +4,8 @@
     right: 0;
     opacity: .15;
     width: 88%;
+    pointer-events: none;
+     z-index: -10; 
     
      @mixin atSmall {
         width: 44%;
