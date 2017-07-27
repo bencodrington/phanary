@@ -1,0 +1,12 @@
+.watermark {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    opacity: .15;
+    width: 88%;
+    
+     @mixin atSmall {
+        width: 44%;
+    }
+
+}

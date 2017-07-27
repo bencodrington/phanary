@@ -50,6 +50,11 @@
             }
         }
 
+        .about &--inline.navbar__brand {
+            display: inline;
+            font-size: 1.5rem;
+        }
+
     }
 
 }
