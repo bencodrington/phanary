@@ -18,20 +18,14 @@ class DataManager {
         };
 
         $.getJSON('/system/get', query, function( data ) {
-            console.log('track names retrieved');
-            console.log(data);
             this.populateSearchResults(data, 'track');
         }.bind(this));
         query.collection = 'atmospheres';
         $.getJSON('/system/get', query, function( data ) {
-            console.log('atmosphere names retrieved');
-            console.log(data);
             this.populateSearchResults(data, 'atmosphere');
         }.bind(this));
         query.collection = 'oneshots';
         $.getJSON('/system/get', query, function( data ) {
-            console.log('oneshot names retrieved');
-            console.log(data);
             this.populateSearchResults(data, 'oneshot');
         }.bind(this));
     }
