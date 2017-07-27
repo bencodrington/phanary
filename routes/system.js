@@ -14,7 +14,8 @@ var AdminModel = require('../public/scripts/modules/models/AdminModel').AdminMod
 
 router.get('/', function(req, res, next) {
   if (req.session && req.session.admin) {
-    AdminModel.findOne({ user: req.session.admin.user }, function(err, admin) {
+    authenticateAdmin(req.session.admin.user, req.session.admin.pass, (admin) => {
+
       if (!admin) {
         // Stored admin data doesn't match any user in db
         req.session.reset();
@@ -26,7 +27,9 @@ router.get('/', function(req, res, next) {
           title: 'Phanary System'
         });
       }
+
     });
+    
   } else {
     res.redirect('/system/login');
   }
@@ -42,29 +45,19 @@ router.get('/login', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-  AdminModel.findOne({ user: req.body.user }, function(err, admin) {
-    
-    if (!admin) {
-      // Invalid username
+  authenticateAdmin(req.body.user, req.body.pass, (admin) => {
+
+    if (admin != null) {
+      // Login success
+      req.session.admin = admin;
+      res.redirect('/system');
+    } else {
       res.render('login', {
         title: 'Phanary System Login',
         error: 'Invalid username or password.'
       });
-
-    } else {
-      // Admin found with matching username
-      if (req.body.pass === admin.pass) {
-        // Login success
-        req.session.admin = admin;
-        res.redirect('/system');
-      } else {
-        // Invalid password
-        res.render('login', {
-          title: 'Phanary System Login',
-          error: 'Invalid username or password.'
-        });
-      }
     }
+
   });
 });
 
@@ -237,15 +230,38 @@ router.get('/find', function(req, res, next) {
 });
 
 router.post('/insert', function(req, res, next) {
-  var collection = req.body.collection;
+
+  if (req.session && req.session.admin) {
+    authenticateAdmin(req.session.admin.user, req.session.admin.pass, (admin) => {
+
+      if (!admin) {
+        // Stored admin data doesn't match any user in db
+        req.session.reset();
+        res.sendStatus(401);
+      } else {
+        // Stored admin data is valid
+        insertItem(req.body);
+        res.sendStatus(200);
+      }
+
+    });
+    
+  } else {
+    // Not logged in
+    res.sendStatus(401);
+  }
+});
+
+function insertItem(body) {
+  var collection = body.collection;
   var item = {
-    name: req.body.name,
-    filename: req.body.filename,
-    tags: parseMultilineInput(req.body.tags),
-    tracks: parseIDs(parseMultilineInput(req.body.tracks)),
-    oneshots: parseIDs(parseMultilineInput(req.body.oneshots)),
-    samples: parseSamples(parseMultilineInput(req.body.samples)),
-    source: req.body.source
+    name: body.name,
+    filename: body.filename,
+    tags: parseMultilineInput(body.tags),
+    tracks: parseIDs(parseMultilineInput(body.tracks)),
+    oneshots: parseIDs(parseMultilineInput(body.oneshots)),
+    samples: parseSamples(parseMultilineInput(body.samples)),
+    source: body.source
   };
   // console.log('item');
   // console.log(item);
@@ -267,25 +283,48 @@ router.post('/insert', function(req, res, next) {
     default:
       console.log("system.js:/insert: invalid collection: " + collection);
   }
-
-  res.sendStatus(200);
-});
+}
 
 router.post('/update', function(req, res, next) {
-  var collection = req.body.collection;
-  var id = req.body.id;
+
+  if (req.session && req.session.admin) {
+    authenticateAdmin(req.session.admin.user, req.session.admin.pass, (admin) => {
+
+      if (!admin) {
+        // Stored admin data doesn't match any user in db
+        req.session.reset();
+        res.sendStatus(401);
+      } else {
+        // Stored admin data is valid
+        updateItem(req.body, res);
+      }
+
+    });
+    
+  } else {
+    // Not logged in
+    res.sendStatus(401);
+  }
+  
+});
+
+function updateItem(body, res) {
+  var collection = body.collection;
+  var id = body.id;
 
   switch(collection) {
     case 'tracks':
       TrackModel.findById(id, function(err, result) {
         if (err || result == null) {
           console.error('system.js:/update: error, no entry found for id: ' + id);
+          res.sendStatus(500);
         } else {
-          result.name = req.body.name;
-          result.filename = req.body.filename,
-          result.tags = parseMultilineInput(req.body.tags)
-          result.source = req.body.source;
+          result.name = body.name;
+          result.filename = body.filename,
+          result.tags = parseMultilineInput(body.tags)
+          result.source = body.source;
           result.save();
+          res.sendStatus(200);
         }
         
       });
@@ -294,12 +333,14 @@ router.post('/update', function(req, res, next) {
       AtmosphereModel.findById(id, function(err, result) {
         if (err) {
           console.error('system.js:/update: error, no entry found');
+          res.sendStatus(500);
         } else {
-          result.name = req.body.name;
-          result.tags = parseMultilineInput(req.body.tags);
-          result.tracks = parseIDs(parseMultilineInput(req.body.tracks));
-          result.oneshots = parseIDs(parseMultilineInput(req.body.oneshots));
+          result.name = body.name;
+          result.tags = parseMultilineInput(body.tags);
+          result.tracks = parseIDs(parseMultilineInput(body.tracks));
+          result.oneshots = parseIDs(parseMultilineInput(body.oneshots));
           result.save();
+          res.sendStatus(200);
         }
         
       });
@@ -308,12 +349,14 @@ router.post('/update', function(req, res, next) {
       OneshotModel.findById(id, function(err, result) {
         if (err) {
           console.error('system.js:/update: error, no entry found');
+          res.sendStatus(500);
         } else {
-          result.name = req.body.name;
-          result.tags = parseMultilineInput(req.body.tags);
-          result.samples = parseSamples(parseMultilineInput(req.body.samples));
-          result.source = req.body.source;
+          result.name = body.name;
+          result.tags = parseMultilineInput(body.tags);
+          result.samples = parseSamples(parseMultilineInput(body.samples));
+          result.source = body.source;
           result.save();
+          res.sendStatus(200);
         }
         
       });
@@ -321,13 +364,35 @@ router.post('/update', function(req, res, next) {
     default:
       console.log("system.js:/update: invalid collection: " + collection);
   }
-  res.sendStatus(200);
+}
+
+router.post('/delete', function(req, res, next) {
+
+  if (req.session && req.session.admin) {
+    authenticateAdmin(req.session.admin.user, req.session.admin.pass, (admin) => {
+
+      if (!admin) {
+        // Stored admin data doesn't match any user in db
+        req.session.reset();
+        res.sendStatus(401);
+      } else {
+        // Stored admin data is valid
+        deleteItem(req.body, res);
+        res.sendStatus(200);
+      }
+
+    });
+    
+  } else {
+    // Not logged in
+    res.sendStatus(401);
+  }
   
 });
 
-router.post('/delete', function(req, res, next) {
-  var collection = req.body.collection;
-  var id = req.body.id;
+function deleteItem(body) {
+  var collection = body.collection;
+  var id = body.id;
 
   switch(collection) {
     case 'tracks':
@@ -342,8 +407,7 @@ router.post('/delete', function(req, res, next) {
     default:
       console.log("system.js:/delete: invalid collection: " + collection);
   }
-  res.sendStatus(200);
-});
+}
 
 function parseMultilineInput(textString) {
   return textString.replace(/\r\n/g,"\n").split('\n');
@@ -387,6 +451,22 @@ function parseSamples(filenameStrings) {
     }
   });
   return samples;
+}
+
+/* Validates admin given a username and password
+    runs the onComplete function after querying the database
+    for a match. admin will be null if no match is found. */
+
+function authenticateAdmin(user, pass, onComplete) {
+  AdminModel.findOne({ user: user }, function(err, admin) {
+
+      if (admin && (admin.pass === pass)) {
+        onComplete(admin);
+      } else {
+        onComplete(null);
+      }
+
+  });
 }
 
 module.exports = router;
