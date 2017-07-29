@@ -10564,6 +10564,7 @@ var GlobalVars = function () {
         this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
         this.$sideBar = (0, _jquery2.default)(".sidebar");
         this.$sideBarFooter = (0, _jquery2.default)(".sidebar__footer");
+        this.$mainContent = (0, _jquery2.default)(".main-content");
         this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
         this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
         this.$editingTitle = null;
@@ -10601,6 +10602,7 @@ var GlobalVars = function () {
         value: function hideSidebar() {
             this.$sideBar.toggleClass("mobile-hidden");
             this.$sideBarFooter.toggleClass("mobile-hidden");
+            this.$mainContent.toggleClass("full-width");
         }
     }, {
         key: 'stopEditingTitle',

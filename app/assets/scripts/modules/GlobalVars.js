@@ -14,6 +14,7 @@ class GlobalVars {
         this.$searchBarInput    = $("#searchBarInput");
         this.$sideBar           = $(".sidebar");
         this.$sideBarFooter     = $(".sidebar__footer");
+        this.$mainContent       = $(".main-content");
         this.$autoplayCheckbox  = $("#autoplayCheckbox");
         this.$searchBarClearBtn = $("#searchBarClearBtn");
         this.$editingTitle      = null;
@@ -52,6 +53,7 @@ class GlobalVars {
     hideSidebar() {
         this.$sideBar.toggleClass("mobile-hidden");
         this.$sideBarFooter.toggleClass("mobile-hidden");
+        this.$mainContent.toggleClass("full-width");
     }
 
     stopEditingTitle() {

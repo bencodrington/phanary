@@ -1,8 +1,13 @@
 .main-content {
     width: 100%;
     float: right;
+    transition: width 0.3s ease-out;
 
     @mixin atSmall {
         width: 66%;
+    }
+
+    &.full-width {
+        width: 100%;
     }
 }
