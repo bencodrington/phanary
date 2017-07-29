@@ -10568,6 +10568,7 @@ var GlobalVars = function () {
         this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
         this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
         this.$editingTitle = null;
+        this.$popup = (0, _jquery2.default)(".navbar__brand__popup");
 
         this.trackPrefix = "/audio/converted/";
         this.fileTypes = ['.webm', '.mp3'];
@@ -10576,7 +10577,7 @@ var GlobalVars = function () {
 
         this.dataManager = new _DataManager2.default();
 
-        // this.compileTemplates();
+        this.managePopup();
 
         this.events();
     }
@@ -10598,6 +10599,18 @@ var GlobalVars = function () {
             });
         }
     }, {
+        key: 'managePopup',
+        value: function managePopup() {
+            var _this = this;
+
+            // Begin popup transitions
+            this.$popup.addClass("hidden");
+            // Remove the popup after 10s
+            setTimeout(function () {
+                _this.$popup.remove();
+            }, 10000);
+        }
+    }, {
         key: 'hideSidebar',
         value: function hideSidebar() {
             this.$sideBar.toggleClass("mobile-hidden");
@@ -10612,25 +10625,6 @@ var GlobalVars = function () {
                 this.$editingTitle = null;
             }
         }
-
-        // compileTemplates() {
-        //     var that = this;
-        //     var template;
-        //     // TODO: move paths to variable
-        //     $.get("/templates/track.html", function(rawTemplate) {
-        //         template = Handlebars.compile(rawTemplate);
-        //         that.trackTemplate = template;
-        //     });
-        //     $.get("/templates/atmosphere.html", function(rawTemplate) {
-        //         template = Handlebars.compile(rawTemplate);
-        //         that.atmosphereTemplate = template;
-        //     });
-        //     $.get("/templates/oneshot.html", function(rawTemplate) {
-        //         template = Handlebars.compile(rawTemplate);
-        //         that.oneshotTemplate = template;
-        //     });
-        // }
-
     }, {
         key: 'selectElementContents',
         value: function selectElementContents(el) {
@@ -12351,7 +12345,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 __webpack_require__(18);
 
 // Used for setting random time ranges
-var _timesteps = [1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
+var _timesteps = [0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
+
+var _startMinIndex = 3;
+var _startMaxIndex = 4;
 
 var OneShot = function (_Track) {
     _inherits(OneShot, _Track);
@@ -12360,6 +12357,16 @@ var OneShot = function (_Track) {
         key: 'timesteps',
         get: function get() {
             return _timesteps;
+        }
+    }, {
+        key: 'startMinIndex',
+        get: function get() {
+            return _startMinIndex;
+        }
+    }, {
+        key: 'startMaxIndex',
+        get: function get() {
+            return _startMaxIndex;
         }
     }]);
 
@@ -12371,8 +12378,8 @@ var OneShot = function (_Track) {
         var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere));
 
         _this.frameLength = 10; // Milliseconds between progress bar updates
-        _this.minIndex = 1;
-        _this.maxIndex = 2;
+        _this.minIndex = OneShot.startMinIndex;
+        _this.maxIndex = OneShot.startMaxIndex;
         // Update labels
         _this.updateLabels();
         return _this;
@@ -12479,14 +12486,15 @@ var OneShot = function (_Track) {
             this.$startBtn.toggle();
             this.$stopBtn.toggle();
             this.togglePlayText();
+            this.atmosphere.am.stopTrack(this.id);
         }
     }, {
         key: 'start',
         value: function start() {
             // Make sure min and max indexes are defined
             if (this.minIndex === undefined || this.maxIndex === undefined) {
-                this.minIndex = 1;
-                this.maxIndex = 2;
+                this.minIndex = 3;
+                this.maxIndex = 4;
             }
             this.timerLength = this.getTimerLength() * 1000;
             this.timerProgress = 0;

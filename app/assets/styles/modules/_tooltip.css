@@ -8,6 +8,7 @@
 .tooltip .tooltiptext {
     display: none;
     font-weight: 200;
+    font-size: 1rem;
     visibility: hidden;
     opacity: 0;
     background-color: rgba($deepSea, 0.8);
@@ -62,6 +63,10 @@
         margin-top: 5px;
         border-color: transparent transparent rgba($deepSea, 0.8) transparent;
     }
+
+    &--important {
+        font-size: 1.25rem;
+    }
 }
 
 .tooltip .tooltiptext--prewritten {
@@ -69,7 +74,8 @@
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
+.tooltip:hover .tooltiptext:not(.tooltiptext--display),
+.tooltip .tooltiptext--display {
     display: block;
     visibility: visible;
     opacity: 1;

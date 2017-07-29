@@ -506,7 +506,6 @@ a {
 
 .navbar__brand {
         display: block;
-        font-size: 2rem;
         color: #F7CE38;
         margin: 0;
         font-family: 'Slabo 27px', serif;
@@ -534,6 +533,7 @@ a {
     }
 
 .navbar__brand__text {
+            font-size: 2rem;
             display: none;
         }
 
@@ -543,6 +543,19 @@ a {
                 display: inline
         }
     }
+
+.navbar__brand__popup {
+            -webkit-animation: shake 2s linear infinite alternate;
+                    animation: shake 2s linear infinite alternate;
+            pointer-events: none;
+            -webkit-transition: opacity 1s ease-in-out 5s, visibility 1s ease-in-out 5s;
+            transition: opacity 1s ease-in-out 5s, visibility 1s ease-in-out 5s;
+        }
+
+.tooltip .navbar__brand__popup.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
 
 .about .navbar__brand--inline.navbar__brand {
             display: inline;
@@ -1433,6 +1446,7 @@ input[type=range]:focus::-moz-range-track {
 .tooltip .tooltiptext {
     display: none;
     font-weight: 200;
+    font-size: 1rem;
     visibility: hidden;
     opacity: 0;
     background-color: rgba(6,20,35, 0.8);
@@ -1490,13 +1504,18 @@ input[type=range]:focus::-moz-range-track {
         border-color: transparent transparent rgba(6,20,35, 0.8) transparent;
     }
 
+.tooltip .tooltiptext--important {
+        font-size: 1.25rem;
+    }
+
 .tooltip .tooltiptext--prewritten {
     white-space: pre;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
 
-.tooltip:hover .tooltiptext {
+.tooltip:hover .tooltiptext:not(.tooltiptext--display),
+.tooltip .tooltiptext--display {
     display: block;
     visibility: visible;
     opacity: 1;
@@ -1860,3 +1879,39 @@ input[type=range]:focus::-moz-range-track {
 
 }
     }
+
+@-webkit-keyframes shake {
+    0%, 50%, 60%, 100% {
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
+        background-color: auto;
+    }
+
+    54% {
+        -webkit-transform: translate(4px, 0);
+                transform: translate(4px, 0);
+    }
+
+    56% {
+        -webkit-transform: translate(-4px, 0);
+                transform: translate(-4px, 0);
+    } 
+}
+
+@keyframes shake {
+    0%, 50%, 60%, 100% {
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
+        background-color: auto;
+    }
+
+    54% {
+        -webkit-transform: translate(4px, 0);
+                transform: translate(4px, 0);
+    }
+
+    56% {
+        -webkit-transform: translate(-4px, 0);
+                transform: translate(-4px, 0);
+    } 
+}

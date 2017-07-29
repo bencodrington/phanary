@@ -18,6 +18,7 @@ class GlobalVars {
         this.$autoplayCheckbox  = $("#autoplayCheckbox");
         this.$searchBarClearBtn = $("#searchBarClearBtn");
         this.$editingTitle      = null;
+        this.$popup             = $(".navbar__brand__popup");
         
         this.trackPrefix        = "/audio/converted/";
         this.fileTypes          = ['.webm', '.mp3'];
@@ -27,7 +28,7 @@ class GlobalVars {
         
         this.dataManager = new DataManager();
 
-        // this.compileTemplates();
+        this.managePopup();
 
         this.events();
     }
@@ -50,6 +51,15 @@ class GlobalVars {
 
     }
 
+    managePopup() {
+        // Begin popup transitions
+        this.$popup.addClass("hidden");
+        // Remove the popup after 10s
+        setTimeout(() => {
+            this.$popup.remove();
+        }, 10000)
+    }
+
     hideSidebar() {
         this.$sideBar.toggleClass("mobile-hidden");
         this.$sideBarFooter.toggleClass("mobile-hidden");
@@ -62,24 +72,6 @@ class GlobalVars {
             this.$editingTitle = null;
         }
     }
-
-    // compileTemplates() {
-    //     var that = this;
-    //     var template;
-    //     // TODO: move paths to variable
-    //     $.get("/templates/track.html", function(rawTemplate) {
-    //         template = Handlebars.compile(rawTemplate);
-    //         that.trackTemplate = template;
-    //     });
-    //     $.get("/templates/atmosphere.html", function(rawTemplate) {
-    //         template = Handlebars.compile(rawTemplate);
-    //         that.atmosphereTemplate = template;
-    //     });
-    //     $.get("/templates/oneshot.html", function(rawTemplate) {
-    //         template = Handlebars.compile(rawTemplate);
-    //         that.oneshotTemplate = template;
-    //     });
-    // }
 
     selectElementContents(el) {
         var range = document.createRange();

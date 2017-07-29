@@ -5,21 +5,26 @@ import { g } from "./GlobalVars.js";
 
 // Used for setting random time ranges
 let _timesteps = [
-    1, 2, 5, 10, 15, 20, 30, 45, 60,
+    0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60,
     120, 180
 ];
+
+let _startMinIndex = 3;
+let _startMaxIndex = 4;
 
 class OneShot extends Track {
     
     static get timesteps() { return _timesteps; }
+    static get startMinIndex() { return _startMinIndex; }
+    static get startMaxIndex() { return _startMaxIndex; }
 
     constructor(trackData, atmosphere) {
         super(trackData, atmosphere);
         // this.rigOneShotControls();
         // this.interval = null; // Runs after start has already been called, nullifying the first clearInterval() call
         this.frameLength = 10; // Milliseconds between progress bar updates
-        this.minIndex = 1;
-        this.maxIndex = 2;
+        this.minIndex = OneShot.startMinIndex;
+        this.maxIndex = OneShot.startMaxIndex;
         // Update labels
         this.updateLabels();
     }
@@ -116,13 +121,14 @@ class OneShot extends Track {
         this.$startBtn.toggle();
         this.$stopBtn.toggle();
         this.togglePlayText();
+        this.atmosphere.am.stopTrack(this.id);
     }
 
     start() {
         // Make sure min and max indexes are defined
         if (this.minIndex === undefined || this.maxIndex === undefined) {
-            this.minIndex = 1;
-            this.maxIndex = 2;
+            this.minIndex = 3;
+            this.maxIndex = 4;
         }
         this.timerLength = this.getTimerLength() * 1000;
         this.timerProgress = 0;
