@@ -6,7 +6,7 @@ gulp.task('watch', function() {
 
     browserSync.init({
         notify: false,  // Supresses notification on updates
-        proxy: "localhost:8000"
+        proxy: "localhost:8080"
     });
 
     watch('./views/**/*.hbs', function() {

@@ -2,6 +2,7 @@
     border-radius: 5px;
     margin-bottom: 20px;
     position: relative;
+    overflow: hidden;
 
     &__heading {
         background-color: $blueberry;
@@ -142,6 +143,18 @@
 
         & .section__body {
             background-color: $whiteBlue;
+        }
+
+        & .section__body:after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 3rem;
+            bottom: 0;
+            right: -.5rem;
+            width: 1rem;
+            background-color: $whiteBlue;
+            filter: blur(.25rem)
         }
     }
 

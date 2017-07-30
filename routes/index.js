@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-mongoose.connect('localhost:27017/phanary');
+mongoose.connect('mongodb://localhost/phanary', {
+  useMongoClient: true
+});
 var TrackModel = require('../public/scripts/modules/models/TrackModel').TrackModel;
 var AtmosphereModel = require('../public/scripts/modules/models/AtmosphereModel').AtmosphereModel;
 var OneshotModel = require('../public/scripts/modules/models/OneshotModel').OneshotModel;
@@ -14,5 +16,8 @@ router.get('/', function(req, res, next) {
   });
   
 });
+
+console.log('readyState');
+console.log(mongoose.connection.readyState);
 
 module.exports = router;

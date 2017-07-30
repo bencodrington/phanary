@@ -1133,6 +1133,7 @@ a {
     border-radius: 5px;
     margin-bottom: 20px;
     position: relative;
+    overflow: hidden;
 
 }
 
@@ -1285,6 +1286,19 @@ a {
 
 .section--track .section__body {
             background-color: #AFC2CD;
+        }
+
+.section--track .section__body:after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 3rem;
+            bottom: 0;
+            right: -.5rem;
+            width: 1rem;
+            background-color: #AFC2CD;
+            -webkit-filter: blur(.25rem);
+                    filter: blur(.25rem)
         }
 
 .section__body {
