@@ -705,7 +705,9 @@ a {
     width: 100%;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 15rem; /* 8 * 2rem(li height) - .5rem(so you can tell there are more) */
     -webkit-box-shadow: 0 0 5px #061423;
             box-shadow: 0 0 5px #061423;
 
@@ -1778,10 +1780,6 @@ input[type=range]:focus::-moz-range-track {
     z-index: 50;
 
 }
-
-.about::-webkit-scrollbar {
-        display: none;
-    }
 
 .about--closed {
         opacity: 0;

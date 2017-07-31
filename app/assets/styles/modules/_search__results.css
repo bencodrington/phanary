@@ -6,7 +6,9 @@
     width: 100%;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 15rem; /* 8 * 2rem(li height) - .5rem(so you can tell there are more) */
     box-shadow: 0 0 5px $deepSea;
 
     & li {

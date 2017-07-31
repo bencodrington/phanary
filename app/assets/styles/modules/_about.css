@@ -11,10 +11,6 @@
     transition: all 0.3s ease-in-out;
     z-index: 50;
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
-
     &--closed {
         opacity: 0;
         transform: scale(1.2);
