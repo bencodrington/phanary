@@ -149,7 +149,11 @@ class AtmosphereManager {
 
     updateAllVolumes() {
         this.atmospheres.forEach(function(atmosphere) {
-            atmosphere.updateTrackVolumes(atmosphere.getVolume());
+            if (atmosphere) {
+                // Make sure atmosphere wasn't deleted
+                atmosphere.updateTrackVolumes(atmosphere.getVolume());
+            }
+            
         });
     }
 
