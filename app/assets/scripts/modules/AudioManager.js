@@ -1,12 +1,12 @@
-
 import { g } from "./GlobalVars.js";
 
 class AudioManager {
+
     constructor() {
-        this.audio = []; // The master list of audio sources
-        this.fadeLength = 1500; // Milliseconds
-        this.volume = 1; // The volume modifier for all of an atmosphere's tracks
-        this.muteMultiplier = 1;
+        this.audio = [];            // Array containing all Howler objects for the containing atmosphere
+        this.fadeLength = 1500;     // How long loops take to fade in and out when started or stopped, in ms
+        this.volume = 1;            // The atmosphere's volume: a volume multiplier applied to each of an atmosphere's tracks
+        this.muteMultiplier = 1;    // 0 if the containing atmosphere is muted, 1 if it's not
     }
 
     addTrack(id, howl) {
@@ -19,34 +19,31 @@ class AudioManager {
     }
 
     playTrack(trackID, volume) {
-        // console.log('AudioManager: playing track #' + trackID);
         var track = this.audio[trackID];
         if (this.isOneShot(track)) {
+            // Randomly select one of the samples to play
             var sampleToPlay = track[g.getRandomInt(track.length)];
             sampleToPlay.play();
         } else {
-            track.off('fade');
+            track.off('fade'); // if currently fading in/out, forget about that
             track.play();
-            track.fade(track.volume(), this.calculateVolume(volume), this.fadeLength);
+            track.fade(track.volume(), this.calculateVolume(volume), this.fadeLength); // begin fading to full volume
         }
         
     }
 
     stopTrack(trackID, callback) {
-        // console.log('AudioManager: stopping track #' + trackID);
-        var that = this;
         var track = this.audio[trackID];
         if (this.isOneShot(track)) {
             // One-shot
             track.forEach(function(sample) {
-                sample.stop();
+                sample.stop(); // stop all samples
             });
         } else {
             // Loop
-            track.fade(track.volume(), 0, this.fadeLength);
+            track.fade(track.volume(), 0, this.fadeLength); // start fading out
             track.once('fade', function() {
-                // console.log('AudioManager: finishing track stop');
-                that.audio[trackID].stop();
+                track.stop(); // stop playing loop upon fade completion
                 if (callback) {
                     callback();
                 }
@@ -59,35 +56,17 @@ class AudioManager {
         if (this.isOneShot(track)) {
             // One-shot
             track.forEach(function(sample) {
-                if (sample.mute()) {
-                    sample.mute(false);
-                } else {
-                    sample.mute(true);
-                }
+                sample.mute(!sample.mute());
             });
         } else {
             // Loop
-            if (track.mute()) {
-                track.mute(false);
-            } else {
-                track.mute(true);
-            }
+            track.mute(!track.mute());
         }
         
     }
 
-    setTrackMute(trackID, muted) {
-        var track = this.audio[trackID];
-        if (this.isOneShot(track)) {
-            // One-shot
-            track.forEach(function(sample) {
-                sample.mute(muted);
-            });
-        } else {
-            // Loop
-            track.mute(muted);
-        }
-        
+    toggleMuteMultiplier() {
+        this.muteMultiplier = 1 - this.muteMultiplier;
     }
 
     setTrackVolume(trackID, newVolume) {
@@ -105,12 +84,11 @@ class AudioManager {
     }
 
     calculateVolume(trackVolume) {
-        return g.atmosphereManager.muteMultiplier // Whether global mute is checked
-            * g.atmosphereManager.volume          // Global volume modifier
-            * this.muteMultiplier   // Whether this atmosphere's mute button is checked
-            * this.volume           // This atmosphere's volume modifier
-                                    // TODO: Whether this track's mute button is checked
-            * trackVolume           // This track's volume modifier
+        return g.atmosphereManager.muteMultiplier   // Whether global mute is checked
+            * g.atmosphereManager.volume            // Global volume modifier
+            * this.muteMultiplier                   // Whether this atmosphere's mute button is checked
+            * this.volume                           // This atmosphere's volume modifier
+            * trackVolume                           // This track's volume modifier
     }
 
     unloadTrack(trackID) {

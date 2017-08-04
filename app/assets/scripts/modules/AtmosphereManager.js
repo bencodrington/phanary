@@ -8,12 +8,12 @@ var activeClass = 'section--atmosphere--active';
 class AtmosphereManager {
 
     constructor() {
-        this.id_counter         = 0;
+        this.id_counter         = 0;    // Used for assigning instantiated tracks a unique integer ID
+        this.muteMultiplier     = 1;    // 0 if global mute is on, 1 if it's not (TODO: look into howler.js global mute method)
+        this.volume             = 1;    // The global volume modifier, affects all sounds
+        this.atmospheres        = [];   // An array of all atmospheres
+        this.activeAtmosphere   = null; // The currently selected atmosphere, whose tracks are being displayed
 
-        this.muteMultiplier     = 1;
-        this.volume             = 1;
-        this.atmospheres        = [];
-        this.activeAtmosphere   = null;
         this.$newAtmosphereBtn  = $('#newAtmosphereBtn');
 
         this.events();
@@ -25,12 +25,12 @@ class AtmosphereManager {
             this.newAtmosphere();
         }.bind(this));
 
-        // Deselect active atmosphere on background click
+        // Deselect active atmosphere on sidebar background click
         $('.sidebar').on('click', function() {
             this.deselectActiveAtmosphere();
         }.bind(this));
 
-        // But not if clicking the footer
+        // ...But not if clicking the footer
         $('.sidebar__footer').on('click', function(e) {
             e.stopPropagation();
         });
@@ -73,7 +73,6 @@ class AtmosphereManager {
         this.id_counter++;
         this.atmospheres.push(atmosphere)
         this.setActiveAtmosphere(atmosphere);
-        // console.log('AtmosphereManager: Adding atmosphere: ' + atmosphereData.name);
     }
 
     setActiveAtmosphere(atmosphere) {
@@ -101,11 +100,10 @@ class AtmosphereManager {
         }
         this.activeAtmosphere = null;
     }
+
     // Called when enter is pressed in the search bar, while a track is highlighted.
     addTrack(trackData, type) {
-        // console.log('AtmosphereManager: Adding track "' + trackData.name + '" to current atmosphere.')
         if (this.activeAtmosphere == null) {
-            // console.log('AtmosphereManager: Current atmosphere is null. Creating new atmosphere...');
             this.newAtmosphere();
         }
 
@@ -114,7 +112,7 @@ class AtmosphereManager {
 
     switchTo(atmosphere) {
         this.atmospheres.forEach(function(current) {
-            if (current != null) {
+            if (current) {
                 if (current == atmosphere) {
                     current.play();
                 } else {
@@ -151,9 +149,8 @@ class AtmosphereManager {
         this.atmospheres.forEach(function(atmosphere) {
             if (atmosphere) {
                 // Make sure atmosphere wasn't deleted
-                atmosphere.updateTrackVolumes(atmosphere.getVolume());
+                atmosphere.updateTrackVolumes();
             }
-            
         });
     }
 

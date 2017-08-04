@@ -2,18 +2,22 @@ import $ from 'jquery';
 
 class About {
 
+    /*
+        Contains the functionality for the 'About' modal that opens when the Phanary logo is clicked.
+    */
+
     constructor() {
+        this.popupLifetime = 10000;                 // The length of time(ms), until the popup element is removed
 
-        this.$about = $('.about');
-        this.rigOpen();
-        this.rigClose();
+        // cache DOM elements
+        this.$about = $('.about');                  // The modal div element
+        this.$popup = $(".navbar__brand__popup");   // The shaking/fading tooltip element
+        this.rigToggleButtons();
+        this.managePopup();
     }
 
-    rigOpen() {
+    rigToggleButtons() {
         $('.about__open').on('click', this.open.bind(this));
-    }
-
-    rigClose() {
         $('.about__close').on('click', this.close.bind(this));
     }
 
@@ -23,6 +27,17 @@ class About {
 
     close() {
         this.$about.addClass('about--closed');
+    }
+
+    /* Manages time-based popup events */
+    managePopup() {
+        // Begin popup animations
+        this.$popup.addClass("hidden");
+
+        // Remove the popup after popupLifetime has elapsed
+        setTimeout(() => {
+            this.$popup.remove();
+        }, this.popupLifetime)
     }
 
 }

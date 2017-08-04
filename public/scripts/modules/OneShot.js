@@ -39,8 +39,6 @@ class OneShot extends Track {
     }
 
     createAudio(trackData) {
-        
-        var $playBtn = this.$trackHTML.find(".btn--play");
         var that = this;
         var samples = [];
         var paths, howl;
@@ -53,11 +51,7 @@ class OneShot extends Track {
                 src: paths,
                 buffer: true,
                 autoplay: false,
-                loop: false,
-                onload: function() {
-                    // console.log("Loaded track '" + that.data.name + "'.");
-                    $playBtn.removeAttr("disabled");
-                }
+                loop: false
             });
 
             samples.push(howl);
@@ -156,12 +150,14 @@ class OneShot extends Track {
         }
     }
 
-    delete() {
+    delete(retain) {
         this.stop();
         this.atmosphere.am.stopTrack(this.id);
         this.atmosphere.am.unloadTrack(this.id);
-        // Unlink data object from containing atmosphere
-        this.atmosphere.removeTrack(this.id);
+        if (!retain) {
+            // Unlink data object from containing atmosphere
+            this.atmosphere.removeTrack(this.id);
+        }
 
         // Remove DOM Element
         this.$trackHTML.slideUp('fast', function() {

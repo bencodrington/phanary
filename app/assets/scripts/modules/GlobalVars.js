@@ -3,32 +3,26 @@ import Handlebars from 'handlebars';
 
 import DataManager from './DataManager';
 import AtmosphereManager from './AtmosphereManager';
+import Sidebar from './Sidebar';
 
 class GlobalVars {
-    // Do all jquery searches here, then other classes can import this file as g and use g.$trackList for example
 
     constructor() {
         this.$trackList         = $("#trackList");          // The div containing all tracks
         this.$atmosphereList    = $("#atmosphereList");     // The div containing all atmospheres
         this.$searchResults     = $("#searchResults");      // The ul containing all search results
         this.$searchBarInput    = $("#searchBarInput");
-        this.$sideBar           = $(".sidebar");
-        this.$sideBarFooter     = $(".sidebar__footer");
-        this.$mainContent       = $(".main-content");
         this.$autoplayCheckbox  = $("#autoplayCheckbox");
         this.$searchBarClearBtn = $("#searchBarClearBtn");
         this.$editingTitle      = null;
-        this.$popup             = $(".navbar__brand__popup");
         
         this.trackPrefix        = "/audio/converted/";
         this.fileTypes          = ['.webm', '.mp3'];
 
         
         this.atmosphereManager = new AtmosphereManager();
-        
         this.dataManager = new DataManager();
-
-        this.managePopup();
+        this.sidebar = new Sidebar();
 
         this.events();
     }
@@ -46,24 +40,13 @@ class GlobalVars {
 
         // Toggle hidden class on sidebar upon hide button click
         $(".navbar__hide").click(function() {
-            that.hideSidebar();
+            that.sidebar.hide();
         });
 
     }
 
-    managePopup() {
-        // Begin popup transitions
-        this.$popup.addClass("hidden");
-        // Remove the popup after 10s
-        setTimeout(() => {
-            this.$popup.remove();
-        }, 10000)
-    }
-
     hideSidebar() {
-        this.$sideBar.toggleClass("mobile-hidden");
-        this.$sideBarFooter.toggleClass("mobile-hidden");
-        this.$mainContent.toggleClass("full-width");
+        
     }
 
     stopEditingTitle() {

@@ -1,3 +1,4 @@
+'use strict';
 import $ from 'jquery';
 
 import { g } from "./GlobalVars.js";
@@ -19,7 +20,6 @@ class Track {
         this.atmosphere = atmosphere;
         this.volume = 1;
 
-        // console.log("Track constructor: trackData.atmosphereId: " + trackData.atmosphereId);
         this.createElement(trackData);
         this.createAudio(trackData);
     }
@@ -36,33 +36,33 @@ class Track {
         // Add to tracklist
         var $trackHTML = $(trackHTML).hide().prependTo(g.$trackList).show('fast');
 
-        var that = this;
+        //FIXME: var that = this;
         // Rig play, stop, and delete buttons to function
         var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
         var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
         var $delBtn = $trackHTML.find(".btn--delete");
         var $tags = $trackHTML.find(".tag");
         $playBtn.on('click', function() {
-            that.play();
-        });
+            this.play();
+        }.bind(this));
         $stopBtn.on('click', function() {
-            that.stop();
-        });
+            this.stop();
+        }.bind(this));
         $stopBtn.hide();
         $delBtn.on('click', function() {
-            that.delete();
-        });
+            this.delete();
+        }.bind(this));
 
         // Rig volume slider to function
         var $volumeSlider = $trackHTML.find(".volume input[type=range]");
         $volumeSlider.on('input', function() {
-            that.volume = $volumeSlider.val();
-            that.updateVolume();
-        })
+            this.volume = $volumeSlider.val();
+            this.updateVolume();
+        }.bind(this))
         var $muteBtn = $trackHTML.find(".btn--mute");
         $muteBtn.on('click', function() {
-            that.toggleMute();
-        });
+            this.toggleMute();
+        }.bind(this));
 
         // Rig tags to modify search bar
         $tags.each( (index, element) => {
@@ -85,10 +85,7 @@ class Track {
         // Append prefix to filenames
         var filenames = g.convertToFilenames(this.data.filename);
         // console.log(filenames);
-
-        var $playBtn = this.$playBtn;
         // Create new audio source
-        var that = this;
         this.atmosphere.am.addTrack(
             this.id,
             new Howl({
@@ -96,11 +93,7 @@ class Track {
                 volume: 0,
                 buffer: true,
                 autoplay: false,
-                loop: true,
-                onload: function() {
-                    // console.log("Loaded track '" + that.data.name + "'.");
-                    $playBtn.removeAttr("disabled");
-                }
+                loop: true
             })
         );
         if (g.$autoplayCheckbox.is(":checked")) {
@@ -131,21 +124,19 @@ class Track {
         this.atmosphere.am.toggleTrackMute(this.id);
     }
 
-    setMute(muted) {
-        this.atmosphere.am.setTrackMute(this.id, muted)
-    }
-
     hidePlayBtn() {
         this.$playBtn.hide();
     }
 
-    delete() {
-        var that = this;
+    delete(retain) {
         this.atmosphere.am.stopTrack(this.id, function() {
-            that.atmosphere.am.unloadTrack(that.id);
-            // Unlink data object from containing atmosphere
-            that.atmosphere.removeTrack(that.id);
-        });
+            this.atmosphere.am.unloadTrack(this.id);
+            if (!retain) {
+                // Unlink data object from containing atmosphere
+                this.atmosphere.removeTrack(this.id);
+            }
+            
+        }.bind(this));
         
         // Remove DOM Element
         this.$trackHTML.slideUp('fast', function() {

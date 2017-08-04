@@ -1,10 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-/* One-shots */
-
 var sampleSchema = new Schema({
-  filename: {type: String, required: true}
+  filename: {type: String, required: true} // does not include extensions (e.g. 'phanary1' instead of 'phanary1.mp3')
 });
 
 var oneshotSchema = new Schema({
