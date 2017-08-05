@@ -10464,6 +10464,126 @@ return jQuery;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.g = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _handlebars = __webpack_require__(47);
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+var _DataManager = __webpack_require__(15);
+
+var _DataManager2 = _interopRequireDefault(_DataManager);
+
+var _AtmosphereManager = __webpack_require__(13);
+
+var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
+
+var _TrackManager = __webpack_require__(18);
+
+var _TrackManager2 = _interopRequireDefault(_TrackManager);
+
+var _Sidebar = __webpack_require__(17);
+
+var _Sidebar2 = _interopRequireDefault(_Sidebar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GlobalVars = function () {
+
+    /*
+        A utility class containing references to classes that should act as
+        singletons (e.g. atmosphereManager, dataManager, etc.).
+        Also contains general purpose helper functions.
+    */
+
+    function GlobalVars() {
+        _classCallCheck(this, GlobalVars);
+
+        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
+
+        this.trackPrefix = "/audio/converted/";
+        this.fileTypes = ['.webm', '.mp3'];
+
+        this.atmosphereManager = new _AtmosphereManager2.default();
+        this.trackManager = new _TrackManager2.default();
+        this.dataManager = new _DataManager2.default();
+        this.sidebar = new _Sidebar2.default();
+    }
+
+    /* Highlights the contents of a given element, used when editing atmosphere titles */
+
+
+    _createClass(GlobalVars, [{
+        key: 'selectElementContents',
+        value: function selectElementContents(el) {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        /*
+            Creates an array of full filenames by prepending the path, and appending the accepted filetypes
+            e.g convertToFilenames("test") returns ["/audio/converted/test.webm", "/audio/converted/test.mp3"]
+        */
+
+    }, {
+        key: 'convertToFilenames',
+        value: function convertToFilenames(filename) {
+            var filenames = [],
+                that = this;
+            this.fileTypes.forEach(function (fileType) {
+                filenames.push(that.trackPrefix + filename + fileType);
+            });
+            return filenames;
+        }
+
+        /* Returns a pseudorandom integer in the range [0, max - 1] */
+
+    }, {
+        key: 'getRandomInt',
+        value: function getRandomInt(max) {
+            max = Math.floor(max);
+            return Math.floor(Math.random() * max);
+        }
+
+        /*
+            Returns min if number < min,
+            max if number > max,
+            number otherwise
+        */
+
+    }, {
+        key: 'clamp',
+        value: function clamp(min, number, max) {
+            return Math.min(Math.max(number, min), max);
+        }
+    }]);
+
+    return GlobalVars;
+}();
+
+var g = exports.g = new GlobalVars();
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 exports.__esModule = true;
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -10519,132 +10639,6 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.g = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _handlebars = __webpack_require__(46);
-
-var _handlebars2 = _interopRequireDefault(_handlebars);
-
-var _DataManager = __webpack_require__(15);
-
-var _DataManager2 = _interopRequireDefault(_DataManager);
-
-var _AtmosphereManager = __webpack_require__(13);
-
-var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
-
-var _Sidebar = __webpack_require__(17);
-
-var _Sidebar2 = _interopRequireDefault(_Sidebar);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var GlobalVars = function () {
-    function GlobalVars() {
-        _classCallCheck(this, GlobalVars);
-
-        this.$trackList = (0, _jquery2.default)("#trackList"); // The div containing all tracks
-        this.$atmosphereList = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
-        this.$searchResults = (0, _jquery2.default)("#searchResults"); // The ul containing all search results
-        this.$searchBarInput = (0, _jquery2.default)("#searchBarInput");
-        this.$autoplayCheckbox = (0, _jquery2.default)("#autoplayCheckbox");
-        this.$searchBarClearBtn = (0, _jquery2.default)("#searchBarClearBtn");
-        this.$editingTitle = null;
-
-        this.trackPrefix = "/audio/converted/";
-        this.fileTypes = ['.webm', '.mp3'];
-
-        this.atmosphereManager = new _AtmosphereManager2.default();
-        this.dataManager = new _DataManager2.default();
-        this.sidebar = new _Sidebar2.default();
-
-        this.events();
-    }
-
-    _createClass(GlobalVars, [{
-        key: 'events',
-        value: function events() {
-            // Stop editing title upon mouse click outside the title
-            var that = this;
-            (0, _jquery2.default)(document).click(function (event) {
-                if (that.$editingTitle != null && !that.$editingTitle.is(event.target) && that.$editingTitle.has(event.target).length === 0) {
-                    that.stopEditingTitle();
-                }
-            });
-
-            // Toggle hidden class on sidebar upon hide button click
-            (0, _jquery2.default)(".navbar__hide").click(function () {
-                that.sidebar.hide();
-            });
-        }
-    }, {
-        key: 'hideSidebar',
-        value: function hideSidebar() {}
-    }, {
-        key: 'stopEditingTitle',
-        value: function stopEditingTitle() {
-            if (g.$editingTitle != null) {
-                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
-                this.$editingTitle = null;
-            }
-        }
-    }, {
-        key: 'selectElementContents',
-        value: function selectElementContents(el) {
-            var range = document.createRange();
-            range.selectNodeContents(el);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
-    }, {
-        key: 'convertToFilenames',
-        value: function convertToFilenames(filename) {
-            var filenames = [],
-                that = this;
-            this.fileTypes.forEach(function (fileType) {
-                filenames.push(that.trackPrefix + filename + fileType);
-            });
-            // console.log('GlobalVars.js:convertToFilenames:filenames:');
-            // console.log(filenames);
-            return filenames;
-        }
-    }, {
-        key: 'getRandomInt',
-        value: function getRandomInt(max) {
-            max = Math.floor(max);
-            return Math.floor(Math.random() * max);
-        }
-    }, {
-        key: 'clamp',
-        value: function clamp(min, number, max) {
-            return Math.min(Math.max(number, min), max);
-        }
-    }]);
-
-    return GlobalVars;
-}();
-
-var g = exports.g = new GlobalVars();
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10659,15 +10653,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(35);
+var _helpers = __webpack_require__(36);
 
-var _decorators = __webpack_require__(33);
+var _decorators = __webpack_require__(34);
 
-var _logger = __webpack_require__(43);
+var _logger = __webpack_require__(44);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10767,7 +10761,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -10919,15 +10913,13 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(21);
-
-// Track object, contains all the data associated with a given track
+__webpack_require__(22);
 
 var Track = function () {
     function Track(trackData, atmosphere) {
@@ -10960,9 +10952,8 @@ var Track = function () {
             var trackHTML = this.template(this.data);
 
             // Add to tracklist
-            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.$trackList).show('fast');
+            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.trackManager.$list).show('fast');
 
-            //FIXME: var that = this;
             // Rig play, stop, and delete buttons to function
             var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
             var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
@@ -11147,7 +11138,7 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(47)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
 
 /***/ }),
 /* 9 */
@@ -11244,7 +11235,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11254,26 +11245,31 @@ var SearchBar = function () {
     function SearchBar() {
         _classCallCheck(this, SearchBar);
 
-        _GlobalVars.g.$searchBarInput.focus();
+        this.$results = (0, _jquery2.default)("#searchResults"); // the ul containing all search results
+        this.$input = (0, _jquery2.default)("#searchBarInput"); // the search bar textbox itself
+        this.$input.focus(); // start cursor in the searchbar
         this.events();
     }
 
     _createClass(SearchBar, [{
-        key: 'events',
+        key: "events",
         value: function events() {
-            _GlobalVars.g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this));
-            _GlobalVars.g.$searchBarInput.focus(function () {
+            var $clearBtn = (0, _jquery2.default)("#searchBarClearBtn"); // the button that removes current text from the search bar
+
+            this.$input.on('keyup', this.keyPressInSearchBar.bind(this));
+            this.$input.focus(function () {
                 (0, _jquery2.default)(this).select();
             });
-            _GlobalVars.g.$searchBarInput.keydown(this.blockArrowKeys);
-            _GlobalVars.g.$searchBarClearBtn.click(this.clearSearchBar.bind(this));
+            this.$input.keydown(this.blockArrowKeys);
+
+            $clearBtn.click(this.clearSearchBar.bind(this));
             _GlobalVars.g.$autoplayCheckbox.click(function (event) {
-                _GlobalVars.g.$searchBarInput.focus();
+                this.$input.focus();
                 event.stopPropagation();
             });
         }
     }, {
-        key: 'keyPressInSearchBar',
+        key: "keyPressInSearchBar",
         value: function keyPressInSearchBar(e) {
             var keyCode = e.keyCode ? e.keyCode : e.which;
             // console.log("keypressInSearchBar: keyCode: " + keyCode);
@@ -11291,7 +11287,7 @@ var SearchBar = function () {
                 case 38: // Up Key
                 case 40:
                     // Down Key
-                    var $visibleResults = _GlobalVars.g.$searchResults.find("li:visible");
+                    var $visibleResults = this.$results.find("li:visible");
                     // $visibleResults.each(function(index, element) {
                     //     console.log("Element " + index + ", " + element.innerHTML);
                     // });
@@ -11308,7 +11304,7 @@ var SearchBar = function () {
             }
         }
     }, {
-        key: 'moveSearchSelector',
+        key: "moveSearchSelector",
         value: function moveSearchSelector(keyCode, $visibleResults) {
             var $current;
             var $selected = $visibleResults.filter(".selected");
@@ -11344,18 +11340,18 @@ var SearchBar = function () {
             $current.addClass("selected");
         }
     }, {
-        key: 'deselect',
+        key: "deselect",
         value: function deselect() {
-            var $results = _GlobalVars.g.$searchResults.find('.selected').removeClass('selected');
+            var $results = this.$results.find('.selected').removeClass('selected');
         }
     }, {
-        key: 'select',
+        key: "select",
         value: function select($result) {
             this.deselect();
             $result.addClass('selected');
         }
     }, {
-        key: 'blockArrowKeys',
+        key: "blockArrowKeys",
         value: function blockArrowKeys(e) {
             var keyCode = e.keyCode ? e.keyCode : e.which;
             if (keyCode == 38 || keyCode == 40) {
@@ -11363,26 +11359,26 @@ var SearchBar = function () {
             }
         }
     }, {
-        key: 'clearSearchBar',
+        key: "clearSearchBar",
         value: function clearSearchBar() {
-            _GlobalVars.g.$searchBarInput.val("");
-            _GlobalVars.g.$searchBarInput.focus();
+            this.$input.val("");
+            this.$input.focus();
             this.filterResults();
         }
     }, {
-        key: 'filterResults',
+        key: "filterResults",
         value: function filterResults() {
-            if (_GlobalVars.g.$searchResults == null) {
+            if (this.$results == null) {
                 console.log('SearchBar.js: filterResults: No search results. Returning...');
                 return;
             }
 
-            _GlobalVars.g.dataManager.search(_GlobalVars.g.$searchBarInput.val(), { '_id': 1 }, this.update.bind(this));
+            _GlobalVars.g.dataManager.search(this.$input.val(), { '_id': 1 }, this.update.bind(this));
         }
     }, {
-        key: 'update',
+        key: "update",
         value: function update(results) {
-            var searchResults = _GlobalVars.g.$searchResults.children(),
+            var searchResults = this.$results.children(),
                 enabledCount = 0;
 
             // console.log("/update/results: ");
@@ -11410,27 +11406,27 @@ var SearchBar = function () {
 
             searchResults.removeClass("selected");
             if (enabledCount == 0) {
-                _GlobalVars.g.$searchResults.css("display", "none");
+                this.$results.css("display", "none");
             } else {
-                _GlobalVars.g.$searchResults.css("display", "");
+                this.$results.css("display", "");
                 // Select top element
-                _GlobalVars.g.$searchResults.find("li:visible").first().addClass("selected");
+                this.$results.find("li:visible").first().addClass("selected");
             }
         }
     }, {
-        key: 'appendToSearchBar',
+        key: "appendToSearchBar",
         value: function appendToSearchBar(text) {
-            var newText = _GlobalVars.g.$searchBarInput.val();
+            var newText = this.$input.val();
             newText += text + " ";
-            _GlobalVars.g.$searchBarInput.val(newText);
-            _GlobalVars.g.$searchBarInput.focus();
+            this.$input.val(newText);
+            this.$input.focus();
             this.filterResults();
         }
     }, {
-        key: 'findSearchResult',
+        key: "findSearchResult",
         value: function findSearchResult(id) {
             //TODO: Store all search results in a map, and then just get the one at key[id]?
-            var $result = _GlobalVars.g.$searchResults.children().filter('[data-db-id="' + id + '"]');
+            var $result = this.$results.children().filter('[data-db-id="' + id + '"]');
 
             if ($result.length > 0) {
                 return $result[0];
@@ -11438,12 +11434,12 @@ var SearchBar = function () {
             return null;
         }
     }, {
-        key: 'moveResultToIndex',
+        key: "moveResultToIndex",
         value: function moveResultToIndex(index, searchResult) {
             // The element to be moved
             var $result = (0, _jquery2.default)(searchResult);
             // The element currently at the desired location
-            var $target = _GlobalVars.g.$searchResults.children().eq(index);
+            var $target = this.$results.children().eq(index);
 
             // If element will be moving left...
             if ($result.index() > index) {
@@ -11472,7 +11468,7 @@ var _SearchBar = __webpack_require__(10);
 
 var _SearchBar2 = _interopRequireDefault(_SearchBar);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 var _About = __webpack_require__(9);
 
@@ -11513,13 +11509,13 @@ var _AudioManager = __webpack_require__(14);
 
 var _AudioManager2 = _interopRequireDefault(_AudioManager);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(18);
+__webpack_require__(19);
 
 var Atmosphere = function () {
     function Atmosphere(atmosphereData, id) {
@@ -11547,7 +11543,7 @@ var Atmosphere = function () {
             var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
             // Add to tracklist
-            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.$atmosphereList).show('fast');
+            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.atmosphereManager.$list).show('fast');
 
             this.rigAtmosphereControls($atmosphereHTML);
 
@@ -11599,7 +11595,7 @@ var Atmosphere = function () {
 
             $atmosphereHTML.on('click', function (e) {
                 e.stopPropagation(); // Don't deselect current atmosphere if it's DOM element is clicked
-                _GlobalVars.g.stopEditingTitle(); // but still cancel title editing
+                _GlobalVars.g.atmosphereManager.stopEditingTitle(); // but still cancel title editing
             });
 
             // Click atmosphere heading to set the containing atmosphere as active
@@ -11624,7 +11620,7 @@ var Atmosphere = function () {
                 if (e.keyCode == "13") {
                     // enter was pressed, so exit edit mode
                     $titleText.prop('contenteditable', false).toggleClass('editable');
-                    _GlobalVars.g.$editingTitle = null;
+                    _GlobalVars.g.atmosphereManager.$editingTitle = null;
                 }
             });
 
@@ -11640,13 +11636,13 @@ var Atmosphere = function () {
         value: function toggleTitleEditable($titleText) {
             var isEditable = $titleText.is('.editable');
             $titleText.prop('contenteditable', !isEditable); // toggle contenteditable property
-            _GlobalVars.g.stopEditingTitle(); // clear any title currently being edited
+            _GlobalVars.g.atmosphereManager.stopEditingTitle(); // clear any title currently being edited
 
             if (!isEditable) {
                 $titleText.addClass("editable");
                 // If it's now editable,
                 //  let GlobalVars know,
-                _GlobalVars.g.$editingTitle = $titleText;
+                _GlobalVars.g.atmosphereManager.$editingTitle = $titleText;
                 //  and select it with the cursor.
                 $titleText.focus();
                 // .delay(100).select();
@@ -11833,7 +11829,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 var _Atmosphere = __webpack_require__(12);
 
@@ -11854,8 +11850,10 @@ var AtmosphereManager = function () {
         this.volume = 1; // The global volume modifier, affects all sounds
         this.atmospheres = []; // An array of all atmospheres
         this.activeAtmosphere = null; // The currently selected atmosphere, whose tracks are being displayed
+        this.$editingTitle = null; // The title text element of the atmosphere which is currently being renamed
 
         this.$newAtmosphereBtn = (0, _jquery2.default)('#newAtmosphereBtn');
+        this.$list = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
 
         this.events();
     }
@@ -11868,15 +11866,13 @@ var AtmosphereManager = function () {
                 this.newAtmosphere();
             }.bind(this));
 
-            // Deselect active atmosphere on sidebar background click
-            (0, _jquery2.default)('.sidebar').on('click', function () {
-                this.deselectActiveAtmosphere();
+            // Stop editing title upon mouse click outside the title
+            (0, _jquery2.default)(document).click(function (event) {
+                if (this.$editingTitle != null && !this.$editingTitle.is(event.target) && this.$editingTitle.has(event.target).length === 0) {
+                    this.stopEditingTitle();
+                }
             }.bind(this));
 
-            // ...But not if clicking the footer
-            (0, _jquery2.default)('.sidebar__footer').on('click', function (e) {
-                e.stopPropagation();
-            });
             this.rigVolumeControls();
         }
 
@@ -12014,6 +12010,14 @@ var AtmosphereManager = function () {
                 }
             });
         }
+    }, {
+        key: 'stopEditingTitle',
+        value: function stopEditingTitle() {
+            if (this.$editingTitle != null) {
+                this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
+                this.$editingTitle = null;
+            }
+        }
     }]);
 
     return AtmosphereManager;
@@ -12034,7 +12038,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12178,27 +12182,39 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(20);
+__webpack_require__(21);
 
 var DataManager = function () {
+
+    /*
+        Responsible for making calls to the system API to get track and atmosphere data and files.
+    */
+
     function DataManager() {
         _classCallCheck(this, DataManager);
 
         this.fetchNames();
     }
 
+    /* 
+        Retrieves the names and tags of all entries in the database,
+        and passes them to the populateSearchResults function upon
+        asynchronous completion.
+    */
+
+
     _createClass(DataManager, [{
         key: 'fetchNames',
         value: function fetchNames() {
             var query = {
-                'collection': 'tracks',
-                'selectedInfo': {
+                'collection': 'tracks', // select loop collection for retrieval
+                'selectedInfo': { // only need name and tags to complete search result template
                     name: true,
                     tags: true
                 }
@@ -12207,11 +12223,11 @@ var DataManager = function () {
             _jquery2.default.getJSON('/system/get', query, function (data) {
                 this.populateSearchResults(data, 'track');
             }.bind(this));
-            query.collection = 'atmospheres';
+            query.collection = 'atmospheres'; // select atmosphere collection for retrieval
             _jquery2.default.getJSON('/system/get', query, function (data) {
                 this.populateSearchResults(data, 'atmosphere');
             }.bind(this));
-            query.collection = 'oneshots';
+            query.collection = 'oneshots'; // select one-shot collection for retrieval
             _jquery2.default.getJSON('/system/get', query, function (data) {
                 this.populateSearchResults(data, 'oneshot');
             }.bind(this));
@@ -12220,13 +12236,17 @@ var DataManager = function () {
         key: 'populateSearchResults',
         value: function populateSearchResults(data, type) {
             var that = this;
-            var resultHTML;
             _jquery2.default.each(data, function (index, object) {
-                // console.log("DataManager.js: populateSearchResults: object.name: " + object.name);
-                var $resultHTML = that.generateResultHTML(object, type);
-                that.rigResultEvents($resultHTML);
+                var $resultHTML = that.generateResultHTML(object, type); // get result DOM element
+                that.rigResultEvents($resultHTML); // attach event handlers
             });
         }
+
+        /*
+            Injects result data into result template, then appends the created
+            DOM element to the search results ul.
+        */
+
     }, {
         key: 'generateResultHTML',
         value: function generateResultHTML(object, type) {
@@ -12237,16 +12257,8 @@ var DataManager = function () {
                 type: "result--" + type
             };
 
-            if (type === "oneshot") {
-                resultObject.isOneshot = true;
-            } else if (type === "atmosphere") {
-                resultObject.isAtmosphere = true;
-            } else {
-                resultObject.isLoop = true;
-            }
-
             var resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
-            return (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.$searchResults);
+            return (0, _jquery2.default)(resultHTML).appendTo(_GlobalVars.g.searchBar.$results);
         }
     }, {
         key: 'rigResultEvents',
@@ -12307,7 +12319,7 @@ var _Track2 = __webpack_require__(6);
 
 var _Track3 = _interopRequireDefault(_Track2);
 
-var _GlobalVars = __webpack_require__(3);
+var _GlobalVars = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12317,13 +12329,13 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-__webpack_require__(19);
+__webpack_require__(20);
 
-// Used for setting random time ranges
+// The different values that "Playing every _ to _ seconds" can hold.
 var _timesteps = [0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
 
-var _startMinIndex = 3;
-var _startMaxIndex = 4;
+var _startMinIndex = 3; // the index of the default minimum timestep
+var _startMaxIndex = 4; // the index of the default maximum timestep
 
 var OneShot = function (_Track) {
     _inherits(OneShot, _Track);
@@ -12348,17 +12360,26 @@ var OneShot = function (_Track) {
     function OneShot(trackData, atmosphere) {
         _classCallCheck(this, OneShot);
 
-        // this.rigOneShotControls();
-        // this.interval = null; // Runs after start has already been called, nullifying the first clearInterval() call
         var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere));
 
-        _this.frameLength = 10; // Milliseconds between progress bar updates
+        _this.frameLength = 10; // milliseconds between progress bar updates
+
+        // Set the frequency of sample firing to the timestep defaults
         _this.minIndex = OneShot.startMinIndex;
         _this.maxIndex = OneShot.startMaxIndex;
-        // Update labels
-        _this.updateLabels();
+
+        _this.updateLabels(); // update labels to reflect the initialized indices
+
+        // These lines are found in Track.createAudio(), but must be called after
+        //  setting the sample firing frequency, and so are moved here in this class
+        if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
+            _this.begin(); // start the timer
+        }
         return _this;
     }
+
+    /* Overrides the default track template function */
+
 
     _createClass(OneShot, [{
         key: 'template',
@@ -12371,16 +12392,19 @@ var OneShot = function (_Track) {
             _get(OneShot.prototype.__proto__ || Object.getPrototypeOf(OneShot.prototype), 'createElement', this).call(this);
             this.rigOneShotControls();
         }
+
+        /* Handles the creation of the actual Howler audio objects */
+
     }, {
         key: 'createAudio',
         value: function createAudio(trackData) {
-            var that = this;
-            var samples = [];
+            var samples = []; // will contain the completed Howler objects, to be passed
+            //  to the containing atmosphere's audio manager
             var paths, howl;
+
             this.data.samples.forEach(function (sample) {
-                // For each oneshot
-                // Append track prefixes to each fallback audio path
-                paths = _GlobalVars.g.convertToFilenames(sample.filename);
+                paths = _GlobalVars.g.convertToFilenames(sample.filename); // prepend path and append track postfixes to the sample name
+
                 // Create new howl for the sample
                 howl = new Howl({
                     src: paths,
@@ -12392,51 +12416,57 @@ var OneShot = function (_Track) {
                 samples.push(howl);
             });
 
-            // Add to audio manager
             this.atmosphere.am.addOneShotSet(this.id, samples);
-
-            if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
-                this.begin();
-            }
         }
+
+        /* Must be called after super.createElement(), otherwise this.$trackHTML will be uninitialized */
+
     }, {
         key: 'rigOneShotControls',
         value: function rigOneShotControls() {
-            var that = this;
-            var $startBtn = this.$startBtn = this.$trackHTML.find('.btn--start');
-            var $stopBtn = this.$trackHTML.find('.btn--stop');
-            var $minMore = this.$trackHTML.find('.oneshot-min.btn--more');
-            var $minLess = this.$trackHTML.find('.oneshot-min.btn--less');
-            var $maxMore = this.$trackHTML.find('.oneshot-max.btn--more');
-            var $maxLess = this.$trackHTML.find('.oneshot-max.btn--less');
+            this.$startBtn = this.$trackHTML.find('.btn--start');
             this.$playText = this.$trackHTML.find('.oneshot-play-text');
             this.$minLabel = this.$trackHTML.find('.oneshot-min-label');
             this.$maxLabel = this.$trackHTML.find('.oneshot-max-label');
             this.$progressBar = this.$trackHTML.find('.progress__bar');
-            $startBtn.on('click', function () {
-                that.start();
-            });
-            $minLess.on('click', function () {
-                that.changeRange('min', -1);
-            });
-            $minMore.on('click', function () {
-                that.changeRange('min', 1);
-            });
-            $maxLess.on('click', function () {
-                that.changeRange('max', -1);
-            });
-            $maxMore.on('click', function () {
-                that.changeRange('max', 1);
-            });
+
+            this.$startBtn.on('click', function () {
+                this.start();
+            }.bind(this));
+
+            // Change frequency range minimum by one step
+            this.$trackHTML.find('.oneshot-min.btn--more' // Increase
+            ).on('click', function () {
+                this.changeRange('min', 1);
+            }.bind(this));
+            this.$trackHTML.find('.oneshot-min.btn--less' // Decrease
+            ).on('click', function () {
+                this.changeRange('min', -1);
+            }.bind(this));
+
+            // Change frequency range maximum by one step
+            this.$trackHTML.find('.oneshot-max.btn--more' // Increase
+            ).on('click', function () {
+                this.changeRange('max', 1);
+            }.bind(this));
+            this.$trackHTML.find('.oneshot-max.btn--less' // Decrease
+            ).on('click', function () {
+                this.changeRange('max', -1);
+            }.bind(this));
         }
 
-        // Called by the containing atmosphere on its play event
+        /* Called by the containing atmosphere on its play event, overrides Track.begin() */
 
     }, {
         key: 'begin',
         value: function begin() {
             this.start();
         }
+
+        /*  Fire one-shot sample once, changing nothing else.
+            Overrides Track.play() to avoid hiding any play buttons
+        */
+
     }, {
         key: 'play',
         value: function play() {
@@ -12445,47 +12475,45 @@ var OneShot = function (_Track) {
     }, {
         key: 'stop',
         value: function stop() {
-            // console.log('stop():this.interval:' + this.interval);
             if (this.interval === null || this.interval === undefined) {
+                // If timer is stopped or was never started
                 return;
             }
-            clearInterval(this.interval);
+            clearInterval(this.interval); // stop updating each frame
             this.interval = null;
-            this.updateProgressBar(100);
-            this.$startBtn.toggle();
-            this.$stopBtn.toggle();
-            this.togglePlayText();
-            this.atmosphere.am.stopTrack(this.id);
+            this.updateProgressBar(100); // reset progress bar to full
+            this.$startBtn.toggle(); // show start button again
+            this.$stopBtn.toggle(); // hide stop button
+            this.togglePlayText(); // set text to 'play' instead of 'playing'
+            this.atmosphere.am.stopTrack(this.id); // stop currently firing one-shot
         }
     }, {
         key: 'start',
         value: function start() {
-            // Make sure min and max indexes are defined
-            if (this.minIndex === undefined || this.maxIndex === undefined) {
-                this.minIndex = 3;
-                this.maxIndex = 4;
-            }
-            this.timerLength = this.getTimerLength() * 1000;
-            this.timerProgress = 0;
+            this.timerLength = this.getTimerLength() * 1000; // get random length and convert to ms
+            this.timerProgress = 0; // reset progress counter
             this.updateProgressBar(this.calculateProgressBar());
-            // Clear previous timeout
-            this.stop();
-            // Play after delay
-            this.interval = setInterval(this.progressFrame.bind(this), 10);
-            // console.log('start():this.interval: ' + this.interval);
+            this.stop(); // clear previous interval
+
+            // Progress one frame every (this.frameLength) seconds
+            this.interval = setInterval(this.progressFrame.bind(this), this.frameLength);
+
             this.$startBtn.hide();
             this.$stopBtn.show();
-            this.togglePlayText();
+            this.togglePlayText(); // set text to 'playing' instead of 'play'
         }
+
+        /*
+            Called every (this.frameLength) seconds when containing one-shot is playing
+            Plays a sample if timer has expired, otherwise just updates the progress bar.
+        */
+
     }, {
         key: 'progressFrame',
         value: function progressFrame() {
             if (this.timerProgress >= this.timerLength) {
-                // console.log('timerprogress: ' + this.timerProgress + ', timerlength: ' + this.timerLength);
-                // Restart loop
-                this.start();
-                // Play sound
-                this.play();
+                this.start(); // restart timer with new random length
+                this.play(); // play sample (must come after this.start(), or else will be stopped immediately)
             } else {
                 this.timerProgress += this.frameLength;
                 this.updateProgressBar(this.calculateProgressBar());
@@ -12558,7 +12586,7 @@ var OneShot = function (_Track) {
         value: function getTimerLength() {
             var min = OneShot.getTimeStep(this.minIndex);
             var max = OneShot.getTimeStep(this.maxIndex);
-            var length = min + _GlobalVars.g.getRandomInt(max - min + 1);
+            var length = min + _GlobalVars.g.getRandomInt(max - min + 1); //TODO: use decimals instead of whole numbers for more variability
             return length;
         }
     }, {
@@ -12599,6 +12627,8 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _GlobalVars = __webpack_require__(2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12615,9 +12645,30 @@ var Sidebar = function () {
         this.$HTML = (0, _jquery2.default)(".sidebar");
         this.$footerHTML = this.$HTML.find(".sidebar__footer");
         this.$mainContent = (0, _jquery2.default)(".main-content");
+
+        this.events();
     }
 
     _createClass(Sidebar, [{
+        key: "events",
+        value: function events() {
+            // Deselect active atmosphere on sidebar background click
+            this.$HTML.on('click', function () {
+                _GlobalVars.g.atmosphereManager.deselectActiveAtmosphere();
+            }.bind(this));
+
+            // ...but not if clicking the footer
+            this.$footerHTML.on('click', function (e) {
+                _GlobalVars.g.atmosphereManager.stopEditingTitle(); // ...but still cancel title editing
+                e.stopPropagation();
+            });
+
+            // Toggle hidden class on sidebar upon when hide button is clicked
+            (0, _jquery2.default)(".navbar__hide").click(function () {
+                this.hide();
+            }.bind(this));
+        }
+    }, {
         key: "hide",
         value: function hide() {
             // TODO: check if sidebar is not 'locked' open
@@ -12639,6 +12690,33 @@ exports.default = Sidebar;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TrackManager = function TrackManager() {
+    _classCallCheck(this, TrackManager);
+
+    this.$list = (0, _jquery2.default)("#trackList"); // The div containing all tracks
+};
+
+exports.default = TrackManager;
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 (function () {
   var template = Handlebars.template,
       templates = Handlebars.templates = Handlebars.templates || {};
@@ -12650,7 +12728,7 @@ exports.default = Sidebar;
 })();
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12684,7 +12762,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12710,7 +12788,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12744,8 +12822,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 22 */,
-/* 23 */
+/* 23 */,
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12756,7 +12834,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(24);
+var _handlebarsRuntime = __webpack_require__(25);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -12766,11 +12844,11 @@ var _handlebarsCompilerAst = __webpack_require__(7);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(25);
+var _handlebarsCompilerBase = __webpack_require__(26);
 
-var _handlebarsCompilerCompiler = __webpack_require__(27);
+var _handlebarsCompilerCompiler = __webpack_require__(28);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(29);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(30);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -12817,7 +12895,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12839,11 +12917,11 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(45);
+var _handlebarsSafeString = __webpack_require__(46);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
-var _handlebarsException = __webpack_require__(2);
+var _handlebarsException = __webpack_require__(3);
 
 var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 
@@ -12851,7 +12929,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(44);
+var _handlebarsRuntime = __webpack_require__(45);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -12890,7 +12968,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12906,15 +12984,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(30);
+var _parser = __webpack_require__(31);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(32);
+var _whitespaceControl = __webpack_require__(33);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(28);
+var _helpers = __webpack_require__(29);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -12945,7 +13023,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13118,7 +13196,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13134,7 +13212,7 @@ exports.compile = compile;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -13698,7 +13776,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13719,7 +13797,7 @@ exports.preparePartialBlock = preparePartialBlock;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -13935,7 +14013,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13948,13 +14026,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _base = __webpack_require__(4);
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(26);
+var _codeGen = __webpack_require__(27);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -15070,7 +15148,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15816,7 +15894,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16009,7 +16087,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16237,7 +16315,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16249,7 +16327,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(34);
+var _decoratorsInline = __webpack_require__(35);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -16260,7 +16338,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16296,7 +16374,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16308,31 +16386,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(36);
+var _helpersBlockHelperMissing = __webpack_require__(37);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(37);
+var _helpersEach = __webpack_require__(38);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(38);
+var _helpersHelperMissing = __webpack_require__(39);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(39);
+var _helpersIf = __webpack_require__(40);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(40);
+var _helpersLog = __webpack_require__(41);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(41);
+var _helpersLookup = __webpack_require__(42);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(42);
+var _helpersWith = __webpack_require__(43);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -16349,7 +16427,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16395,7 +16473,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16408,7 +16486,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _utils = __webpack_require__(0);
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16496,7 +16574,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16507,7 +16585,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -16528,7 +16606,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16564,7 +16642,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16597,7 +16675,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16616,7 +16694,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16656,7 +16734,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16710,7 +16788,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16735,7 +16813,7 @@ var _utils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_utils);
 
-var _exception = __webpack_require__(2);
+var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -17024,7 +17102,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17046,7 +17124,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -17055,9 +17133,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(23)['default'];
+var handlebars = __webpack_require__(24)['default'];
 
-var printer = __webpack_require__(31);
+var printer = __webpack_require__(32);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -17077,7 +17155,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports) {
 
 var g;

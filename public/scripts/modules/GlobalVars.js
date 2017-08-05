@@ -3,59 +3,31 @@ import Handlebars from 'handlebars';
 
 import DataManager from './DataManager';
 import AtmosphereManager from './AtmosphereManager';
+import TrackManager from './TrackManager';
 import Sidebar from './Sidebar';
 
 class GlobalVars {
 
+    /*
+        A utility class containing references to classes that should act as
+        singletons (e.g. atmosphereManager, dataManager, etc.).
+        Also contains general purpose helper functions.
+    */
+
     constructor() {
-        this.$trackList         = $("#trackList");          // The div containing all tracks
-        this.$atmosphereList    = $("#atmosphereList");     // The div containing all atmospheres
-        this.$searchResults     = $("#searchResults");      // The ul containing all search results
-        this.$searchBarInput    = $("#searchBarInput");
+        
         this.$autoplayCheckbox  = $("#autoplayCheckbox");
-        this.$searchBarClearBtn = $("#searchBarClearBtn");
-        this.$editingTitle      = null;
         
         this.trackPrefix        = "/audio/converted/";
         this.fileTypes          = ['.webm', '.mp3'];
 
-        
         this.atmosphereManager = new AtmosphereManager();
+        this.trackManager = new TrackManager();
         this.dataManager = new DataManager();
         this.sidebar = new Sidebar();
-
-        this.events();
-    }
-    
-    events() {
-        // Stop editing title upon mouse click outside the title
-        var that = this;
-        $(document).click(function(event) {
-            if (that.$editingTitle != null
-                    && !that.$editingTitle.is(event.target)
-                    && that.$editingTitle.has(event.target).length === 0) {
-                that.stopEditingTitle();
-            }
-        });
-
-        // Toggle hidden class on sidebar upon hide button click
-        $(".navbar__hide").click(function() {
-            that.sidebar.hide();
-        });
-
     }
 
-    hideSidebar() {
-        
-    }
-
-    stopEditingTitle() {
-        if (g.$editingTitle != null) {
-            this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
-            this.$editingTitle = null;
-        }
-    }
-
+    /* Highlights the contents of a given element, used when editing atmosphere titles */
     selectElementContents(el) {
         var range = document.createRange();
         range.selectNodeContents(el);
@@ -64,22 +36,30 @@ class GlobalVars {
         sel.addRange(range);
     }
 
+    /*
+        Creates an array of full filenames by prepending the path, and appending the accepted filetypes
+        e.g convertToFilenames("test") returns ["/audio/converted/test.webm", "/audio/converted/test.mp3"]
+    */
     convertToFilenames(filename) {
         var filenames = [],
         that = this;
         this.fileTypes.forEach( (fileType) => {
             filenames.push(that.trackPrefix + filename + fileType);
         });
-        // console.log('GlobalVars.js:convertToFilenames:filenames:');
-        // console.log(filenames);
         return filenames;
     }
 
+    /* Returns a pseudorandom integer in the range [0, max - 1] */
     getRandomInt(max) {
         max = Math.floor(max);
         return Math.floor(Math.random() * max);
     }
 
+    /*
+        Returns min if number < min,
+        max if number > max,
+        number otherwise
+    */
     clamp(min, number, max) {
         return Math.min(Math.max(number, min), max);
     }

@@ -27,7 +27,7 @@ class Atmosphere {
         var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
         // Add to tracklist
-        var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.$atmosphereList).show('fast');
+        var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.atmosphereManager.$list).show('fast');
 
         this.rigAtmosphereControls($atmosphereHTML);
 
@@ -75,7 +75,7 @@ class Atmosphere {
         
         $atmosphereHTML.on('click', function(e) {
             e.stopPropagation();    // Don't deselect current atmosphere if it's DOM element is clicked
-            g.stopEditingTitle();   // but still cancel title editing
+            g.atmosphereManager.stopEditingTitle();   // but still cancel title editing
         });
 
         // Click atmosphere heading to set the containing atmosphere as active
@@ -100,7 +100,7 @@ class Atmosphere {
             if (e.keyCode == "13") {
                 // enter was pressed, so exit edit mode
                 $titleText.prop('contenteditable', false).toggleClass('editable');
-                g.$editingTitle = null;
+                g.atmosphereManager.$editingTitle = null;
             }
         });
 
@@ -115,13 +115,13 @@ class Atmosphere {
     toggleTitleEditable($titleText) {
         var isEditable = $titleText.is('.editable');
         $titleText.prop('contenteditable', !isEditable); // toggle contenteditable property
-        g.stopEditingTitle(); // clear any title currently being edited
+        g.atmosphereManager.stopEditingTitle(); // clear any title currently being edited
 
         if (!isEditable) {
             $titleText.addClass("editable");
             // If it's now editable,
             //  let GlobalVars know,
-            g.$editingTitle = $titleText;
+            g.atmosphereManager.$editingTitle = $titleText;
             //  and select it with the cursor.
             $titleText.focus();
             // .delay(100).select();

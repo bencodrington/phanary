@@ -5,7 +5,6 @@ import { g } from "./GlobalVars.js";
 require('./templates/track');
 
 
-// Track object, contains all the data associated with a given track
 class Track {
 
     constructor(trackData, atmosphere) {
@@ -34,9 +33,8 @@ class Track {
         var trackHTML = this.template(this.data);
 
         // Add to tracklist
-        var $trackHTML = $(trackHTML).hide().prependTo(g.$trackList).show('fast');
+        var $trackHTML = $(trackHTML).hide().prependTo(g.trackManager.$list).show('fast');
 
-        //FIXME: var that = this;
         // Rig play, stop, and delete buttons to function
         var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
         var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");

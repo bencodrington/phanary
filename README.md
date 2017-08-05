@@ -27,6 +27,6 @@ Please don't hesitate to let us know if you have any issues at: phanarydev@gmail
 
 ## License
 
-Copyright (c) 2017 [Ben Codrington](projectben.ch)
+Copyright (c) 2017 [Ben Codrington](http://projectben.ch/)
 
 The project code is licensed under the [3-Clause BSD License](https://github.com/bencodrington/phanary/blob/master/LICENSE.md).

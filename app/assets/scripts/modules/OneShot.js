@@ -3,14 +3,13 @@ require('./templates/oneshot');
 
 import { g } from "./GlobalVars.js";
 
-// Used for setting random time ranges
+// The different values that "Playing every _ to _ seconds" can hold.
 let _timesteps = [
-    0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60,
-    120, 180
+    0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180
 ];
 
-let _startMinIndex = 3;
-let _startMaxIndex = 4;
+let _startMinIndex = 3; // the index of the default minimum timestep
+let _startMaxIndex = 4; // the index of the default maximum timestep
 
 class OneShot extends Track {
     
@@ -20,15 +19,23 @@ class OneShot extends Track {
 
     constructor(trackData, atmosphere) {
         super(trackData, atmosphere);
-        // this.rigOneShotControls();
-        // this.interval = null; // Runs after start has already been called, nullifying the first clearInterval() call
-        this.frameLength = 10; // Milliseconds between progress bar updates
+
+        this.frameLength = 10;  // milliseconds between progress bar updates
+
+        // Set the frequency of sample firing to the timestep defaults
         this.minIndex = OneShot.startMinIndex;
         this.maxIndex = OneShot.startMaxIndex;
-        // Update labels
-        this.updateLabels();
+
+        this.updateLabels();    // update labels to reflect the initialized indices
+
+        // These lines are found in Track.createAudio(), but must be called after
+        //  setting the sample firing frequency, and so are moved here in this class
+        if (g.$autoplayCheckbox.is(":checked")) {
+            this.begin(); // start the timer
+        }
     }
 
+    /* Overrides the default track template function */
     template(data) {
         return Handlebars.templates['oneshot.hbs'](data);
     }
@@ -38,14 +45,15 @@ class OneShot extends Track {
         this.rigOneShotControls();
     }
 
+    /* Handles the creation of the actual Howler audio objects */
     createAudio(trackData) {
-        var that = this;
-        var samples = [];
+        var samples = [];   // will contain the completed Howler objects, to be passed
+                            //  to the containing atmosphere's audio manager
         var paths, howl;
+
         this.data.samples.forEach(function(sample) {
-            // For each oneshot
-            // Append track prefixes to each fallback audio path
-            paths = g.convertToFilenames(sample.filename);
+            paths = g.convertToFilenames(sample.filename); // prepend path and append track postfixes to the sample name
+
             // Create new howl for the sample
             howl = new Howl({
                 src: paths,
@@ -55,95 +63,93 @@ class OneShot extends Track {
             });
 
             samples.push(howl);
-
         });
 
-        // Add to audio manager
         this.atmosphere.am.addOneShotSet(this.id, samples);
-        
-        if (g.$autoplayCheckbox.is(":checked")) {
-            this.begin();
-        }
     }
 
+    /* Must be called after super.createElement(), otherwise this.$trackHTML will be uninitialized */
     rigOneShotControls() {
-        var that = this;
-        var $startBtn = this.$startBtn = this.$trackHTML.find('.btn--start');
-        var $stopBtn = this.$trackHTML.find('.btn--stop');
-        var $minMore = this.$trackHTML.find('.oneshot-min.btn--more');
-        var $minLess = this.$trackHTML.find('.oneshot-min.btn--less');
-        var $maxMore = this.$trackHTML.find('.oneshot-max.btn--more');
-        var $maxLess = this.$trackHTML.find('.oneshot-max.btn--less');
+        this.$startBtn = this.$trackHTML.find('.btn--start');
         this.$playText = this.$trackHTML.find('.oneshot-play-text');
         this.$minLabel = this.$trackHTML.find('.oneshot-min-label');
         this.$maxLabel = this.$trackHTML.find('.oneshot-max-label');
         this.$progressBar = this.$trackHTML.find('.progress__bar');
-        $startBtn.on('click', function() {
-            that.start();
-        });
-        $minLess.on('click', function() {
-            that.changeRange('min', -1);
-        });
-        $minMore.on('click', function() {
-            that.changeRange('min', 1);
-        });
-        $maxLess.on('click', function() {
-            that.changeRange('max', -1);
-        });
-        $maxMore.on('click', function() {
-            that.changeRange('max', 1);
-        });
+
+        this.$startBtn
+        .on('click', function() {
+            this.start();
+        }.bind(this));
+
+        // Change frequency range minimum by one step
+        this.$trackHTML.find('.oneshot-min.btn--more')  // Increase
+        .on('click', function() {
+            this.changeRange('min', 1);
+        }.bind(this));
+        this.$trackHTML.find('.oneshot-min.btn--less')  // Decrease
+        .on('click', function() {
+            this.changeRange('min', -1);
+        }.bind(this));
+
+        // Change frequency range maximum by one step
+        this.$trackHTML.find('.oneshot-max.btn--more')  // Increase
+        .on('click', function() {
+            this.changeRange('max', 1);
+        }.bind(this));
+        this.$trackHTML.find('.oneshot-max.btn--less')  // Decrease
+        .on('click', function() {
+            this.changeRange('max', -1);
+        }.bind(this));
     }
 
-    // Called by the containing atmosphere on its play event
+    /* Called by the containing atmosphere on its play event, overrides Track.begin() */
     begin() {
         this.start();
     }
 
+    /*  Fire one-shot sample once, changing nothing else.
+        Overrides Track.play() to avoid hiding any play buttons
+    */
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
     }
 
     stop() {
-        // console.log('stop():this.interval:' + this.interval);
         if (this.interval === null || this.interval === undefined) {
+            // If timer is stopped or was never started
             return;
         }
-        clearInterval(this.interval);
+        clearInterval(this.interval);           // stop updating each frame
         this.interval = null;
-        this.updateProgressBar(100);
-        this.$startBtn.toggle();
-        this.$stopBtn.toggle();
-        this.togglePlayText();
-        this.atmosphere.am.stopTrack(this.id);
+        this.updateProgressBar(100);            // reset progress bar to full
+        this.$startBtn.toggle();                // show start button again
+        this.$stopBtn.toggle();                 // hide stop button
+        this.togglePlayText();                  // set text to 'play' instead of 'playing'
+        this.atmosphere.am.stopTrack(this.id);  // stop currently firing one-shot
     }
 
     start() {
-        // Make sure min and max indexes are defined
-        if (this.minIndex === undefined || this.maxIndex === undefined) {
-            this.minIndex = 3;
-            this.maxIndex = 4;
-        }
-        this.timerLength = this.getTimerLength() * 1000;
-        this.timerProgress = 0;
+        this.timerLength = this.getTimerLength() * 1000;    // get random length and convert to ms
+        this.timerProgress = 0;                             // reset progress counter
         this.updateProgressBar(this.calculateProgressBar());
-        // Clear previous timeout
-        this.stop();
-        // Play after delay
-        this.interval = setInterval(this.progressFrame.bind(this), 10);
-        // console.log('start():this.interval: ' + this.interval);
+        this.stop();                                        // clear previous interval
+
+        // Progress one frame every (this.frameLength) seconds
+        this.interval = setInterval(this.progressFrame.bind(this), this.frameLength);
+
         this.$startBtn.hide();
         this.$stopBtn.show();
-        this.togglePlayText();
+        this.togglePlayText();  // set text to 'playing' instead of 'play'
     }
 
+    /*
+        Called every (this.frameLength) seconds when containing one-shot is playing
+        Plays a sample if timer has expired, otherwise just updates the progress bar.
+    */
     progressFrame() {
         if (this.timerProgress >= this.timerLength) {
-            // console.log('timerprogress: ' + this.timerProgress + ', timerlength: ' + this.timerLength);
-            // Restart loop
-            this.start();
-            // Play sound
-            this.play();
+            this.start();   // restart timer with new random length
+            this.play();    // play sample (must come after this.start(), or else will be stopped immediately)
         } else {
             this.timerProgress += this.frameLength;
             this.updateProgressBar(this.calculateProgressBar());
@@ -209,7 +215,7 @@ class OneShot extends Track {
     getTimerLength() {
         var min = OneShot.getTimeStep(this.minIndex)
         var max = OneShot.getTimeStep(this.maxIndex)
-        var length = min + g.getRandomInt(max - min + 1);
+        var length = min + g.getRandomInt(max - min + 1); //TODO: use decimals instead of whole numbers for more variability
         return length;
     }
 

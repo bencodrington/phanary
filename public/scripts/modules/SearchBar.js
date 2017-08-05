@@ -4,19 +4,24 @@ import { g } from "./GlobalVars.js";
 class SearchBar {
 
     constructor() {
-        g.$searchBarInput.focus();
+        this.$results   = $("#searchResults");      // the ul containing all search results
+        this.$input     = $("#searchBarInput");     // the search bar textbox itself
+        this.$input.focus();                        // start cursor in the searchbar
         this.events();
     }
 
     events() {
-        g.$searchBarInput.on('keyup', this.keyPressInSearchBar.bind(this));
-        g.$searchBarInput.focus(function() {
+        var $clearBtn   = $("#searchBarClearBtn");  // the button that removes current text from the search bar
+
+        this.$input.on('keyup', this.keyPressInSearchBar.bind(this));
+        this.$input.focus(function() {
             $(this).select();
         });
-        g.$searchBarInput.keydown(this.blockArrowKeys);
-        g.$searchBarClearBtn.click(this.clearSearchBar.bind(this));
+        this.$input.keydown(this.blockArrowKeys);
+        
+        $clearBtn.click(this.clearSearchBar.bind(this));
         g.$autoplayCheckbox.click(function(event) {
-            g.$searchBarInput.focus();
+            this.$input.focus();
             event.stopPropagation();
         });
     }
@@ -36,7 +41,7 @@ class SearchBar {
                 break;
             case 38:    // Up Key
             case 40:    // Down Key
-                var $visibleResults = g.$searchResults.find("li:visible");
+                var $visibleResults = this.$results.find("li:visible");
                 // $visibleResults.each(function(index, element) {
                 //     console.log("Element " + index + ", " + element.innerHTML);
                 // });
@@ -92,7 +97,7 @@ class SearchBar {
     }
 
     deselect() {
-        var $results = g.$searchResults.find('.selected').removeClass('selected');
+        var $results = this.$results.find('.selected').removeClass('selected');
     }
 
     select($result) {
@@ -108,23 +113,23 @@ class SearchBar {
     }
 
     clearSearchBar() {
-        g.$searchBarInput.val("");
-        g.$searchBarInput.focus();
+        this.$input.val("");
+        this.$input.focus();
         this.filterResults();
     }
 
     filterResults() {
-        if (g.$searchResults == null) {
+        if (this.$results == null) {
             console.log('SearchBar.js: filterResults: No search results. Returning...');
             return;
         }
 
-        g.dataManager.search(g.$searchBarInput.val(), { '_id': 1 }, this.update.bind(this));
+        g.dataManager.search(this.$input.val(), { '_id': 1 }, this.update.bind(this));
 
     }
 
     update(results) {
-        var searchResults = g.$searchResults.children(),
+        var searchResults = this.$results.children(),
         enabledCount = 0;
 
         // console.log("/update/results: ");
@@ -152,25 +157,25 @@ class SearchBar {
 
         searchResults.removeClass("selected");
         if (enabledCount == 0) {
-            g.$searchResults.css("display", "none");
+            this.$results.css("display", "none");
         } else {
-            g.$searchResults.css("display", "");
+            this.$results.css("display", "");
             // Select top element
-            g.$searchResults.find("li:visible").first().addClass("selected");
+            this.$results.find("li:visible").first().addClass("selected");
         }
     }
 
     appendToSearchBar(text) {
-        var newText = g.$searchBarInput.val();
+        var newText = this.$input.val();
         newText += text + " ";
-        g.$searchBarInput.val(newText);
-        g.$searchBarInput.focus();
+        this.$input.val(newText);
+        this.$input.focus();
         this.filterResults();
     }
 
     findSearchResult(id) {
         //TODO: Store all search results in a map, and then just get the one at key[id]?
-        var $result = g.$searchResults.children().filter('[data-db-id="' + id + '"]');
+        var $result = this.$results.children().filter('[data-db-id="' + id + '"]');
 
         if ($result.length > 0) {
             return $result[0];
@@ -182,7 +187,7 @@ class SearchBar {
         // The element to be moved
         var $result = $(searchResult);
         // The element currently at the desired location
-        var $target = g.$searchResults.children().eq(index);
+        var $target = this.$results.children().eq(index);
 
         // If element will be moving left...
         if ($result.index() > index) {

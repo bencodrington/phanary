@@ -13,8 +13,10 @@ class AtmosphereManager {
         this.volume             = 1;    // The global volume modifier, affects all sounds
         this.atmospheres        = [];   // An array of all atmospheres
         this.activeAtmosphere   = null; // The currently selected atmosphere, whose tracks are being displayed
+        this.$editingTitle      = null; // The title text element of the atmosphere which is currently being renamed
 
         this.$newAtmosphereBtn  = $('#newAtmosphereBtn');
+        this.$list              = $("#atmosphereList"); // The div containing all atmospheres
 
         this.events();
     }
@@ -25,15 +27,15 @@ class AtmosphereManager {
             this.newAtmosphere();
         }.bind(this));
 
-        // Deselect active atmosphere on sidebar background click
-        $('.sidebar').on('click', function() {
-            this.deselectActiveAtmosphere();
+        // Stop editing title upon mouse click outside the title
+        $(document).click(function(event) {
+            if (this.$editingTitle != null
+                    && !this.$editingTitle.is(event.target)
+                    && this.$editingTitle.has(event.target).length === 0) {
+                this.stopEditingTitle();
+            }
         }.bind(this));
 
-        // ...But not if clicking the footer
-        $('.sidebar__footer').on('click', function(e) {
-            e.stopPropagation();
-        });
         this.rigVolumeControls();
     }
 
@@ -152,6 +154,13 @@ class AtmosphereManager {
                 atmosphere.updateTrackVolumes();
             }
         });
+    }
+
+    stopEditingTitle() {
+        if (this.$editingTitle != null) {
+            this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
+            this.$editingTitle = null;
+        }
     }
 
 }

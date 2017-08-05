@@ -4,14 +4,23 @@ require('./templates/searchResult');
 
 class DataManager {
 
+    /*
+        Responsible for making calls to the system API to get track and atmosphere data and files.
+    */
+
     constructor() {
         this.fetchNames();
     }
 
+    /* 
+        Retrieves the names and tags of all entries in the database,
+        and passes them to the populateSearchResults function upon
+        asynchronous completion.
+    */
     fetchNames() {
         var query = {
-            'collection': 'tracks',
-            'selectedInfo': {
+            'collection': 'tracks',         // select loop collection for retrieval
+            'selectedInfo': {               // only need name and tags to complete search result template
                 name: true,
                 tags: true
             }
@@ -20,11 +29,11 @@ class DataManager {
         $.getJSON('/system/get', query, function( data ) {
             this.populateSearchResults(data, 'track');
         }.bind(this));
-        query.collection = 'atmospheres';
+        query.collection = 'atmospheres';   // select atmosphere collection for retrieval
         $.getJSON('/system/get', query, function( data ) {
             this.populateSearchResults(data, 'atmosphere');
         }.bind(this));
-        query.collection = 'oneshots';
+        query.collection = 'oneshots';      // select one-shot collection for retrieval
         $.getJSON('/system/get', query, function( data ) {
             this.populateSearchResults(data, 'oneshot');
         }.bind(this));
@@ -32,14 +41,16 @@ class DataManager {
 
     populateSearchResults(data, type) {
         var that = this;
-        var resultHTML;
         $.each(data, function(index, object) {
-            // console.log("DataManager.js: populateSearchResults: object.name: " + object.name);
-            var $resultHTML = that.generateResultHTML(object, type);
-            that.rigResultEvents($resultHTML);
+            var $resultHTML = that.generateResultHTML(object, type);    // get result DOM element
+            that.rigResultEvents($resultHTML);                          // attach event handlers
         } );
     }
 
+    /*
+        Injects result data into result template, then appends the created
+        DOM element to the search results ul.
+    */
     generateResultHTML(object, type) {
         var resultObject = {
             _id: object._id,
@@ -48,16 +59,8 @@ class DataManager {
             type: "result--" + type
         };
 
-        if (type === "oneshot") {
-            resultObject.isOneshot = true;
-        } else if (type === "atmosphere") {
-            resultObject.isAtmosphere = true;
-        } else {
-            resultObject.isLoop = true;
-        }
-
         var resultHTML = Handlebars.templates['searchResult.hbs'](resultObject);
-        return $(resultHTML).appendTo(g.$searchResults);
+        return $(resultHTML).appendTo(g.searchBar.$results);
     }
 
     rigResultEvents($resultHTML) {
