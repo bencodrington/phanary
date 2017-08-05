@@ -156,13 +156,16 @@ class OneShot extends Track {
         }
     }
 
+    /*
+        retain: whether or not to avoid removing the track from the containing atmosphere
+        If this were called in Atmosphere.tracks.forEach(), removing the track mid-loop
+        would cause issues like one track being skipped.
+    */
     delete(retain) {
         this.stop();
-        this.atmosphere.am.stopTrack(this.id);
         this.atmosphere.am.unloadTrack(this.id);
         if (!retain) {
-            // Unlink data object from containing atmosphere
-            this.atmosphere.removeTrack(this.id);
+            this.atmosphere.removeTrack(this.id); // unlink data object from containing atmosphere
         }
 
         // Remove DOM Element
@@ -171,22 +174,24 @@ class OneShot extends Track {
         });
     }
 
+    /*
+        Modifies the valid range of times for use in the countdown until the next sample firing
+        minmax: 'min' if the minimum index is to be modified, 'max' for the maximum index
+        difference: how much to modify the selected index by
+    */
     changeRange(minmax, difference) {
-
         if (minmax === 'min') {
             this.minIndex = g.clamp(0, this.minIndex + difference, OneShot.timesteps.length - 1);
             this.updateLabels();
             if (this.minIndex > this.maxIndex) {
-                // Increase max
-                // console.log("OneShot:changeRange(): " + this.minIndex + " is greater than " + this.maxIndex);
+                // new min cannot be greater than max; increase max by one step
                 this.changeRange('max', 1);
             }
         } else { // 'max'
             this.maxIndex = g.clamp(0, this.maxIndex + difference, OneShot.timesteps.length - 1);
             this.updateLabels();
             if (this.maxIndex < this.minIndex) {
-                // Decrease min
-                // console.log("OneShot:changeRange(): " + this.maxIndex + " is less than " + this.minIndex);
+                // new max cannot be less than min; decrease min by one step
                 this.changeRange('min', -1);
             }
         }
@@ -202,16 +207,18 @@ class OneShot extends Track {
             console.error('OneShot.js: Timer length <= 0: ' + this.timerLength);
             return 100;
         }
-        var percentage = this.timerProgress / this.timerLength;
-        percentage = 1 - percentage;
-        percentage *= 100;
+        var percentage = this.timerProgress / this.timerLength; // 0 < percentage < 1
+        percentage = 1 - percentage; // invert to have progress bar count down instead of up
+        percentage *= 100; // 0 < percentage < 100
         return percentage;
     }
 
+    /* Sets the percentage of the progress bar that is filled based on input in the range [0, 100] */
     updateProgressBar(percentage) {
         this.$progressBar.width(percentage + "%");
     }
 
+    /* Returns a random whole number in the range of selected times, inclusively */
     getTimerLength() {
         var min = OneShot.getTimeStep(this.minIndex)
         var max = OneShot.getTimeStep(this.maxIndex)
@@ -219,6 +226,7 @@ class OneShot extends Track {
         return length;
     }
 
+    /* Sets 'play' to 'playing' and vice versa for linguistic accuracy */
     togglePlayText() {
         if (this.$playText.text() === "Play") {
             this.$playText.text("Playing");
@@ -227,6 +235,7 @@ class OneShot extends Track {
         }
     }
 
+    /* Semantic method for accessing the static timesteps array given a min or max index */
     static getTimeStep(index) {
         return OneShot.timesteps[index];
     }
