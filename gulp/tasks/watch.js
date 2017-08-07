@@ -5,7 +5,7 @@ browserSync = require('browser-sync').create();
 gulp.task('watch', function() {
 
     browserSync.init({
-        notify: false,  // Supresses notification on updates
+        notify: false,  // supresses notification on updates
         proxy: "localhost:8080"
     });
 
@@ -22,12 +22,8 @@ gulp.task('watch', function() {
     });
 
     watch('./app/assets/templates/**/*.hbs', function() {
-        gulp.start('templatesRefresh');
+        gulp.start('templates');
     })
-
-    watch('./public/audio/converted/*', function() {
-        gulp.start('audioRefresh');
-    });
 
 });
 
@@ -38,12 +34,4 @@ gulp.task('cssInject', ['styles'], function() {
 
 gulp.task('scriptsRefresh', ['scripts'], function() {
     browserSync.reload();
-});
-
-gulp.task('templatesRefresh', ['templates'], function() {
-    // browserSync.reload(); Not necessary, as the changed .js files will trigger scriptsrefresh
-});
-
-gulp.task('audioRefresh', function() {
-    // browserSync.reload();
 });

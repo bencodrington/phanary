@@ -1,23 +1,22 @@
-'use strict';
 import $ from 'jquery';
-
 import { g } from "./GlobalVars.js";
 require('./templates/track');
 
-
 class Track {
 
-    constructor(trackData, atmosphere) {
+    /*
+        The data object behind loop and one-shot tracks.
+    */
 
+    constructor(trackData, atmosphere) {
         if (trackData == undefined) {
             console.error('No accessible data for selected track.')
         }
+        this.data = trackData;  // info like track title, filename, etc.
 
-        this.data = trackData;
-
-        this.id = trackData.id;
+        this.id = trackData.id; // used for identifying this track to the containing atmosphere's AudioManager
         this.atmosphere = atmosphere;
-        this.volume = 1;
+        this.volume = 1;        // the volume modifier specific to this current track
 
         this.createElement(trackData);
         this.createAudio(trackData);
@@ -28,69 +27,64 @@ class Track {
     }
 
     createElement() {
-        
-        // Convert object to HTML
-        var trackHTML = this.template(this.data);
-
+        var trackHTML = this.template(this.data); // convert object to HTML
         // Add to tracklist
-        var $trackHTML = $(trackHTML).hide().prependTo(g.trackManager.$list).show('fast');
+        var $trackHTML = $(trackHTML)
+            .hide()
+            .prependTo(g.trackManager.$list)
+            .show('fast');
 
-        // Rig play, stop, and delete buttons to function
-        var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
-        var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
-        var $delBtn = $trackHTML.find(".btn--delete");
-        var $tags = $trackHTML.find(".tag");
-        $playBtn.on('click', function() {
+        // Play and Stop buttons
+        this.$playBtn = $trackHTML.find(".btn--play");
+        this.$stopBtn = $trackHTML.find(".btn--stop");
+        this.$playBtn.on('click', function() {
             this.play();
         }.bind(this));
-        $stopBtn.on('click', function() {
+        this.$stopBtn.on('click', function() {
             this.stop();
         }.bind(this));
-        $stopBtn.hide();
-        $delBtn.on('click', function() {
+        this.$stopBtn.hide();   // only display 'play' button at first
+
+        // Delete button
+        $trackHTML.find(".btn--delete").on('click', function() {
             this.delete();
         }.bind(this));
 
-        // Rig volume slider to function
-        var $volumeSlider = $trackHTML.find(".volume input[type=range]");
-        $volumeSlider.on('input', function() {
+        // Make volume controls affect the associated audio object
+        $trackHTML.find(".volume input[type=range]")    // volume slider
+        .on('input', function() {
             this.volume = $volumeSlider.val();
             this.updateVolume();
         }.bind(this))
-        var $muteBtn = $trackHTML.find(".btn--mute");
-        $muteBtn.on('click', function() {
+        $trackHTML.find(".btn--mute")                   // mute button
+        .on('click', function() {
             this.toggleMute();
         }.bind(this));
 
-        // Rig tags to modify search bar
-        $tags.each( (index, element) => {
-            // console.log('ELEMENT: ');
-            // console.log(element);
+        // Make tags modify search bar on click
+        $trackHTML.find(".tag").each( (index, element) => {
             var $element = $(element);
             $element.on('click', () => {
                 g.searchBar.appendToSearchBar($element.text());
             });
         });
 
-        this.$trackHTML = $trackHTML;
-
+        this.$trackHTML = $trackHTML;   // cache jquery object
     }
 
+    /* Handles the creation of the actual Howler audio object */
     createAudio() {
-        
-        // console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
-
-        // Append prefix to filenames
+        // Prepend path and append track postfixes to the sample name
         var filenames = g.convertToFilenames(this.data.filename);
-        // console.log(filenames);
-        // Create new audio source
+
+        // Create new audio source attached to the associated AudioManager
         this.atmosphere.am.addTrack(
             this.id,
             new Howl({
                 src: filenames,
-                volume: 0,
+                volume: 0,          // required for fade-in
                 buffer: true,
-                autoplay: false,
+                autoplay: false,    // handled manually
                 loop: true
             })
         );
@@ -99,6 +93,7 @@ class Track {
         }
     }
 
+    /* Allows for overriding of the default 'begin' functionality of child classes (e.g. OneShot) */
     begin() {
         this.play();
     }
@@ -106,14 +101,16 @@ class Track {
     play() {
         this.atmosphere.am.playTrack(this.id, this.volume);
         this.atmosphere.hidePlayButtons();
-        // Disable/hide play button
+
+        // Disable/hide track play button
         this.$playBtn.hide();
         this.$stopBtn.show();
     }
 
     stop() {
         this.atmosphere.am.stopTrack(this.id);
-        // Enable/show play button
+
+        // Enable/show track play button
         this.$playBtn.show();
         this.$stopBtn.hide();
     }
@@ -126,14 +123,20 @@ class Track {
         this.$playBtn.hide();
     }
 
+    /*
+        retain: whether or not to avoid removing the track from the containing atmosphere
+        If this were called in Atmosphere.tracks.forEach(), removing the track mid-loop
+        would cause issues like one track being skipped.
+    */
     delete(retain) {
+        // Begin track stopping process, beginning with fade out
         this.atmosphere.am.stopTrack(this.id, function() {
+            // On fade-out completion
             this.atmosphere.am.unloadTrack(this.id);
             if (!retain) {
                 // Unlink data object from containing atmosphere
                 this.atmosphere.removeTrack(this.id);
             }
-            
         }.bind(this));
         
         // Remove DOM Element

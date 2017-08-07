@@ -9,6 +9,7 @@ gulp.task('scripts', function(callback) {
         console.log(stats.toString());
         callback();
     });
-    gulp.src('./app/assets/scripts/**/*.js')
+    gulp.src(['./app/assets/scripts/**/*.js',
+        '!./app/assets/scripts/modules/*.js'])   // module files not required in dist build
         .pipe(gulp.dest('./public/scripts'));
 });

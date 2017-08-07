@@ -33,9 +33,13 @@ class Sidebar {
         }.bind(this));
     }
 
+    /*
+        Apply the 'mobile-hidden' class to the sidebar,
+        and the 'full-width' class to the main content div
+    */
     hide() {
         // TODO: check if sidebar is not 'locked' open
-        this.$HTML.toggleClass("mobile-hidden");
+        this.$HTML.toggleClass("mobile-hidden");    // TODO: refactor 'mobile-hidden' to just 'hidden'?
         this.$footerHTML.toggleClass("mobile-hidden");
         this.$mainContent.toggleClass("full-width");
     }

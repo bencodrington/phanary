@@ -10922,18 +10922,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 __webpack_require__(22);
 
 var Track = function () {
+
+    /*
+        The data object behind loop and one-shot tracks.
+    */
+
     function Track(trackData, atmosphere) {
         _classCallCheck(this, Track);
 
         if (trackData == undefined) {
             console.error('No accessible data for selected track.');
         }
+        this.data = trackData; // info like track title, filename, etc.
 
-        this.data = trackData;
-
-        this.id = trackData.id;
+        this.id = trackData.id; // used for identifying this track to the containing atmosphere's AudioManager
         this.atmosphere = atmosphere;
-        this.volume = 1;
+        this.volume = 1; // the volume modifier specific to this current track
 
         this.createElement(trackData);
         this.createAudio(trackData);
@@ -10947,73 +10951,71 @@ var Track = function () {
     }, {
         key: 'createElement',
         value: function createElement() {
-
-            // Convert object to HTML
-            var trackHTML = this.template(this.data);
-
+            var trackHTML = this.template(this.data); // convert object to HTML
             // Add to tracklist
             var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.trackManager.$list).show('fast');
 
-            // Rig play, stop, and delete buttons to function
-            var $playBtn = this.$playBtn = $trackHTML.find(".btn--play");
-            var $stopBtn = this.$stopBtn = $trackHTML.find(".btn--stop");
-            var $delBtn = $trackHTML.find(".btn--delete");
-            var $tags = $trackHTML.find(".tag");
-            $playBtn.on('click', function () {
+            // Play and Stop buttons
+            this.$playBtn = $trackHTML.find(".btn--play");
+            this.$stopBtn = $trackHTML.find(".btn--stop");
+            this.$playBtn.on('click', function () {
                 this.play();
             }.bind(this));
-            $stopBtn.on('click', function () {
+            this.$stopBtn.on('click', function () {
                 this.stop();
             }.bind(this));
-            $stopBtn.hide();
-            $delBtn.on('click', function () {
+            this.$stopBtn.hide(); // only display 'play' button at first
+
+            // Delete button
+            $trackHTML.find(".btn--delete").on('click', function () {
                 this.delete();
             }.bind(this));
 
-            // Rig volume slider to function
-            var $volumeSlider = $trackHTML.find(".volume input[type=range]");
-            $volumeSlider.on('input', function () {
+            // Make volume controls affect the associated audio object
+            $trackHTML.find(".volume input[type=range]" // volume slider
+            ).on('input', function () {
                 this.volume = $volumeSlider.val();
                 this.updateVolume();
             }.bind(this));
-            var $muteBtn = $trackHTML.find(".btn--mute");
-            $muteBtn.on('click', function () {
+            $trackHTML.find(".btn--mute" // mute button
+            ).on('click', function () {
                 this.toggleMute();
             }.bind(this));
 
-            // Rig tags to modify search bar
-            $tags.each(function (index, element) {
-                // console.log('ELEMENT: ');
-                // console.log(element);
+            // Make tags modify search bar on click
+            $trackHTML.find(".tag").each(function (index, element) {
                 var $element = (0, _jquery2.default)(element);
                 $element.on('click', function () {
                     _GlobalVars.g.searchBar.appendToSearchBar($element.text());
                 });
             });
 
-            this.$trackHTML = $trackHTML;
+            this.$trackHTML = $trackHTML; // cache jquery object
         }
+
+        /* Handles the creation of the actual Howler audio object */
+
     }, {
         key: 'createAudio',
         value: function createAudio() {
-
-            // console.log("Track:createAudio(): Autoplay checked? " + g.$autoplayCheckbox.is(":checked"));
-
-            // Append prefix to filenames
+            // Prepend path and append track postfixes to the sample name
             var filenames = _GlobalVars.g.convertToFilenames(this.data.filename);
-            // console.log(filenames);
-            // Create new audio source
+
+            // Create new audio source attached to the associated AudioManager
             this.atmosphere.am.addTrack(this.id, new Howl({
                 src: filenames,
-                volume: 0,
+                volume: 0, // required for fade-in
                 buffer: true,
-                autoplay: false,
+                autoplay: false, // handled manually
                 loop: true
             }));
             if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
                 this.begin();
             }
         }
+
+        /* Allows for overriding of the default 'begin' functionality of child classes (e.g. OneShot) */
+
     }, {
         key: 'begin',
         value: function begin() {
@@ -11024,7 +11026,8 @@ var Track = function () {
         value: function play() {
             this.atmosphere.am.playTrack(this.id, this.volume);
             this.atmosphere.hidePlayButtons();
-            // Disable/hide play button
+
+            // Disable/hide track play button
             this.$playBtn.hide();
             this.$stopBtn.show();
         }
@@ -11032,7 +11035,8 @@ var Track = function () {
         key: 'stop',
         value: function stop() {
             this.atmosphere.am.stopTrack(this.id);
-            // Enable/show play button
+
+            // Enable/show track play button
             this.$playBtn.show();
             this.$stopBtn.hide();
         }
@@ -11046,10 +11050,19 @@ var Track = function () {
         value: function hidePlayBtn() {
             this.$playBtn.hide();
         }
+
+        /*
+            retain: whether or not to avoid removing the track from the containing atmosphere
+            If this were called in Atmosphere.tracks.forEach(), removing the track mid-loop
+            would cause issues like one track being skipped.
+        */
+
     }, {
         key: 'delete',
         value: function _delete(retain) {
+            // Begin track stopping process, beginning with fade out
             this.atmosphere.am.stopTrack(this.id, function () {
+                // On fade-out completion
                 this.atmosphere.am.unloadTrack(this.id);
                 if (!retain) {
                     // Unlink data object from containing atmosphere
@@ -11254,29 +11267,29 @@ var SearchBar = function () {
     _createClass(SearchBar, [{
         key: "events",
         value: function events() {
-            var $clearBtn = (0, _jquery2.default)("#searchBarClearBtn"); // the button that removes current text from the search bar
-
-            this.$input.on('keyup', this.keyPressInSearchBar.bind(this));
+            (0, _jquery2.default)("#searchBarClearBtn").click( // the button that removes current text from the search bar
+            this.clearSearchBar.bind(this));
+            this.$input.on('keyup', // any time a key is pressed in the search bar text
+            this.keyPressInSearchBar.bind(this));
             this.$input.focus(function () {
+                // automatically select all text on focus
                 (0, _jquery2.default)(this).select();
             });
-            this.$input.keydown(this.blockArrowKeys);
-
-            $clearBtn.click(this.clearSearchBar.bind(this));
+            this.$input.keydown( // don't let up and down arrows move the cursor
+            this.blockArrowKeys);
             _GlobalVars.g.$autoplayCheckbox.click(function (event) {
+                // refocus on text upon autoplay click
                 this.$input.focus();
-                event.stopPropagation();
             });
         }
     }, {
         key: "keyPressInSearchBar",
         value: function keyPressInSearchBar(e) {
             var keyCode = e.keyCode ? e.keyCode : e.which;
-            // console.log("keypressInSearchBar: keyCode: " + keyCode);
             switch (keyCode) {
                 case 13:
                     // 'Enter'
-                    // Add selected track
+                    // Add selected track/atmosphere
                     var $selected = (0, _jquery2.default)(".selected");
                     if ($selected) {
                         _GlobalVars.g.atmosphereManager.addSelected($selected);
@@ -11288,17 +11301,13 @@ var SearchBar = function () {
                 case 40:
                     // Down Key
                     var $visibleResults = this.$results.find("li:visible");
-                    // $visibleResults.each(function(index, element) {
-                    //     console.log("Element " + index + ", " + element.innerHTML);
-                    // });
                     if ($visibleResults.length > 0) {
                         e.preventDefault();
                         this.moveSearchSelector(keyCode, $visibleResults);
-                    } else {
-                        // Unselect all items
                     }
                     break;
                 default:
+                    // Probably a character was added or removed
                     this.filterResults();
                     break;
             }
@@ -11309,31 +11318,29 @@ var SearchBar = function () {
             var $current;
             var $selected = $visibleResults.filter(".selected");
             var index = $visibleResults.index($selected);
-            // Remove .selected class from currently selected thing
-            $selected.removeClass("selected");
+            $selected.removeClass("selected"); // remove .selected class from currently selected result
             if (keyCode == 38) {
-                // Move up
+                // move up in the list
                 // if nothing or the first item is selected
                 if (index == -1 || index == 0) {
                     // select the last result
-                    index--;
                     $current = $visibleResults.last();
                 } else {
                     // select the previous result
                     $current = $visibleResults.eq(index - 1);
                 }
             } else if (keyCode == 40) {
-                // Move down
+                // move down in the list
                 // if nothing or the last item is selected
                 if (index == -1 || index >= $visibleResults.length - 1) {
                     // select the first result
                     $current = $visibleResults.first();
                 } else {
                     // select the next result
-                    index++;
-                    $current = $visibleResults.eq(index);
+                    $current = $visibleResults.eq(index + 1);
                 }
             } else {
+                // sanity check
                 console.error("moveSearchSelector: Invalid keyCode was passed: " + keyCode);
                 return;
             }
@@ -11350,14 +11357,24 @@ var SearchBar = function () {
             this.deselect();
             $result.addClass('selected');
         }
+
+        /*
+            Takes an event object, and if the up or down key was pressed, prevents their
+            default effects from occuring (i.e. move text cursor back and forth)
+        */
+
     }, {
         key: "blockArrowKeys",
         value: function blockArrowKeys(e) {
             var keyCode = e.keyCode ? e.keyCode : e.which;
             if (keyCode == 38 || keyCode == 40) {
+                // 38 = Up arrow, 40 = Down arrow
                 e.preventDefault();
             }
         }
+
+        /* Empty search bar text, focus on it, and update search results accordingly */
+
     }, {
         key: "clearSearchBar",
         value: function clearSearchBar() {
@@ -11365,54 +11382,67 @@ var SearchBar = function () {
             this.$input.focus();
             this.filterResults();
         }
+
+        /*
+            Tells the data manager to make a call to the system API to get search results
+            based on the current contents of the search bar
+        */
+
     }, {
         key: "filterResults",
         value: function filterResults() {
             if (this.$results == null) {
-                console.log('SearchBar.js: filterResults: No search results. Returning...');
+                console.error('SearchBar.js: filterResults: No search results. Returning...');
                 return;
             }
-
-            _GlobalVars.g.dataManager.search(this.$input.val(), { '_id': 1 }, this.update.bind(this));
+            _GlobalVars.g.dataManager.search(this.$input.val(), // search using current contents of search bar input
+            { '_id': 1 }, // only need the id fields of the returned results
+            this.update // call this.update() with the results upon async completion
+            .bind(this // make sure this.update() is running in the correct context
+            ));
         }
+
+        /*
+            Updates the ul of search results to match the results returned by searching the database.
+            results: an array containing the ID's of the results which should be displayed after this update
+        */
+
     }, {
         key: "update",
         value: function update(results) {
-            var searchResults = this.$results.children(),
-                enabledCount = 0;
-
-            // console.log("/update/results: ");
-            // console.log(results);
-
-            // Hide all search results
-            searchResults.css('display', 'none');
+            var searchResults = this.$results.children();
+            searchResults.css('display', 'none'); // hide all search results
+            var enabledCount = 0; // how many search results are currently selected to be displayed
 
             if (results && results.length != 0) {
-
+                // if any results should be displayed
                 for (var i = 0; i < results.length; i++) {
-                    var result = results[i];
-                    // Find search result with matching ID
+                    var result = results[i]; // FOREACH database object result IN results
+                    // Find the search result li with an ID that matches the current database result object
                     var resultListItem = this.findSearchResult(result._id);
                     if (resultListItem === null) {
-                        console.error('Client has no list item with ID #' + result._id);
+                        console.error('SearchBar.js:update(): Client has no list item with ID #' + result._id);
                     } else {
-                        // Move to the i'th position in the list
+                        // search result li with matching ID found
                         enabledCount++;
-                        this.moveResultToIndex(i, resultListItem);
-                        (0, _jquery2.default)(resultListItem).css('display', '');
+                        this.moveResultToIndex(i, resultListItem); // move to the i'th position in the list
+                        (0, _jquery2.default)(resultListItem).css('display', ''); // show the li
                     }
                 }
             }
-
             searchResults.removeClass("selected");
             if (enabledCount == 0) {
-                this.$results.css("display", "none");
+                this.$results.css("display", "none"); // hide entire ul (stops the styled ul top and bottom from showing)
             } else {
                 this.$results.css("display", "");
-                // Select top element
-                this.$results.find("li:visible").first().addClass("selected");
+                this.$results.find("li:visible").first().addClass("selected"); // select top element
             }
         }
+
+        /*
+            text: string to append to the end of the current search bar query text
+        */
+
     }, {
         key: "appendToSearchBar",
         value: function appendToSearchBar(text) {
@@ -11422,31 +11452,41 @@ var SearchBar = function () {
             this.$input.focus();
             this.filterResults();
         }
+
+        /*
+            Finds and returns the search result li with the given data-db-id attribute,
+            or null if none exist.
+        */
+
     }, {
         key: "findSearchResult",
         value: function findSearchResult(id) {
             //TODO: Store all search results in a map, and then just get the one at key[id]?
+            //  would that be more efficient?
             var $result = this.$results.children().filter('[data-db-id="' + id + '"]');
-
             if ($result.length > 0) {
                 return $result[0];
             }
             return null;
         }
+
+        /*
+            Moves a given search result li element to a given position in the ul.
+        */
+
     }, {
         key: "moveResultToIndex",
         value: function moveResultToIndex(index, searchResult) {
-            // The element to be moved
-            var $result = (0, _jquery2.default)(searchResult);
-            // The element currently at the desired location
-            var $target = this.$results.children().eq(index);
+            var $result = (0, _jquery2.default)(searchResult); // the element to be moved
+            var $target = this.$results.children().eq(index); // the element currently at the desired location
 
-            // If element will be moving left...
+            // If $result will be moving up...
             if ($result.index() > index) {
-                // Place on the left
+                // Place above $target
                 $target.before($result);
             } else {
-                // Place on the right
+                // $result will be moving down
+                // Place below $target
                 $target.after($result);
             }
         }
@@ -12689,11 +12729,17 @@ var Sidebar = function () {
                 this.hide();
             }.bind(this));
         }
+
+        /*
+            Apply the 'mobile-hidden' class to the sidebar,
+            and the 'full-width' class to the main content div
+        */
+
     }, {
         key: "hide",
         value: function hide() {
             // TODO: check if sidebar is not 'locked' open
-            this.$HTML.toggleClass("mobile-hidden");
+            this.$HTML.toggleClass("mobile-hidden"); // TODO: refactor 'mobile-hidden' to just 'hidden'?
             this.$footerHTML.toggleClass("mobile-hidden");
             this.$mainContent.toggleClass("full-width");
         }
@@ -12723,10 +12769,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var TrackManager = function TrackManager() {
+var TrackManager =
+
+/*
+    Currently only used for caching a reference to the track list element.
+    Felt like something that should be separated from the GlobalVars class.
+*/
+
+function TrackManager() {
     _classCallCheck(this, TrackManager);
 
-    this.$list = (0, _jquery2.default)("#trackList"); // The div containing all tracks
+    this.$list = (0, _jquery2.default)("#trackList"); // The div containing all track elements
 };
 
 exports.default = TrackManager;

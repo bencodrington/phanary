@@ -12,6 +12,11 @@ var models = [TrackModel, AtmosphereModel, OneshotModel];
 
 var AdminModel = require('../public/scripts/modules/models/AdminModel').AdminModel;
 
+/*
+  Database management and backend interface.
+*/
+
+
 /* GET system page. */
 
 router.get('/', function(req, res, next) {
