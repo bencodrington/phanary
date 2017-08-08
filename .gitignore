@@ -2,3 +2,4 @@
 node_modules/
 app/assets/audio/
 .vscode/
+.github/
