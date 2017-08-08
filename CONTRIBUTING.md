@@ -9,7 +9,7 @@ Please consider submitting **bug reports** and **feature requests** and writing 
 * Ensure cross-browser compatibility and mobile responsiveness for every change that's accepted. Chrome, Firefox, and Safari, at the very least.
 * [Open a new issue](https://github.com/bencodrington/phanary/issues/new) for any major change and enhancement that you wish to make. Discuss things transparently and get community feedback.
 * Avoid adding any classes to the codebase unless absolutely needed. Err on the side of using functions.
-* Be welcoming to newcomers and encourage diverse new contributors from all backgrounds. See the [Contributor Covenant](https://github.com/bencodrington/phanary/blob/master/CODE_OF_CONDUCT.md).
+* Be welcoming to newcomers and encourage diverse new contributors from all backgrounds. See the [Contributor Covenant](https://github.com/bencodrington/phanary/blob/master/.github/CODE_OF_CONDUCT.md).
 
 # Submitting Changes
 

@@ -1,5 +1,3 @@
-Fixes #.
-
 1. Which device and operating system are you using?
 2. Which browser are you using?
 3. What did you do?
