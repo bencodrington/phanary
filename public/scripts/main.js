@@ -12705,6 +12705,7 @@ var Sidebar = function () {
 
         this.$HTML = (0, _jquery2.default)(".sidebar");
         this.$footerHTML = this.$HTML.find(".sidebar__footer");
+        this.$lockCheckbox = this.$HTML.find("#lockCheckbox");
         this.$mainContent = (0, _jquery2.default)(".main-content");
 
         this.events();
@@ -12738,7 +12739,9 @@ var Sidebar = function () {
     }, {
         key: "hide",
         value: function hide() {
-            // TODO: check if sidebar is not 'locked' open
+            if (this.$lockCheckbox.is(':checked')) {
+                return;
+            }
             this.$HTML.toggleClass("mobile-hidden"); // TODO: refactor 'mobile-hidden' to just 'hidden'?
             this.$footerHTML.toggleClass("mobile-hidden");
             this.$mainContent.toggleClass("full-width");
