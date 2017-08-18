@@ -27,7 +27,7 @@ class Atmosphere {
         var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
         // Add to tracklist
-        var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.atmosphereManager.$list).show('fast');
+        var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.atmosphereManager.$list).slideDown('fast');
 
         this.rigAtmosphereControls($atmosphereHTML);
 

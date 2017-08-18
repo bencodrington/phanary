@@ -27,7 +27,7 @@ class SearchBar {
         );
         g.$autoplayCheckbox.click(function(event) { // refocus on text upon autoplay click
             this.$input.focus();
-        });
+        }.bind(this));
     }
 
     keyPressInSearchBar(e) {

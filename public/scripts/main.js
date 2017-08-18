@@ -11280,7 +11280,7 @@ var SearchBar = function () {
             _GlobalVars.g.$autoplayCheckbox.click(function (event) {
                 // refocus on text upon autoplay click
                 this.$input.focus();
-            });
+            }.bind(this));
         }
     }, {
         key: "keyPressInSearchBar",
@@ -11583,7 +11583,7 @@ var Atmosphere = function () {
             var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
             // Add to tracklist
-            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.atmosphereManager.$list).show('fast');
+            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.atmosphereManager.$list).slideDown('fast');
 
             this.rigAtmosphereControls($atmosphereHTML);
 
