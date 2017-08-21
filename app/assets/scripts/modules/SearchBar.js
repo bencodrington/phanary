@@ -25,9 +25,10 @@ class SearchBar {
         this.$input.keydown(            // don't let up and down arrows move the cursor
             this.blockArrowKeys
         );
-        g.$autoplayCheckbox.click(function(event) { // refocus on text upon autoplay click
-            this.$input.focus();
-        }.bind(this));
+        g.$autoplayCheckbox.click(      // refocus on the search bar text input
+            this.onAutoplayPress
+            .bind(this)
+        );
     }
 
     keyPressInSearchBar(e) {
@@ -113,6 +114,12 @@ class SearchBar {
         this.$input.val("");
         this.$input.focus();
         this.filterResults();
+    }
+
+    /* Focuses on the search bar, and stops the event propagation from interfering with that */
+    onAutoplayPress(event) {
+        this.$input.focus();
+        event.stopPropagation();
     }
 
     /*

@@ -11277,10 +11277,8 @@ var SearchBar = function () {
             });
             this.$input.keydown( // don't let up and down arrows move the cursor
             this.blockArrowKeys);
-            _GlobalVars.g.$autoplayCheckbox.click(function (event) {
-                // refocus on text upon autoplay click
-                this.$input.focus();
-            }.bind(this));
+            _GlobalVars.g.$autoplayCheckbox.click( // refocus on the search bar text input
+            this.onAutoplayPress.bind(this));
         }
     }, {
         key: "keyPressInSearchBar",
@@ -11381,6 +11379,15 @@ var SearchBar = function () {
             this.$input.val("");
             this.$input.focus();
             this.filterResults();
+        }
+
+        /* Focuses on the search bar, and stops the event propagation from interfering with that */
+
+    }, {
+        key: "onAutoplayPress",
+        value: function onAutoplayPress(event) {
+            this.$input.focus();
+            event.stopPropagation();
         }
 
         /*
