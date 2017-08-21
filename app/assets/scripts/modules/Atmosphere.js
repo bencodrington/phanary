@@ -27,7 +27,13 @@ class Atmosphere {
         var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
         // Add to tracklist
-        var $atmosphereHTML = $(atmosphereHTML).hide().prependTo(g.atmosphereManager.$list).show('fast');
+        var $atmosphereHTML = $(atmosphereHTML).prependTo(g.atmosphereManager.$list).hide();
+        
+        // Hack that corrects the jQuery 'snapping' visual bug
+        //  $atmosphereHTML.height() returns an unreliable result if called here, but it's fine 0ms later
+        setTimeout(function() {
+            $atmosphereHTML.show('fast');
+        }, 0);
 
         this.rigAtmosphereControls($atmosphereHTML);
 
