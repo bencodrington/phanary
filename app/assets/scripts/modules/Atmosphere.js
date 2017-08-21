@@ -82,7 +82,6 @@ class Atmosphere {
         $atmosphereHTML.on('click', function(e) {
             e.stopPropagation();    // Don't deselect current atmosphere if it's DOM element is clicked
             g.atmosphereManager.stopEditingTitle();   // but still cancel title editing
-            console.log($atmosphereHTML.height());
         });
 
         // Click atmosphere heading to set the containing atmosphere as active
