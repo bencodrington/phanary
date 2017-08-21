@@ -3,7 +3,6 @@
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    width: 200px;
 
     &__heading {
         background-color: $blueberry;

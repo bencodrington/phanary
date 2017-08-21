@@ -11583,7 +11583,13 @@ var Atmosphere = function () {
             var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
             // Add to tracklist
-            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).hide().prependTo(_GlobalVars.g.atmosphereManager.$list).slideDown('fast');
+            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).prependTo(_GlobalVars.g.atmosphereManager.$list).hide();
+
+            // Hack that corrects the jQuery 'snapping' visual bug
+            //  $atmosphereHTML.height() returns an unreliable result if called here, but it's fine 0ms later
+            setTimeout(function () {
+                $atmosphereHTML.show('fast');
+            }, 0);
 
             this.rigAtmosphereControls($atmosphereHTML);
 
@@ -11636,6 +11642,7 @@ var Atmosphere = function () {
             $atmosphereHTML.on('click', function (e) {
                 e.stopPropagation(); // Don't deselect current atmosphere if it's DOM element is clicked
                 _GlobalVars.g.atmosphereManager.stopEditingTitle(); // but still cancel title editing
+                console.log($atmosphereHTML.height());
             });
 
             // Click atmosphere heading to set the containing atmosphere as active
