@@ -153,15 +153,24 @@ class Atmosphere {
         if (!tracks) { // empty atmosphere
             return;
         }
-        tracks.forEach(function(trackObject) {
-            g.dataManager.getData(collection, trackObject.id, function(result) {
-                this.addTrack(result, type);
+        tracks.forEach(function(trackData) {
+            g.dataManager.getData(collection, trackData.id, function(result) {
+                this.addTrack(result, type, trackData.volume);
             }.bind(this));
-            // TODO: instantiate them with their atmosphere-defined settings (volume, loop, delay etc.)
+            // TODO: instantiate them with their atmosphere-defined settings (volume, delay, etc.)
         }, this);
     }
 
-    addTrack(trackObject, type) {
+    /*
+        trackObject: contains track-specific information pulled from the database (filename, etc.)
+        type: "oneshot" or "track"
+        volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
+    */
+    addTrack(trackObject, type, volume) {
+        if (!volume) {
+            volume = 1; // Assume full volume by default
+        }
+        console.log('addTrack: track volume: ' + volume);
         // Prepare track data for template injection
         trackObject.id = this.idCounter;
         trackObject.atmosphereId = this.id;
@@ -171,10 +180,10 @@ class Atmosphere {
         var track;
         if (type === "oneshot") {
             // OneShot
-            track = new OneShot(trackObject, this);
+            track = new OneShot(trackObject, this, volume);
         } else {
             // Default
-            track = new Track(trackObject, this);
+            track = new Track(trackObject, this, volume);
         }
 
         // Add track to array

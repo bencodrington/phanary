@@ -10927,7 +10927,7 @@ var Track = function () {
         The data object behind loop and one-shot tracks.
     */
 
-    function Track(trackData, atmosphere) {
+    function Track(trackData, atmosphere, volume) {
         _classCallCheck(this, Track);
 
         if (trackData == undefined) {
@@ -10937,10 +10937,11 @@ var Track = function () {
 
         this.id = trackData.id; // used for identifying this track to the containing atmosphere's AudioManager
         this.atmosphere = atmosphere;
-        this.volume = 1; // the volume modifier specific to this current track
+        this.volume = volume; // the volume modifier specific to this current track
 
         this.createElement(trackData);
         this.createAudio(trackData);
+        this.updateVolumeSlider(this.volume); // update the volume slider to match the predefined volume from this atmosphere, if one exists
     }
 
     _createClass(Track, [{
@@ -10972,9 +10973,9 @@ var Track = function () {
             }.bind(this));
 
             // Make volume controls affect the associated audio object
-            $trackHTML.find(".volume input[type=range]" // volume slider
-            ).on('input', function () {
-                this.volume = $volumeSlider.val();
+            this.$volumeSlider = $trackHTML.find(".volume input[type=range]"); // volume slider
+            this.$volumeSlider.on('input', function () {
+                this.volume = this.$volumeSlider.val();
                 this.updateVolume();
             }.bind(this));
             $trackHTML.find(".btn--mute" // mute button
@@ -11074,6 +11075,13 @@ var Track = function () {
             this.$trackHTML.slideUp('fast', function () {
                 this.remove();
             });
+        }
+    }, {
+        key: 'updateVolumeSlider',
+        value: function updateVolumeSlider(newVolume) {
+            this.$volumeSlider.val(newVolume);
+            this.volume = newVolume;
+            this.updateVolume();
         }
     }, {
         key: 'updateVolume',
@@ -11724,16 +11732,27 @@ var Atmosphere = function () {
                 // empty atmosphere
                 return;
             }
-            tracks.forEach(function (trackObject) {
-                _GlobalVars.g.dataManager.getData(collection, trackObject.id, function (result) {
-                    this.addTrack(result, type);
+            tracks.forEach(function (trackData) {
+                _GlobalVars.g.dataManager.getData(collection, trackData.id, function (result) {
+                    this.addTrack(result, type, trackData.volume);
                 }.bind(this));
-                // TODO: instantiate them with their atmosphere-defined settings (volume, loop, delay etc.)
+                // TODO: instantiate them with their atmosphere-defined settings (volume, delay, etc.)
             }, this);
         }
+
+        /*
+            trackObject: contains track-specific information pulled from the database (filename, etc.)
+            type: "oneshot" or "track"
+            volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
+        */
+
     }, {
         key: 'addTrack',
-        value: function addTrack(trackObject, type) {
+        value: function addTrack(trackObject, type, volume) {
+            if (!volume) {
+                volume = 1; // Assume full volume by default
+            }
+            console.log('addTrack: track volume: ' + volume);
             // Prepare track data for template injection
             trackObject.id = this.idCounter;
             trackObject.atmosphereId = this.id;
@@ -11743,10 +11762,10 @@ var Atmosphere = function () {
             var track;
             if (type === "oneshot") {
                 // OneShot
-                track = new _OneShot2.default(trackObject, this);
+                track = new _OneShot2.default(trackObject, this, volume);
             } else {
                 // Default
-                track = new _Track2.default(trackObject, this);
+                track = new _Track2.default(trackObject, this, volume);
             }
 
             // Add track to array
@@ -12410,10 +12429,10 @@ var OneShot = function (_Track) {
         }
     }]);
 
-    function OneShot(trackData, atmosphere) {
+    function OneShot(trackData, atmosphere, volume) {
         _classCallCheck(this, OneShot);
 
-        var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere));
+        var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere, volume));
 
         _this.frameLength = 10; // milliseconds between progress bar updates
 

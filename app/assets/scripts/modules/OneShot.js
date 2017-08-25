@@ -17,8 +17,8 @@ class OneShot extends Track {
     static get startMinIndex() { return _startMinIndex; }
     static get startMaxIndex() { return _startMaxIndex; }
 
-    constructor(trackData, atmosphere) {
-        super(trackData, atmosphere);
+    constructor(trackData, atmosphere, volume) {
+        super(trackData, atmosphere, volume);
 
         this.frameLength = 10;  // milliseconds between progress bar updates
 

@@ -8,7 +8,7 @@ class Track {
         The data object behind loop and one-shot tracks.
     */
 
-    constructor(trackData, atmosphere) {
+    constructor(trackData, atmosphere, volume) {
         if (trackData == undefined) {
             console.error('No accessible data for selected track.')
         }
@@ -16,10 +16,11 @@ class Track {
 
         this.id = trackData.id; // used for identifying this track to the containing atmosphere's AudioManager
         this.atmosphere = atmosphere;
-        this.volume = 1;        // the volume modifier specific to this current track
+        this.volume = volume;        // the volume modifier specific to this current track
 
         this.createElement(trackData);
         this.createAudio(trackData);
+        this.updateVolumeSlider(this.volume);   // update the volume slider to match the predefined volume from this atmosphere, if one exists
     }
 
     template(data) {
@@ -51,9 +52,10 @@ class Track {
         }.bind(this));
 
         // Make volume controls affect the associated audio object
-        $trackHTML.find(".volume input[type=range]")    // volume slider
-        .on('input', function() {
-            this.volume = $volumeSlider.val();
+        this.$volumeSlider = 
+        $trackHTML.find(".volume input[type=range]");    // volume slider
+        this.$volumeSlider.on('input', function() {
+            this.volume = this.$volumeSlider.val();
             this.updateVolume();
         }.bind(this))
         $trackHTML.find(".btn--mute")                   // mute button
@@ -143,6 +145,12 @@ class Track {
         this.$trackHTML.slideUp('fast', function() {
             this.remove();
         });
+    }
+
+    updateVolumeSlider(newVolume) {
+        this.$volumeSlider.val(newVolume);
+        this.volume = newVolume;
+        this.updateVolume();
     }
 
     updateVolume() {
