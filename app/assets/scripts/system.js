@@ -19,9 +19,7 @@ modify.$delete.hide();
 const fieldNames = ['_id', 'name', 'tags', 'oneshots', 'tracks', 'source', 'filename', 'samples'];
 
 var $sections   = $('.system__section');
-$('.system-sidebar__list').hide();  //  Hide all sidebar lists
-$sections.hide();                   //  Hide all fields and inputs
-
+hideAll();
 events();
 
 function events() {
@@ -33,8 +31,19 @@ function events() {
         toggleCollection($list);   //  Show or hide the relevant sidebar section
         if ($list.is(':visible')) {
             loadCollection(sidebarSection, $list);
-        }  
+        }
     });
+
+    $('.sidebar').on('click', (event) => {
+        if ($(event.target).is('.sidebar')) {
+            hideAll();  //  Event was triggered directly on the sidebar background
+        }
+    });
+}
+
+function hideAll() {
+    $('.system-sidebar__list').hide();  //  Hide all sidebar lists
+    $sections.hide();                   //  Hide all fields and inputs
 }
 
 function toggleCollection($list) {
@@ -54,7 +63,7 @@ function displayCollection(results, collection, $list) {
     $list.empty();
     $.each(results, (i, result) => {
         //  Create a new list element for each result
-        var $li = $('<li>').
+        $('<li>').
         append(
             $('<span>').text(result.name)
         ).
@@ -131,10 +140,60 @@ function writeValue($field, key, value) {
             $field.val(parseArray(value));
         }
     } else if ($field.is('table')) {    //  Atmosphere 'Loops' or 'One-Shots' special field
+        if (key === 'tracks') {
+            $field.html(parseLoops(value));
+        }
         //TODO: replace table contents
     }
 }
 
+function parseSamples(array) {
+    if (!array) {
+        return 'n/a';
+    }
+    var samples = [];
+    array.forEach(function(sample) {
+        samples.push(sample.filename);
+    });
+    return samples.toString().split(',').join('\n');
+}
+
+function parseArray(array) {
+    if (!array) {
+        return 'n/a';
+    }
+    return array.toString().split(',').join('\n');
+}
+
+/* 
+    Takes an array of loop data objects, and creates the contents
+    of a <table> element with them, then returns the jQuery object
+    containing them.
+*/
+function parseLoops(loops) {
+    var $slider, $remove, $loop;
+    var $loops = $();
+    $.each(loops, (i, loop) => {
+        //  TODO: replace with handlebars template
+        $slider = $('<td>').
+        append(
+            $('<label>', {'for': 'volume'}),
+            $('<input>', {'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': loop.volume})
+        );
+        $remove = $('<td>').
+        append(
+            $('<button>')
+        );
+        $loop = $('<tr>').
+        append(
+            $('<td>').text('Loading name...'),
+            $slider,
+            $remove
+        );
+        $loops = $loops.add($loop);
+    });
+    return $loops;
+}
 
 modify.$collection.change(function() {
     changeCollection(this.value);
@@ -207,13 +266,6 @@ function updateSubtitle(newCollection) {
     modify.$subtitle.text(newCollection);
 }
 
-function parseArray(array) {
-    if (!array) {
-        return 'n/a';
-    }
-    return array.toString().split(',').join('\n');
-}
-
 function parseIDs(array, collection, showNames) {
     if (!array) {
         return 'n/a';
@@ -228,17 +280,6 @@ function parseIDs(array, collection, showNames) {
         ids.push(idWithName);
     });
     return ids.toString().split(',').join('\n');
-}
-
-function parseSamples(array) {
-    if (!array) {
-        return 'n/a';
-    }
-    var samples = [];
-    array.forEach(function(sample) {
-        samples.push(sample.filename);
-    });
-    return samples.toString().split(',').join('\n');
 }
 
 function insertData() {
