@@ -1712,13 +1712,35 @@ input[type=range]:focus::-moz-range-track {
         background-color: #AFC2CD;
     }
 
-.system-sidebar__section__title {
+.system-sidebar {
+    overflow: scroll;
+}
+
+.system-sidebar__list {
+    border-top: 1px solid #3A6982;
+    border-bottom: 1px solid #3A6982;
+}
+
+.system-sidebar__list li {
+        background-color: #3A6982;
+        color: #061423;
         cursor: pointer;
     }
 
-.system-sidebar__section__content {
-        border-top: 1px solid #3A6982;
-        border-bottom: 1px solid #3A6982;
+.system-sidebar__list li:nth-child(even) {
+        background-color: rgba(58,105,130, 0.5);
+    }
+
+.system-sidebar__list li:hover {
+        color: #AFC2CD;
+    }
+
+.system-sidebar__section__title {
+    cursor: pointer;
+}
+
+.system-sidebar__section__title i {
+        pointer-events: none;   /* Stops the caret from blocking the click event */
     }
 
 .system__section__table {
@@ -1730,6 +1752,10 @@ input[type=range]:focus::-moz-range-track {
 
 .system__section__table input, .system__section__table textarea {
         width: 100%;
+    }
+
+.system__section__table textarea {
+        min-height: 8rem;
     }
 
 .system__section h1 {

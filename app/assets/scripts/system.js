@@ -15,6 +15,127 @@ var $displayTable           = $('#display-table');
 modify.$fields.hide();
 modify.$delete.hide();
 
+//  The set of all field names for the different types of items (atmospheres, loops, oneshots)
+const fieldNames = ['_id', 'name', 'tags', 'oneshots', 'tracks', 'source', 'filename', 'samples'];
+
+var $sections   = $('.system__section');
+$('.system-sidebar__list').hide();  //  Hide all sidebar lists
+$sections.hide();                   //  Hide all fields and inputs
+
+events();
+
+function events() {
+
+    $('.system-sidebar__section__title').on('click', (event) => {
+        var $target = $(event.target);
+        var sidebarSection = $target.data('sidebar-section');    // 'atmosphere', 'loop', or 'oneshot'
+        var $list = $target.siblings('.system-sidebar__list');
+        toggleCollection($list);   //  Show or hide the relevant sidebar section
+        if ($list.is(':visible')) {
+            loadCollection(sidebarSection, $list);
+        }  
+    });
+}
+
+function toggleCollection($list) {
+    $list.toggle();
+}
+
+function loadCollection(collection, $list) {
+    var query = {
+        'collection': collection
+    };
+    $.getJSON('/system/get', query, (results) => {
+        displayCollection(results, collection, $list);
+    });
+}
+
+function displayCollection(results, collection, $list) {
+    $list.empty();
+    $.each(results, (i, result) => {
+        //  Create a new list element for each result
+        var $li = $('<li>').
+        append(
+            $('<span>').text(result.name)
+        ).
+        //  Display details of selected item
+        on('click', () => {
+            switchToItem(collection, result._id);
+        }).
+        //  Append the li to the list
+        appendTo($list);
+    });
+}
+
+function switchToItem(collection, id) {
+    //  Display relevant fields and inputs
+    switchToCollection(collection);
+    //  Get data to populate relevant fields
+    fetchItem(collection, id);
+}
+
+function switchToCollection(collection) {
+    var $section;
+    $.each($sections, (i, section) => {
+        $section = $(section);
+        if($section.data('section') === collection) {
+            $section.show();
+        } else {
+            $section.hide();
+        }
+    });
+}
+
+function fetchItem(collection, id) {
+    var query = {
+        'collection': collection,
+        'id': id
+    };
+    $.getJSON('/system/find', query, function(result) {
+        if (result.error) {
+            return;
+        }
+        populateFields(result);
+    });
+}
+
+function populateFields(data) {
+    //  Cache system__section__inputs in the currently visible section
+    var $inputs = $sections.filter(':visible')
+    .find('.system__section__input');
+    var $field;
+    for (var key in data) {
+        if ($.inArray(key, fieldNames) >= 0) {
+            //  'key' matches one of the field names,
+            //  so find the input with that name
+            $field = $inputs.filter('[name="' + key + '"]');
+            writeValue($field, key, data[key]);  // Store the value in the input
+            console.log(key);
+            console.log($field);
+            console.log(data[key]);
+        }
+    }
+}
+
+/*
+    Converts a piece of data to the correct format,
+    then writes it to the provided field.
+*/
+function writeValue($field, key, value) {
+    if ($field.is('input')) {           //  Simple one-line textbox
+        $field.val(value);
+    } else if ($field.is('textarea')) { //  Multi-line textbox, requires parsing
+        if (key === 'samples') {
+            $field.val(parseSamples(value));
+        } else {    //  tags
+            $field.val(parseArray(value));
+        }
+    } else if ($field.is('table')) {    //  Atmosphere 'Loops' or 'One-Shots' special field
+        //TODO: replace table contents
+    }
+}
+
+
 modify.$collection.change(function() {
     changeCollection(this.value);
 });
@@ -86,39 +207,6 @@ function updateSubtitle(newCollection) {
     modify.$subtitle.text(newCollection);
 }
 
-function fetchItem(collection, id) {
-    
-    var query = {
-        'collection': collection,
-        'id': id
-    };
-    $.getJSON('/system/find', query, function(result) {
-        if (result.error) {
-            return;
-        }
-        modify.$fields.children('input[name=name]').val(result.name);
-        if (result.filename) {
-            modify.$fields.children('input[name=filename]').val(result.filename);
-        }
-        if (result.tags) {
-            modify.$fields.children('textarea[name=tags]').val(parseArray(result.tags));
-        }
-        if (result.tracks) {
-            modify.$fields.children('textarea[name=tracks]').val(parseIDs(result.tracks, 'tracks', false));
-        }
-        if (result.oneshots) {
-            modify.$fields.children('textarea[name=oneshots]').val(parseIDs(result.oneshots, 'oneshots', false));
-        }
-        if (result.samples) {
-            modify.$fields.children('textarea[name=samples]').val(parseSamples(result.samples));
-        }
-        if (result.source) {
-            modify.$fields.children('input[name=source]').val(result.source);
-        }
-        
-    });
-}
-
 function parseArray(array) {
     if (!array) {
         return 'n/a';
@@ -151,39 +239,6 @@ function parseSamples(array) {
         samples.push(sample.filename);
     });
     return samples.toString().split(',').join('\n');
-}
-
-function loadCollection(collection) {
-    var query = {
-        'collection': collection
-    };
-    $.getJSON('/system/get', query, displayCollection);
-}
-
-function displayCollection(results) {
-    $displayTable.find('tbody tr').remove();
-    $.each(results, function(i, result) {
-        var $tr = $('<tr>').
-        append(
-            $('<td>').text(result._id),
-            $('<td>').text(result.name),
-            $('<td>').text(result.filename),
-            $('<td>').text(parseArray(result.tags)),
-            $('<td>').text(parseIDs(result.tracks, 'tracks', true)),
-            $('<td>').text(parseIDs(result.oneshots, 'oneshots', true)),
-            $('<td>').text(parseSamples(result.samples)),
-            $('<td>').text(result.source)
-        ).
-        appendTo($displayTable.find('tbody'));
-
-        // Rig click event
-        $tr.on('click', function() {
-            var newId = $tr.find('td:first-child').text();
-            modify.$id.val(newId);
-            updateButtons();
-            fetchItem(getCollection(), newId);
-        });
-    });
 }
 
 function insertData() {

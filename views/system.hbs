@@ -23,46 +23,55 @@
 </div>
 
 {{!-- Sidebar --}}
-<div class="sidebar">
-    <div class="wrapper--top-margin">
-        {{!-- TODO: refresh button --}}
+<div class="sidebar system-sidebar">
+    <div class="wrapper--top-margin wrapper--bottom-margin">
         <div class="system-sidebar__section">
-            <h2 class="system-sidebar__section__title">Atmospheres <i class="fa fa-caret-down"></i></h2>
-            <div class="system-sidebar__section__content">
-            </div>
+            <h2 data-sidebar-section="atmospheres" class="system-sidebar__section__title">Atmospheres <i class="fa fa-caret-down"></i></h2>
+            <ul class="system-sidebar__list">
+            </ul>
+        </div>
+        <div class="system-sidebar__section">
+            <h2 data-sidebar-section="tracks" class="system-sidebar__section__title">Loops <i class="fa fa-caret-down"></i></h2>
+            <ul class="system-sidebar__list">
+            </ul>
+        </div>
+        <div class="system-sidebar__section">
+            <h2 data-sidebar-section="oneshots" class="system-sidebar__section__title">One-Shots <i class="fa fa-caret-down"></i></h2>
+            <ul class="system-sidebar__list">
+            </ul>
         </div>
     </div>
 </div>
 
 {{!-- Main Content --}}
 <div class="main-content">
-    <div class="wrapper--top-margin">
-        <div id="section--atmosphere" class="system__section">
+    <div class="wrapper wrapper--top-margin">
+        <div data-section="atmospheres" class="system__section">
             <h1>Atmosphere</h1>
             <table class="system__section__table">
                 <tr>
                     <td><label for="name">Name</label></td>
-                    <td><input type="text" name="name"></td>
+                    <td><input class="system__section__input" type="text" name="name"></td>
                 </tr>
                 <tr>
                     <td><label for="id">ID</label></td>
-                    <td><input type="text" name="id"></td>
+                    <td><input class="system__section__input" type="text" name="_id"></td>
                 </tr>
                 <tr>
                     <td><label for="tags">Tags (separate by newline)</label></td>
-                    <td><textarea name="tags"></textarea></td>
+                    <td><textarea class="system__section__input" name="tags"></textarea></td>
                 </tr>
             </table>
 
             <h2>Loops</h2>
-            <table id="atmosphere__loop-table" class="system__section__table">
+            <table name="tracks" class="system__section__table system__section__input">
             </table>
             <div id="atmosphere__loop-dropbox" class="system__section__dropbox">
                 <span>Drag and drop loops here to add them.</span>
             </div>
 
             <h2>One-Shots</h2>
-            <table id="atmosphere__oneshot-table" class="system__section__table">
+            <table name="oneshots" class="system__section__table system__section__input">
             </table>
             <div id="atmosphere__oneshot-dropbox" class="system__section__dropbox">
                 <span>Drag and drop one-shots here to add them.</span>
@@ -71,65 +80,66 @@
 
         </div>
 
-        <div id="section--loops" class="system__section">
+        <div data-section="tracks" class="system__section">
 
             <h1>Loop</h1>
 
             <table class="system__section__table">
                 <tr>
                     <td><label for="name">Name</label></td>
-                    <td><input type="text" name="name"></td>
+                    <td><input class="system__section__input" type="text" name="name"></td>
                 </tr>
                 <tr>
                     <td><label for="id">ID</label></td>
-                    <td><input type="text" name="id"></td>
+                    <td><input class="system__section__input" type="text" name="_id"></td>
                 </tr>
                 <tr>
                     <td><label for="tags">Tags (separate by newline)</label></td>
-                    <td><textarea name="tags"></textarea></td>
+                    <td><textarea class="system__section__input" name="tags"></textarea></td>
                 </tr>
                 <tr>
                     <td><label for="source">Source</label></td>
-                    <td><input name="source"></input></td>
+                    <td><input class="system__section__input" name="source"></input></td>
                 </tr>
                 <tr>
                     <td><label for="filename">File Name</label></td>
-                    <td><input name="filename"></input></td>
+                    <td><input class="system__section__input" name="filename"></input></td>
                 </tr>
             </table>
 
         </div>
 
-        <div id="section--oneshots" class="system__section">
+        <div data-section="oneshots" class="system__section">
 
             <h1>One-Shot</h1>
 
             <table class="system__section__table">
                 <tr>
                     <td><label for="name">Name</label></td>
-                    <td><input type="text" name="name"></td>
+                    <td><input class="system__section__input" type="text" name="name"></td>
                 </tr>
                 <tr>
                     <td><label for="id">ID</label></td>
-                    <td><input type="text" name="id"></td>
+                    <td><input class="system__section__input" type="text" name="_id"></td>
                 </tr>
                 <tr>
                     <td><label for="source">Source</label></td>
-                    <td><input name="source"></input></td>
+                    <td><input class="system__section__input" name="source"></input></td>
                 </tr>
                 <tr>
                     <td><label for="tags">Tags (separate by newline)</label></td>
-                    <td><textarea name="tags"></textarea></td>
+                    <td><textarea class="system__section__input" name="tags"></textarea></td>
                 </tr>
                 <tr>
                     <td><label for="samples">Samples (separate by newline)</label></td>
-                    <td><textarea name="samples"></textarea></td>
+                    <td><textarea class="system__section__input" name="samples"></textarea></td>
                 </tr>
             </table>
 
         </div>
     </div>
-    <div class="wrapper wrapper--top-margin">
+    
+    {{!-- <div class="wrapper wrapper--top-margin">
     
         <div class="system-sections">
             <div class="system-section modify">
@@ -214,7 +224,7 @@
         </div>
 
         
-    </div>
+    </div> --}}
 </div>
 <script src="https://use.fontawesome.com/075d51e5f2.js"></script>
 <script src="/scripts/system.js"></script>

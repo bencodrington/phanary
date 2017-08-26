@@ -131,15 +131,34 @@
     }
 }
 
-.system-sidebar__section {
+.system-sidebar {
+    overflow: scroll;
+}
 
-    &__title {
+.system-sidebar__list {
+    border-top: 1px solid $mediumBlue;
+    border-bottom: 1px solid $mediumBlue;
+
+    & li {
+        background-color: $mediumBlue;
+        color: $deepSea;
         cursor: pointer;
     }
 
-    &__content {
-        border-top: 1px solid $mediumBlue;
-        border-bottom: 1px solid $mediumBlue;
+    & li:nth-child(even) {
+        background-color: rgba($mediumBlue, 0.5);
+    }
+
+    & li:hover {
+        color: $whiteBlue;
+    }
+}
+
+.system-sidebar__section__title {
+    cursor: pointer;
+
+    & i {
+        pointer-events: none;   /* Stops the caret from blocking the click event */
     }
 }
 
@@ -154,6 +173,10 @@
 
     &__table input, &__table textarea {
         width: 100%;
+    }
+
+    &__table textarea {
+        min-height: 8rem;
     }
 
     & h1 {
