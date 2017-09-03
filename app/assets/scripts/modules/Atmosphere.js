@@ -149,24 +149,24 @@ class Atmosphere {
         });
     }
 
-    instantiateTracks(tracks, collection, type) {
-        if (!tracks) { // empty atmosphere
+    instantiateTracks(tracks, collection) {
+        if (!tracks) { // Atmosphere contains no loops, no one-shots, or neither
             return;
         }
         tracks.forEach(function(trackData) {
+            console.log(trackData);
             g.dataManager.getData(collection, trackData.id, function(result) {
-                this.addTrack(result, type, trackData.volume);
+                this.addTrack(result, collection, trackData.volume);
             }.bind(this));
-            // TODO: instantiate them with their atmosphere-defined settings (volume, delay, etc.)
         }, this);
     }
 
     /*
         trackObject: contains track-specific information pulled from the database (filename, etc.)
-        type: "oneshot" or "track"
+        collection: "oneshots" or "tracks"
         volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
     */
-    addTrack(trackObject, type, volume) {
+    addTrack(trackObject, collection, volume) {
         if (!volume) {
             volume = 1; // Assume full volume by default
         }
@@ -178,7 +178,7 @@ class Atmosphere {
         
         // Create track data object
         var track;
-        if (type === "oneshot") {
+        if (collection === "oneshots") {
             // OneShot
             track = new OneShot(trackObject, this, volume);
         } else {

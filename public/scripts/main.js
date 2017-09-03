@@ -11741,28 +11741,28 @@ var Atmosphere = function () {
         }
     }, {
         key: 'instantiateTracks',
-        value: function instantiateTracks(tracks, collection, type) {
+        value: function instantiateTracks(tracks, collection) {
             if (!tracks) {
-                // empty atmosphere
+                // Atmosphere contains no loops, no one-shots, or neither
                 return;
             }
             tracks.forEach(function (trackData) {
+                console.log(trackData);
                 _GlobalVars.g.dataManager.getData(collection, trackData.id, function (result) {
-                    this.addTrack(result, type, trackData.volume);
+                    this.addTrack(result, collection, trackData.volume);
                 }.bind(this));
-                // TODO: instantiate them with their atmosphere-defined settings (volume, delay, etc.)
             }, this);
         }
 
         /*
             trackObject: contains track-specific information pulled from the database (filename, etc.)
-            type: "oneshot" or "track"
+            collection: "oneshots" or "tracks"
             volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
         */
 
     }, {
         key: 'addTrack',
-        value: function addTrack(trackObject, type, volume) {
+        value: function addTrack(trackObject, collection, volume) {
             if (!volume) {
                 volume = 1; // Assume full volume by default
             }
@@ -11774,7 +11774,7 @@ var Atmosphere = function () {
 
             // Create track data object
             var track;
-            if (type === "oneshot") {
+            if (collection === "oneshots") {
                 // OneShot
                 track = new _OneShot2.default(trackObject, this, volume);
             } else {
