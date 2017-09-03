@@ -55,11 +55,11 @@ class AtmosphereManager {
         var id = $selected.data('db-id');
         if ($selected.hasClass("result--track")) {
             g.dataManager.getData('tracks', id, function(result) {
-                this.addTrack(result, 'track');
+                this.addTrack(result, 'tracks');
             }.bind(this));
         } else if ($selected.hasClass("result--oneshot")) {
             g.dataManager.getData('oneshots', id, function(result) {
-                this.addTrack(result, 'oneshot');
+                this.addTrack(result, 'oneshots');
             }.bind(this));
         } else if ($selected.hasClass("result--atmosphere")) {
             g.dataManager.getData('atmospheres', id, function(result) {
@@ -104,12 +104,12 @@ class AtmosphereManager {
     }
 
     // Called when enter is pressed in the search bar, while a track is highlighted.
-    addTrack(trackData, type) {
+    addTrack(trackData, collection) {
         if (this.activeAtmosphere == null) {
             this.newAtmosphere();
         }
 
-        this.activeAtmosphere.addTrack(trackData, type);
+        this.activeAtmosphere.addTrack(trackData, collection);
     }
 
     switchTo(atmosphere) {

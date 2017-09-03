@@ -15,7 +15,7 @@ class OneShot extends Track {
     static get startMinIndex() { return _startMinIndex; }
     static get startMaxIndex() { return _startMaxIndex; }
 
-    constructor(trackData, atmosphere, volume) {
+    constructor(trackData, atmosphere, volume, minIndex, maxIndex) {
         super(trackData, atmosphere, volume);
 
         this.frameLength = 10;  // milliseconds between progress bar updates
@@ -23,6 +23,10 @@ class OneShot extends Track {
         // Set the frequency of sample firing to the timestep defaults
         this.minIndex = OneShot.startMinIndex;
         this.maxIndex = OneShot.startMaxIndex;
+        if (minIndex && maxIndex) { // One-shot timesteps are specified in the containing atmosphere
+            this.minIndex = minIndex;
+            this.maxIndex = maxIndex;
+        }
 
         this.updateLabels();    // update labels to reflect the initialized indices
 

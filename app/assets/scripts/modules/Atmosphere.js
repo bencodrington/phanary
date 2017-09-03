@@ -156,7 +156,7 @@ class Atmosphere {
         tracks.forEach(function(trackData) {
             console.log(trackData);
             g.dataManager.getData(collection, trackData.id, function(result) {
-                this.addTrack(result, collection, trackData.volume);
+                this.addTrack(result, collection, trackData);
             }.bind(this));
         }, this);
     }
@@ -164,13 +164,16 @@ class Atmosphere {
     /*
         trackObject: contains track-specific information pulled from the database (filename, etc.)
         collection: "oneshots" or "tracks"
-        volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
+        trackData: contains track-specific information as specified by the containing atmosphere, such as:
+            volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
+            min- and
+            maxIndex: the indices that specify how often a one-shot is played
     */
-    addTrack(trackObject, collection, volume) {
-        if (!volume) {
-            volume = 1; // Assume full volume by default
+    addTrack(trackObject, collection, trackData) {
+        var volume = 1; // Assume full volume by default
+        if (trackData && trackData.volume) {  // Track included in the preconfigured atmosphere
+            volume = trackData.volume; 
         }
-        console.log('addTrack: track volume: ' + volume);
         // Prepare track data for template injection
         trackObject.id = this.idCounter;
         trackObject.atmosphereId = this.id;
@@ -180,7 +183,12 @@ class Atmosphere {
         var track;
         if (collection === "oneshots") {
             // OneShot
-            track = new OneShot(trackObject, this, volume);
+            if (trackData && trackData.minIndex && trackData.maxIndex) { // One-shot included in the preconfigured atmosphere
+                track = new OneShot(trackObject, this, volume, trackData.minIndex, trackData.maxIndex);
+            } else {
+                track = new OneShot(trackObject, this, volume); // Resort to timestep defaults
+            }
+            
         } else {
             // Default
             track = new Track(trackObject, this, volume);

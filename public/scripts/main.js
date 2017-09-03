@@ -11749,7 +11749,7 @@ var Atmosphere = function () {
             tracks.forEach(function (trackData) {
                 console.log(trackData);
                 _GlobalVars.g.dataManager.getData(collection, trackData.id, function (result) {
-                    this.addTrack(result, collection, trackData.volume);
+                    this.addTrack(result, collection, trackData);
                 }.bind(this));
             }, this);
         }
@@ -11757,16 +11757,20 @@ var Atmosphere = function () {
         /*
             trackObject: contains track-specific information pulled from the database (filename, etc.)
             collection: "oneshots" or "tracks"
-            volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
+            trackData: contains track-specific information as specified by the containing atmosphere, such as:
+                volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
+                min- and
+                maxIndex: the indices that specify how often a one-shot is played
         */
 
     }, {
         key: 'addTrack',
-        value: function addTrack(trackObject, collection, volume) {
-            if (!volume) {
-                volume = 1; // Assume full volume by default
+        value: function addTrack(trackObject, collection, trackData) {
+            var volume = 1; // Assume full volume by default
+            if (trackData && trackData.volume) {
+                // Track included in the preconfigured atmosphere
+                volume = trackData.volume;
             }
-            console.log('addTrack: track volume: ' + volume);
             // Prepare track data for template injection
             trackObject.id = this.idCounter;
             trackObject.atmosphereId = this.id;
@@ -11776,7 +11780,12 @@ var Atmosphere = function () {
             var track;
             if (collection === "oneshots") {
                 // OneShot
-                track = new _OneShot2.default(trackObject, this, volume);
+                if (trackData && trackData.minIndex && trackData.maxIndex) {
+                    // One-shot included in the preconfigured atmosphere
+                    track = new _OneShot2.default(trackObject, this, volume, trackData.minIndex, trackData.maxIndex);
+                } else {
+                    track = new _OneShot2.default(trackObject, this, volume); // Resort to timestep defaults
+                }
             } else {
                 // Default
                 track = new _Track2.default(trackObject, this, volume);
@@ -11984,11 +11993,11 @@ var AtmosphereManager = function () {
             var id = $selected.data('db-id');
             if ($selected.hasClass("result--track")) {
                 _GlobalVars.g.dataManager.getData('tracks', id, function (result) {
-                    this.addTrack(result, 'track');
+                    this.addTrack(result, 'tracks');
                 }.bind(this));
             } else if ($selected.hasClass("result--oneshot")) {
                 _GlobalVars.g.dataManager.getData('oneshots', id, function (result) {
-                    this.addTrack(result, 'oneshot');
+                    this.addTrack(result, 'oneshots');
                 }.bind(this));
             } else if ($selected.hasClass("result--atmosphere")) {
                 _GlobalVars.g.dataManager.getData('atmospheres', id, function (result) {
@@ -12041,12 +12050,12 @@ var AtmosphereManager = function () {
 
     }, {
         key: 'addTrack',
-        value: function addTrack(trackData, type) {
+        value: function addTrack(trackData, collection) {
             if (this.activeAtmosphere == null) {
                 this.newAtmosphere();
             }
 
-            this.activeAtmosphere.addTrack(trackData, type);
+            this.activeAtmosphere.addTrack(trackData, collection);
         }
     }, {
         key: 'switchTo',
@@ -12447,7 +12456,7 @@ var OneShot = function (_Track) {
         }
     }]);
 
-    function OneShot(trackData, atmosphere, volume) {
+    function OneShot(trackData, atmosphere, volume, minIndex, maxIndex) {
         _classCallCheck(this, OneShot);
 
         var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere, volume));
@@ -12457,6 +12466,11 @@ var OneShot = function (_Track) {
         // Set the frequency of sample firing to the timestep defaults
         _this.minIndex = OneShot.startMinIndex;
         _this.maxIndex = OneShot.startMaxIndex;
+        if (minIndex && maxIndex) {
+            // One-shot timesteps are specified in the containing atmosphere
+            _this.minIndex = minIndex;
+            _this.maxIndex = maxIndex;
+        }
 
         _this.updateLabels(); // update labels to reflect the initialized indices
 
