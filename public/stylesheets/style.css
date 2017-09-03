@@ -1758,6 +1758,11 @@ input[type=range]:focus::-moz-range-track {
         min-height: 8rem;
     }
 
+.system__section__table input[type=number] {
+        width: 4rem;
+        margin: 0 1rem;
+    }
+
 .system__section h1 {
         margin: 0;
         color: rgba(46,82,102, 0.25);
@@ -1799,6 +1804,11 @@ input[type=range]:focus::-moz-range-track {
                 transform: translateY(-50%);
         color: #849AA8;
     }
+
+.system__timestep {
+    display: inline-block;
+    width: 2rem;
+}
 
 .tags {
 

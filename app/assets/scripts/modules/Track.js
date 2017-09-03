@@ -16,7 +16,7 @@ class Track {
 
         this.id = trackData.id; // used for identifying this track to the containing atmosphere's AudioManager
         this.atmosphere = atmosphere;
-        this.volume = volume;        // the volume modifier specific to this current track
+        this.volume = volume;        // the volume modifier specific to this track
 
         this.createElement(trackData);
         this.createAudio(trackData);

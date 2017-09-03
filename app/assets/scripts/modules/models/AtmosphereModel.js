@@ -14,8 +14,9 @@ var childTrackSchema = new Schema({
 
 var childOneshotSchema = new Schema({
   id: {type: Schema.Types.ObjectId, required: true}, // The database ID of a one-shot track
-  volume: {type: Number, default: 1}
-  // TODO: add one-shot timing configuration here
+  volume: {type: Number, default: 1},
+  minIndex: {type: Number, default: 0},   // Used for specifying how often a one-shot should play
+  maxIndex: {type: Number, default: 0}
 });
 
 var atmosphereSchema = new Schema({

@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import timesteps from './modules/OneShotTimesteps.js';
 
 var modify                  = {};
 modify.$collection          = $('input[type=radio][name=collection]');
@@ -80,7 +81,7 @@ function switchToItem(collection, id) {
     //  Display relevant fields and inputs
     switchToCollection(collection);
     //  Get data to populate relevant fields
-    fetchItem(collection, id);
+    fetchItem(collection, id, populateFields);
 }
 
 function switchToCollection(collection) {
@@ -95,16 +96,16 @@ function switchToCollection(collection) {
     });
 }
 
-function fetchItem(collection, id) {
+function fetchItem(collection, id, callback) {
     var query = {
         'collection': collection,
         'id': id
     };
     $.getJSON('/system/find', query, function(result) {
         if (result.error) {
-            return;
+            callback(null);
         }
-        populateFields(result);
+        callback(result);
     });
 }
 
@@ -119,9 +120,6 @@ function populateFields(data) {
             //  so find the input with that name
             $field = $inputs.filter('[name="' + key + '"]');
             writeValue($field, key, data[key]);  // Store the value in the input
-            console.log(key);
-            console.log($field);
-            console.log(data[key]);
         }
     }
 }
@@ -140,10 +138,7 @@ function writeValue($field, key, value) {
             $field.val(parseArray(value));
         }
     } else if ($field.is('table')) {    //  Atmosphere 'Loops' or 'One-Shots' special field
-        if (key === 'tracks') {
-            $field.html(parseLoops(value));
-        }
-        //TODO: replace table contents
+        $field.html(parseAtmosphereChildren(value, key));
     }
 }
 
@@ -166,33 +161,79 @@ function parseArray(array) {
 }
 
 /* 
-    Takes an array of loop data objects, and creates the contents
-    of a <table> element with them, then returns the jQuery object
-    containing them.
+    Takes an array of atmosphere children data objects(e.g. loops or one-shots),
+    and creates the contents of a <table> element with them, then returns the
+    jQuery object containing them.
 */
-function parseLoops(loops) {
-    var $slider, $remove, $loop;
-    var $loops = $();
-    $.each(loops, (i, loop) => {
+function parseAtmosphereChildren(children, collection) {
+    var $slider, $remove, $name, $indices, $child;
+    var $children = $();
+    $.each(children, (i, child) => {
         //  TODO: replace with handlebars template
         $slider = $('<td>').
         append(
             $('<label>', {'for': 'volume'}),
-            $('<input>', {'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': loop.volume})
+            $('<input>', {'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': child.volume})
         );
         $remove = $('<td>').
         append(
             $('<button>')
         );
-        $loop = $('<tr>').
+        $name = $('<td>').
+        text('Loading name...');
+        if (collection === "oneshots") {
+            $indices = $('<td>').
+            append(
+                $('<span>').text('MIN: '),
+                $('<span>').addClass('system__timestep').text('n/a'),
+                $('<input>', {'type': 'number', 'min': 0, 'max': timesteps.length - 1, 'value': child.minIndex}),
+                $('<span>').text('MAX: '),
+                $('<span>').addClass('system__timestep').text('n/a'),
+                $('<input>', {'type': 'number', 'min': 0, 'max': timesteps.length - 1, 'value': child.maxIndex})
+            );
+            $indices.children('input').each((i, element) => {
+                updateTimestep(element);
+            })
+            $indices.children('input').on('input', (event) => {
+                updateTimestep(event.target);
+            });
+        };
+        $child = $('<tr>').
         append(
-            $('<td>').text('Loading name...'),
-            $slider,
-            $remove
+            $name,
+            $slider
         );
-        $loops = $loops.add($loop);
+        if (collection === "oneshots") {
+            $child.append($indices);
+        }
+        $child.append($remove);
+        //  Begin fetching child name
+        injectName(collection, child.id, $name);
+        $children = $children.add($child);
     });
-    return $loops;
+    return $children;
+}
+
+/*
+    $field: the jQuery object to inject the fetched name into. Must have a text component.
+*/
+function injectName(collection, id, $field) {
+    fetchItem(collection, id, (result) => {
+        if (!result || !result.name) {
+            $field.text('Error loading name for: ' + id);
+        } else {
+            $field.text(result.name);
+        }
+    });
+}
+
+/*
+    Given the HTML element of a number input, uses that input's value as an index to find
+    the relevant timestep value in seconds, and injects that into the relevant timestep label.
+*/
+function updateTimestep(inputHTML) {
+    var $span = $(inputHTML).prev('.system__timestep'); // Find text element to update
+    $span.text(timesteps[inputHTML.value]);
 }
 
 modify.$collection.change(function() {
@@ -201,7 +242,7 @@ modify.$collection.change(function() {
 
 modify.$id.on('input', function() {
     updateButtons(this.value);
-    fetchItem(getCollection(), this.value);
+    fetchItem(getCollection(), this.value, populateFields);
 });
 
 

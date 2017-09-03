@@ -179,6 +179,11 @@
         min-height: 8rem;
     }
 
+    &__table input[type=number] {
+        width: 4rem;
+        margin: 0 1rem;
+    }
+
     & h1 {
         margin: 0;
         color: rgba($blueberry, 0.25);
@@ -218,4 +223,9 @@
         transform: translateY(-50%);
         color: $stormGrey;
     }
+}
+
+.system__timestep {
+    display: inline-block;
+    width: 2rem;
 }

@@ -4,9 +4,7 @@ require('./templates/oneshot');
 import { g } from "./GlobalVars.js";
 
 // The different values that "Playing every _ to _ seconds" can hold.
-let _timesteps = [
-    0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180
-];
+import _timesteps from './OneShotTimesteps';
 
 let _startMinIndex = 3; // the index of the default minimum timestep
 let _startMaxIndex = 4; // the index of the default maximum timestep
