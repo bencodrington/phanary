@@ -11747,7 +11747,6 @@ var Atmosphere = function () {
                 return;
             }
             tracks.forEach(function (trackData) {
-                console.log(trackData);
                 _GlobalVars.g.dataManager.getData(collection, trackData.id, function (result) {
                     this.addTrack(result, collection, trackData);
                 }.bind(this));
