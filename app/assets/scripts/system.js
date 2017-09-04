@@ -228,9 +228,12 @@ function generateChildHTML(child, collection) {
         $('<label>', {'for': 'volume'}),
         $('<input>', {'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': child.volume})
     );
-    $remove = $('<td>').
-    append(
-        $('<button>')
+    $remove = $('<td>').append(
+        $('<div>', {'class': 'btn btn btn--rounded btn--medium'}).append(
+            $('<div>', {'class': 'btn__inner'}).append(
+                $('<i>', {'class': 'fa fa-close', 'aria-hidden': 'true'})
+            )
+        )
     );
     $name = $('<td>').
     text('Loading name...');

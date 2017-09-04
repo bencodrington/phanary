@@ -10564,7 +10564,7 @@ function parseAtmosphereChildren(children, collection) {
 function generateChildHTML(child, collection) {
     var $slider, $remove, $name, $indices, $child;
     $slider = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<label>', { 'for': 'volume' }), (0, _jquery2.default)('<input>', { 'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': child.volume }));
-    $remove = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<button>'));
+    $remove = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<div>', { 'class': 'btn btn btn--rounded btn--medium' }).append((0, _jquery2.default)('<div>', { 'class': 'btn__inner' }).append((0, _jquery2.default)('<i>', { 'class': 'fa fa-close', 'aria-hidden': 'true' }))));
     $name = (0, _jquery2.default)('<td>').text('Loading name...');
     if (collection === "oneshots") {
         $indices = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<span>').text('MIN: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.minIndex }), (0, _jquery2.default)('<span>').text('MAX: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.maxIndex }));
