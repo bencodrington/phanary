@@ -234,7 +234,9 @@ function generateChildHTML(child, collection) {
                 $('<i>', {'class': 'fa fa-close', 'aria-hidden': 'true'})
             )
         )
-    );
+    ).on('click', (event) => {
+        $child.remove();
+    });
     $name = $('<td>').
     text('Loading name...');
     if (collection === "oneshots") {
