@@ -1774,7 +1774,6 @@ input[type=range]:focus::-moz-range-track {
     }
 
 .system__section__dropbox {
-        pointer-events: none;
         height: 4rem;
         background-color: #AFC2CD;
         position: relative;
@@ -1795,6 +1794,7 @@ input[type=range]:focus::-moz-range-track {
     }
 
 .system__section__dropbox span {
+        pointer-events: none;
         display: block;
         position: relative;
         width: 100%;

@@ -195,7 +195,6 @@
     }
 
     &__dropbox {
-        pointer-events: none;
         height: 4rem;
         background-color: $lighterGrey;
         position: relative;
@@ -215,6 +214,7 @@
     }
 
     &__dropbox span {
+        pointer-events: none;
         display: block;
         position: relative;
         width: 100%;

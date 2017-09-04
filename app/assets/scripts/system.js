@@ -19,7 +19,10 @@ modify.$delete.hide();
 //  The set of all field names for the different types of items (atmospheres, loops, oneshots)
 const fieldNames = ['_id', 'name', 'tags', 'oneshots', 'tracks', 'source', 'filename', 'samples'];
 
-var $sections   = $('.system__section');
+var $sections       = $('.system__section');
+var $loopDropbox    = $('#loop-dropbox');
+var $oneshotDropbox = $('#oneshot-dropbox');
+hideDropboxes();
 hideAll();
 events();
 
@@ -40,11 +43,29 @@ function events() {
             hideAll();  //  Event was triggered directly on the sidebar background
         }
     });
+
+    $('.system__section').on('dragover', (event) => {
+        event.preventDefault();
+    });
+
+    $('.system__section__dropbox').
+    on('dragover', (event) => {
+        event.preventDefault(); //  Allow elements to be dropped here
+    }).
+    on('drop', (event) => {
+        onDropboxDrop(event);
+        hideDropboxes();
+    })
 }
 
 function hideAll() {
     $('.system-sidebar__list').hide();  //  Hide all sidebar lists
     $sections.hide();                   //  Hide all fields and inputs
+}
+
+function hideDropboxes() {
+    $loopDropbox.hide();
+    $oneshotDropbox.hide();
 }
 
 function toggleCollection($list) {
@@ -64,7 +85,10 @@ function displayCollection(results, collection, $list) {
     $list.empty();
     $.each(results, (i, result) => {
         //  Create a new list element for each result
-        $('<li>').
+        $('<li>', {'draggable': (collection !== 'atmospheres'), 'data-id': result._id, 'data-collection': collection}).
+        on('dragstart', (event) => {
+            liDragStart(event);
+        }).
         append(
             $('<span>').text(result.name)
         ).
@@ -75,6 +99,21 @@ function displayCollection(results, collection, $list) {
         //  Append the li to the list
         appendTo($list);
     });
+}
+
+function liDragStart(event) {
+    event.stopPropagation();
+    // Record resource id in the drag event
+    var id = event.target.dataset.id;
+    event.originalEvent.dataTransfer.setData("text", id);
+
+    // Show the relevant dropbox
+    var collection = event.target.dataset.collection;
+    if (collection === "tracks") {
+        $loopDropbox.show();
+    } else if (collection === "oneshots") {
+        $oneshotDropbox.show();
+    }
 }
 
 function switchToItem(collection, id) {
@@ -102,10 +141,10 @@ function fetchItem(collection, id, callback) {
         'id': id
     };
     $.getJSON('/system/find', query, function(result) {
-        if (result.error) {
-            callback(null);
-        }
         callback(result);
+    }).
+    fail(() => {
+        callback(null);
     });
 }
 
@@ -166,52 +205,64 @@ function parseArray(array) {
     jQuery object containing them.
 */
 function parseAtmosphereChildren(children, collection) {
-    var $slider, $remove, $name, $indices, $child;
+    var $child;
     var $children = $();
     $.each(children, (i, child) => {
-        //  TODO: replace with handlebars template
-        $slider = $('<td>').
-        append(
-            $('<label>', {'for': 'volume'}),
-            $('<input>', {'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': child.volume})
-        );
-        $remove = $('<td>').
-        append(
-            $('<button>')
-        );
-        $name = $('<td>').
-        text('Loading name...');
-        if (collection === "oneshots") {
-            $indices = $('<td>').
-            append(
-                $('<span>').text('MIN: '),
-                $('<span>').addClass('system__timestep').text('n/a'),
-                $('<input>', {'type': 'number', 'min': 0, 'max': timesteps.length - 1, 'value': child.minIndex}),
-                $('<span>').text('MAX: '),
-                $('<span>').addClass('system__timestep').text('n/a'),
-                $('<input>', {'type': 'number', 'min': 0, 'max': timesteps.length - 1, 'value': child.maxIndex})
-            );
-            $indices.children('input').each((i, element) => {
-                updateTimestep(element);
-            })
-            $indices.children('input').on('input', (event) => {
-                updateTimestep(event.target);
-            });
-        };
-        $child = $('<tr>').
-        append(
-            $name,
-            $slider
-        );
-        if (collection === "oneshots") {
-            $child.append($indices);
-        }
-        $child.append($remove);
-        //  Begin fetching child name
-        injectName(collection, child.id, $name);
+        $child = generateChildHTML(child, collection);
         $children = $children.add($child);
     });
     return $children;
+}
+
+/*
+    Creates a jQuery object representing a <tr> in an atmosphere's
+    'Loops' or 'One-Shots' <table>.
+    child contains:
+        volume[, minIndex, maxIndex if child is a one-shot] and id
+    TODO: replace this function with a handlebars template
+*/
+function generateChildHTML(child, collection) {
+    var $slider, $remove, $name, $indices, $child;
+    $slider = $('<td>').
+    append(
+        $('<label>', {'for': 'volume'}),
+        $('<input>', {'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': child.volume})
+    );
+    $remove = $('<td>').
+    append(
+        $('<button>')
+    );
+    $name = $('<td>').
+    text('Loading name...');
+    if (collection === "oneshots") {
+        $indices = $('<td>').
+        append(
+            $('<span>').text('MIN: '),
+            $('<span>').addClass('system__timestep').text('n/a'),
+            $('<input>', {'type': 'number', 'min': 0, 'max': timesteps.length - 1, 'value': child.minIndex}),
+            $('<span>').text('MAX: '),
+            $('<span>').addClass('system__timestep').text('n/a'),
+            $('<input>', {'type': 'number', 'min': 0, 'max': timesteps.length - 1, 'value': child.maxIndex})
+        );
+        $indices.children('input').each((i, element) => {
+            updateTimestep(element);
+        })
+        $indices.children('input').on('input', (event) => {
+            updateTimestep(event.target);
+        });
+    };
+    $child = $('<tr>', {'data-id': child.id}).  // Store id value for future updating
+    append(
+        $name,
+        $slider
+    );
+    if (collection === "oneshots") {
+        $child.append($indices);
+    }
+    $child.append($remove);
+    //  Begin fetching child name
+    injectName(collection, child.id, $name);
+    return $child;
 }
 
 /*
@@ -219,7 +270,7 @@ function parseAtmosphereChildren(children, collection) {
 */
 function injectName(collection, id, $field) {
     fetchItem(collection, id, (result) => {
-        if (!result || !result.name) {
+        if (!result || result.error || result.name === undefined) {
             $field.text('Error loading name for: ' + id);
         } else {
             $field.text(result.name);
@@ -234,6 +285,24 @@ function injectName(collection, id, $field) {
 function updateTimestep(inputHTML) {
     var $span = $(inputHTML).prev('.system__timestep'); // Find text element to update
     $span.text(timesteps[inputHTML.value]);
+}
+
+function onDropboxDrop(event) {
+    event.preventDefault();
+    var collection = event.target.dataset.collection;
+    var childData = {};
+    childData.volume = 1;
+    childData.id = event.originalEvent.dataTransfer.getData("text");
+    if (collection === "oneshots"){
+        childData.minIndex = 0;
+        childData.maxIndex = 0;
+    }
+    var $child = generateChildHTML(childData, collection);
+    // Select table that corresponds to this dropbox
+    var $table = $('.system__atmosphere-children').filter((i, element) => {
+        return $(element).data('collection') === collection;
+    });
+    $table.append($child);
 }
 
 modify.$collection.change(function() {

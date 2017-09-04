@@ -10364,6 +10364,9 @@ modify.$delete.hide();
 var fieldNames = ['_id', 'name', 'tags', 'oneshots', 'tracks', 'source', 'filename', 'samples'];
 
 var $sections = (0, _jquery2.default)('.system__section');
+var $loopDropbox = (0, _jquery2.default)('#loop-dropbox');
+var $oneshotDropbox = (0, _jquery2.default)('#oneshot-dropbox');
+hideDropboxes();
 hideAll();
 events();
 
@@ -10384,11 +10387,27 @@ function events() {
             hideAll(); //  Event was triggered directly on the sidebar background
         }
     });
+
+    (0, _jquery2.default)('.system__section').on('dragover', function (event) {
+        event.preventDefault();
+    });
+
+    (0, _jquery2.default)('.system__section__dropbox').on('dragover', function (event) {
+        event.preventDefault(); //  Allow elements to be dropped here
+    }).on('drop', function (event) {
+        onDropboxDrop(event);
+        hideDropboxes();
+    });
 }
 
 function hideAll() {
     (0, _jquery2.default)('.system-sidebar__list').hide(); //  Hide all sidebar lists
     $sections.hide(); //  Hide all fields and inputs
+}
+
+function hideDropboxes() {
+    $loopDropbox.hide();
+    $oneshotDropbox.hide();
 }
 
 function toggleCollection($list) {
@@ -10408,7 +10427,9 @@ function displayCollection(results, collection, $list) {
     $list.empty();
     _jquery2.default.each(results, function (i, result) {
         //  Create a new list element for each result
-        (0, _jquery2.default)('<li>').append((0, _jquery2.default)('<span>').text(result.name)).
+        (0, _jquery2.default)('<li>', { 'draggable': collection !== 'atmospheres', 'data-id': result._id, 'data-collection': collection }).on('dragstart', function (event) {
+            liDragStart(event);
+        }).append((0, _jquery2.default)('<span>').text(result.name)).
         //  Display details of selected item
         on('click', function () {
             switchToItem(collection, result._id);
@@ -10416,6 +10437,21 @@ function displayCollection(results, collection, $list) {
         //  Append the li to the list
         appendTo($list);
     });
+}
+
+function liDragStart(event) {
+    event.stopPropagation();
+    // Record resource id in the drag event
+    var id = event.target.dataset.id;
+    event.originalEvent.dataTransfer.setData("text", id);
+
+    // Show the relevant dropbox
+    var collection = event.target.dataset.collection;
+    if (collection === "tracks") {
+        $loopDropbox.show();
+    } else if (collection === "oneshots") {
+        $oneshotDropbox.show();
+    }
 }
 
 function switchToItem(collection, id) {
@@ -10443,10 +10479,9 @@ function fetchItem(collection, id, callback) {
         'id': id
     };
     _jquery2.default.getJSON('/system/find', query, function (result) {
-        if (result.error) {
-            callback(null);
-        }
         callback(result);
+    }).fail(function () {
+        callback(null);
     });
 }
 
@@ -10510,32 +10545,45 @@ function parseArray(array) {
     jQuery object containing them.
 */
 function parseAtmosphereChildren(children, collection) {
-    var $slider, $remove, $name, $indices, $child;
+    var $child;
     var $children = (0, _jquery2.default)();
     _jquery2.default.each(children, function (i, child) {
-        //  TODO: replace with handlebars template
-        $slider = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<label>', { 'for': 'volume' }), (0, _jquery2.default)('<input>', { 'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': child.volume }));
-        $remove = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<button>'));
-        $name = (0, _jquery2.default)('<td>').text('Loading name...');
-        if (collection === "oneshots") {
-            $indices = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<span>').text('MIN: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.minIndex }), (0, _jquery2.default)('<span>').text('MAX: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.maxIndex }));
-            $indices.children('input').each(function (i, element) {
-                updateTimestep(element);
-            });
-            $indices.children('input').on('input', function (event) {
-                updateTimestep(event.target);
-            });
-        };
-        $child = (0, _jquery2.default)('<tr>').append($name, $slider);
-        if (collection === "oneshots") {
-            $child.append($indices);
-        }
-        $child.append($remove);
-        //  Begin fetching child name
-        injectName(collection, child.id, $name);
+        $child = generateChildHTML(child, collection);
         $children = $children.add($child);
     });
     return $children;
+}
+
+/*
+    Creates a jQuery object representing a <tr> in an atmosphere's
+    'Loops' or 'One-Shots' <table>.
+    child contains:
+        volume[, minIndex, maxIndex if child is a one-shot] and id
+    TODO: replace this function with a handlebars template
+*/
+function generateChildHTML(child, collection) {
+    var $slider, $remove, $name, $indices, $child;
+    $slider = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<label>', { 'for': 'volume' }), (0, _jquery2.default)('<input>', { 'type': 'range', 'name': 'volume', 'max': 1, 'step': 0.1, 'value': child.volume }));
+    $remove = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<button>'));
+    $name = (0, _jquery2.default)('<td>').text('Loading name...');
+    if (collection === "oneshots") {
+        $indices = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<span>').text('MIN: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.minIndex }), (0, _jquery2.default)('<span>').text('MAX: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.maxIndex }));
+        $indices.children('input').each(function (i, element) {
+            updateTimestep(element);
+        });
+        $indices.children('input').on('input', function (event) {
+            updateTimestep(event.target);
+        });
+    };
+    $child = (0, _jquery2.default)('<tr>', { 'data-id': child.id }). // Store id value for future updating
+    append($name, $slider);
+    if (collection === "oneshots") {
+        $child.append($indices);
+    }
+    $child.append($remove);
+    //  Begin fetching child name
+    injectName(collection, child.id, $name);
+    return $child;
 }
 
 /*
@@ -10543,7 +10591,7 @@ function parseAtmosphereChildren(children, collection) {
 */
 function injectName(collection, id, $field) {
     fetchItem(collection, id, function (result) {
-        if (!result || !result.name) {
+        if (!result || result.error || result.name === undefined) {
             $field.text('Error loading name for: ' + id);
         } else {
             $field.text(result.name);
@@ -10558,6 +10606,24 @@ function injectName(collection, id, $field) {
 function updateTimestep(inputHTML) {
     var $span = (0, _jquery2.default)(inputHTML).prev('.system__timestep'); // Find text element to update
     $span.text(_OneShotTimesteps2.default[inputHTML.value]);
+}
+
+function onDropboxDrop(event) {
+    event.preventDefault();
+    var collection = event.target.dataset.collection;
+    var childData = {};
+    childData.volume = 1;
+    childData.id = event.originalEvent.dataTransfer.getData("text");
+    if (collection === "oneshots") {
+        childData.minIndex = 0;
+        childData.maxIndex = 0;
+    }
+    var $child = generateChildHTML(childData, collection);
+    // Select table that corresponds to this dropbox
+    var $table = (0, _jquery2.default)('.system__atmosphere-children').filter(function (i, element) {
+        return (0, _jquery2.default)(element).data('collection') === collection;
+    });
+    $table.append($child);
 }
 
 modify.$collection.change(function () {
