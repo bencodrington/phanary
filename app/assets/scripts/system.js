@@ -228,8 +228,8 @@ function saveItem() {
     if (query.id === '') {
         insertItem(query);  // Create new record
     } else {
-        //TODO: update record
-        console.log('Final query:', query);
+        // Update existing record
+        updateItem(query);
     }
 }
 
@@ -255,6 +255,13 @@ function insertItem(query) {
     });
 }
 
+function updateItem(query) {
+    $.post('/system/update', query, function () {
+        hideAll();
+        toggleCollection(refreshCollection(query.collection));
+    });
+}
+
 /*
     Converts a piece of data to the correct format,
     then writes it to the provided field.
@@ -274,7 +281,6 @@ function writeValue($field, key, value) {
 }
 
 function readValue($field, name) {
-    console.log('getting val for: ' + name);
     if (name === 'tracks') {
         return parseLoopTable($field);
     } else if (name === 'oneshots') {
@@ -525,14 +531,6 @@ function parseIDs(array, collection, showNames) {
         ids.push(idWithName);
     });
     return ids.toString().split(',').join('\n');
-}
-
-function updateData() {
-    var query = getProperties();
-    query.id = getProperty('id');
-    $.post('/system/update', query, function () {
-        loadCollection(getCollection());
-    });
 }
 
 

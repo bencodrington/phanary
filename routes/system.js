@@ -260,7 +260,6 @@ router.post('/insert', function(req, res, next) {
 });
 
 function insertItem(body) {
-  // console.log('body:', body); //TODO: remove
   var collection = body.collection;
   var item = {
     name: body.name,
@@ -315,6 +314,7 @@ router.post('/update', function(req, res, next) {
 });
 
 function updateItem(body, res) {
+  // console.log('body:', body); //TODO: remove
   var collection = body.collection;
   var id = body.id;
 
@@ -343,8 +343,8 @@ function updateItem(body, res) {
         } else {
           result.name = body.name;
           result.tags = parseMultilineInput(body.tags);
-          result.tracks = [];
-          result.oneshots = [];
+          result.tracks = parseLoopArrayString(body.tracks);
+          result.oneshots = parseOneshotArrayString(body.oneshots);
           result.save();
           res.sendStatus(200);
         }
@@ -425,6 +425,9 @@ function parseMultilineInput(textString) {
 }
 
 function parseLoopArrayString(loopArrayString) {
+  if (!loopArrayString) {
+    return;
+  }
   var loopArray = JSON.parse(loopArrayString);
   loopArray.forEach(function(loop) {
     try {
@@ -438,6 +441,9 @@ function parseLoopArrayString(loopArrayString) {
 }
 
 function parseOneshotArrayString(oneshotArrayString) {
+  if (!oneshotArrayString) {
+    return;
+  }
   var oneshotArray = JSON.parse(oneshotArrayString);
   oneshotArray.forEach(function(oneshot) {
     try {
