@@ -110,3 +110,28 @@
 .system__btn--add {
     height: 1.5rem;
 }
+
+.system__login-box {
+    background-color: $lighterGrey;
+    border-radius: 5px;
+    padding: 1rem;
+    text-align: center;
+    display: inline-block;
+
+    &__error {
+        color: #913F3F;
+    }
+
+    & h2 {
+        color: $deepSea;
+        margin-bottom: 0.5rem;
+    }
+
+    & input {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.system__login-container {
+    text-align: center;
+}

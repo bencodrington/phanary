@@ -1685,6 +1685,31 @@ input[type=range]:focus::-moz-range-track {
     height: 1.5rem;
 }
 
+.system__login-box {
+    background-color: #AFC2CD;
+    border-radius: 5px;
+    padding: 1rem;
+    text-align: center;
+    display: inline-block;
+}
+
+.system__login-box__error {
+        color: #913F3F;
+    }
+
+.system__login-box h2 {
+        color: #061423;
+        margin-bottom: 0.5rem;
+    }
+
+.system__login-box input {
+        margin-bottom: 0.5rem;
+    }
+
+.system__login-container {
+    text-align: center;
+}
+
 .tags {
 
     line-height: 1.5rem;
