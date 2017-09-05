@@ -265,8 +265,8 @@ function insertItem(body) {
     name: body.name,
     filename: body.filename,
     tags: parseMultilineInput(body.tags),
-    tracks: parseIDs(parseMultilineInput(body.tracks)),
-    oneshots: parseIDs(parseMultilineInput(body.oneshots)),
+    tracks: [],
+    oneshots: [],
     samples: parseSamples(parseMultilineInput(body.samples)),
     source: body.source
   };
@@ -344,8 +344,8 @@ function updateItem(body, res) {
         } else {
           result.name = body.name;
           result.tags = parseMultilineInput(body.tags);
-          result.tracks = parseIDs(parseMultilineInput(body.tracks));
-          result.oneshots = parseIDs(parseMultilineInput(body.oneshots));
+          result.tracks = [];
+          result.oneshots = [];
           result.save();
           res.sendStatus(200);
         }
@@ -417,7 +417,12 @@ function deleteItem(body) {
 }
 
 function parseMultilineInput(textString) {
-  return textString.replace(/\r\n/g,"\n").split('\n');
+  if (textString) {
+    return textString.replace(/\r\n/g,"\n").split('\n');
+  } else {
+    return null;
+  }
+  
 }
 
 function parseIDs(idStringArray) {
@@ -446,6 +451,9 @@ function parseIDs(idStringArray) {
 }
 
 function parseSamples(filenameStrings) {
+  if (!filenameStrings) {
+    return null;
+  }
   var samples = []
   var resourceObject;
   filenameStrings.forEach(function(value) {

@@ -162,6 +162,10 @@
     }
 }
 
+.system__hidden {
+    display: none;
+}
+
 .system__section {
 
     &__table {
@@ -228,4 +232,12 @@
 .system__timestep {
     display: inline-block;
     width: 2rem;
+}
+
+.system__right {
+    float: right;
+}
+
+.system__btn--add {
+    height: 1.5rem;
 }

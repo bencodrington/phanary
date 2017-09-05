@@ -827,6 +827,7 @@ a {
     }
 
 .btn__inner {
+        pointer-events: none;
         width: 100%;
         text-align: center;
         position: relative;
@@ -1743,6 +1744,10 @@ input[type=range]:focus::-moz-range-track {
         pointer-events: none;   /* Stops the caret from blocking the click event */
     }
 
+.system__hidden {
+    display: none;
+}
+
 .system__section__table {
         width: 100%;
         border-top: 1px solid #3A6982;
@@ -1808,6 +1813,14 @@ input[type=range]:focus::-moz-range-track {
 .system__timestep {
     display: inline-block;
     width: 2rem;
+}
+
+.system__right {
+    float: right;
+}
+
+.system__btn--add {
+    height: 1.5rem;
 }
 
 .tags {

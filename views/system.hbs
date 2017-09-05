@@ -27,17 +27,32 @@
     <div class="wrapper--top-margin wrapper--bottom-margin">
         <div class="system-sidebar__section">
             <h2 data-sidebar-section="atmospheres" class="system-sidebar__section__title">Atmospheres <i class="fa fa-caret-down"></i></h2>
-            <ul class="system-sidebar__list">
+            <div class="btn btn--dark system__btn--add" data-collection="atmospheres">
+                <div class="btn__inner">
+                    <i class="fa fa-plus"></i>
+                </div>
+            </div>
+            <ul class="system-sidebar__list" data-collection="atmospheres">
             </ul>
         </div>
         <div class="system-sidebar__section">
             <h2 data-sidebar-section="tracks" class="system-sidebar__section__title">Loops <i class="fa fa-caret-down"></i></h2>
-            <ul class="system-sidebar__list">
+            <div class="btn btn--dark system__btn--add" data-collection="tracks">
+                <div class="btn__inner">
+                    <i class="fa fa-plus"></i>
+                </div>
+            </div>
+            <ul class="system-sidebar__list" data-collection="tracks">
             </ul>
         </div>
         <div class="system-sidebar__section">
             <h2 data-sidebar-section="oneshots" class="system-sidebar__section__title">One-Shots <i class="fa fa-caret-down"></i></h2>
-            <ul class="system-sidebar__list">
+            <div class="btn btn--dark system__btn--add" data-collection="oneshots">
+                <div class="btn__inner">
+                    <i class="fa fa-plus"></i>
+                </div>
+            </div>
+            <ul class="system-sidebar__list" data-collection="oneshots">
             </ul>
         </div>
     </div>
@@ -46,14 +61,14 @@
 {{!-- Main Content --}}
 <div class="main-content">
     <div class="wrapper wrapper--top-margin">
-        <div data-section="atmospheres" class="system__section">
+        <div data-collection="atmospheres" class="system__section">
             <h1>Atmosphere</h1>
             <table class="system__section__table">
                 <tr>
                     <td><label for="name">Name</label></td>
                     <td><input class="system__section__input" type="text" name="name"></td>
                 </tr>
-                <tr>
+                <tr class="system__hidden">
                     <td><label for="id">ID</label></td>
                     <td><input class="system__section__input" type="text" name="_id"></td>
                 </tr>
@@ -80,7 +95,7 @@
 
         </div>
 
-        <div data-section="tracks" class="system__section">
+        <div data-collection="tracks" class="system__section">
 
             <h1>Loop</h1>
 
@@ -90,6 +105,7 @@
                     <td><input class="system__section__input" type="text" name="name"></td>
                 </tr>
                 <tr>
+                <tr class="system__hidden">
                     <td><label for="id">ID</label></td>
                     <td><input class="system__section__input" type="text" name="_id"></td>
                 </tr>
@@ -99,17 +115,17 @@
                 </tr>
                 <tr>
                     <td><label for="source">Source</label></td>
-                    <td><input class="system__section__input" name="source"></input></td>
+                    <td><input type="text" class="system__section__input" name="source"></input></td>
                 </tr>
                 <tr>
                     <td><label for="filename">File Name</label></td>
-                    <td><input class="system__section__input" name="filename"></input></td>
+                    <td><input type="text" class="system__section__input" name="filename"></input></td>
                 </tr>
             </table>
 
         </div>
 
-        <div data-section="oneshots" class="system__section">
+        <div data-collection="oneshots" class="system__section">
 
             <h1>One-Shot</h1>
 
@@ -119,12 +135,13 @@
                     <td><input class="system__section__input" type="text" name="name"></td>
                 </tr>
                 <tr>
+                <tr class="system__hidden">
                     <td><label for="id">ID</label></td>
                     <td><input class="system__section__input" type="text" name="_id"></td>
                 </tr>
                 <tr>
                     <td><label for="source">Source</label></td>
-                    <td><input class="system__section__input" name="source"></input></td>
+                    <td><input type="text" class="system__section__input" name="source"></input></td>
                 </tr>
                 <tr>
                     <td><label for="tags">Tags (separate by newline)</label></td>
@@ -137,7 +154,20 @@
             </table>
 
         </div>
+
+        {{!-- 'Save' and 'Delete' buttons --}}
+        <div id="delete-btn" class="btn btn--medium-text btn--rounded system__record-control">
+            <div class="btn__inner">
+                <span>Delete</span>
+            </div>
+        </div>
+        <div id="save-btn" class="btn btn--medium-text btn--yellow btn--rounded system__right system__record-control">
+            <div class="btn__inner">
+                <span>Save</span>
+            </div>
+        </div>
     </div>
+
     
     {{!-- <div class="wrapper wrapper--top-margin">
     
@@ -226,5 +256,6 @@
         
     </div> --}}
 </div>
+
 <script src="https://use.fontawesome.com/075d51e5f2.js"></script>
 <script src="/scripts/system.js"></script>

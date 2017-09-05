@@ -20,8 +20,11 @@ modify.$delete.hide();
 const fieldNames = ['_id', 'name', 'tags', 'oneshots', 'tracks', 'source', 'filename', 'samples'];
 
 var $sections       = $('.system__section');
+var $inputs         = $('.system__section__input');
 var $loopDropbox    = $('#loop-dropbox');
 var $oneshotDropbox = $('#oneshot-dropbox');
+var $saveBtn        = $('#save-btn');
+var $deleteBtn      = $('#delete-btn');
 hideDropboxes();
 hideAll();
 events();
@@ -55,12 +58,27 @@ function events() {
     on('drop', (event) => {
         onDropboxDrop(event);
         hideDropboxes();
+        invalidateRecord();
     })
+
+    $inputs.on('input', () => {
+        invalidateRecord();
+    });
+
+    $saveBtn.on('click', saveItem);
+    $deleteBtn.on('click', deleteItem)
+
+    $('.system__btn--add').on('click', (event) => {
+        var collection = event.target.dataset.collection;
+        switchToCollection(collection);
+        clearVisibleInputs();
+    });
 }
 
 function hideAll() {
-    $('.system-sidebar__list').hide();  //  Hide all sidebar lists
-    $sections.hide();                   //  Hide all fields and inputs
+    $('.system-sidebar__list').hide();      //  Hide all sidebar lists
+    $sections.hide();                       //  Hide all fields and inputs
+    $('.system__record-control').hide();    //  Hide 'Save' and 'Delete' buttons
 }
 
 function hideDropboxes() {
@@ -70,6 +88,19 @@ function hideDropboxes() {
 
 function toggleCollection($list) {
     $list.toggle();
+}
+
+function getCollection() {
+    return $sections.filter(':visible').data('collection');
+}
+
+function refreshCollection(collection) {
+    // Find list with matching data-collection attribute
+    var $list = $('.system-sidebar__list').filter((i, element) => {
+        return $(element).data('collection') === collection;
+    });
+    loadCollection(collection, $list);
+    return $list;
 }
 
 function loadCollection(collection, $list) {
@@ -120,14 +151,16 @@ function switchToItem(collection, id) {
     //  Display relevant fields and inputs
     switchToCollection(collection);
     //  Get data to populate relevant fields
-    fetchItem(collection, id, populateFields);
+    fetchItem(collection, id, populateInputs);
+    //  Display 'delete' button
+    $deleteBtn.show();
 }
 
 function switchToCollection(collection) {
     var $section;
     $.each($sections, (i, section) => {
         $section = $(section);
-        if($section.data('section') === collection) {
+        if($section.data('collection') === collection) {
             $section.show();
         } else {
             $section.hide();
@@ -148,19 +181,79 @@ function fetchItem(collection, id, callback) {
     });
 }
 
-function populateFields(data) {
+function getInputs() {
+    return $sections.
+        filter(':visible').
+        find('.system__section__input');
+}
+
+function clearVisibleInputs() {
+    var $visibleInputs = getInputs();
+    $visibleInputs.filter('textarea, input[type=text]').val('');    // Empty textboxes and textareas
+    $visibleInputs.filter('input[type=range]').val(1);              // Reset sliders to full
+    $visibleInputs.filter('.system__atmosphere-children').empty();  // Remove loop and one-shot children
+}
+
+function populateInputs(data) {
     //  Cache system__section__inputs in the currently visible section
-    var $inputs = $sections.filter(':visible')
-    .find('.system__section__input');
+    var $visibleInputs = getInputs();
     var $field;
     for (var key in data) {
         if ($.inArray(key, fieldNames) >= 0) {
             //  'key' matches one of the field names,
             //  so find the input with that name
-            $field = $inputs.filter('[name="' + key + '"]');
+            $field = $visibleInputs.filter('[name="' + key + '"]');
             writeValue($field, key, data[key]);  // Store the value in the input
         }
     }
+}
+
+function saveItem() {
+    var name;
+    var query = {};
+    query.collection = getCollection();
+    // Cache system__section__inputs in the currently visible section
+    var $visibleInputs = getInputs();
+    
+    $visibleInputs.each((i, element) => {
+        name = element.getAttribute('name');
+        if (name === '_id') {
+            query.id = element.value;
+        } else {
+            query[name] = readValue($(element), name);
+        }
+    });
+
+    if (query.id === '') {
+        insertItem(query);  // Create new record
+    } else {
+        //TODO: update record
+        console.log('Final query:', query);
+    }
+}
+
+function deleteItem() {
+    var query = {};
+    query.collection = getCollection();
+    // Cache system__section__inputs in the currently visible section
+    var $visibleInputs = getInputs();
+    var $idField = $visibleInputs.filter((i, element) => {
+        return element.getAttribute('name') === '_id';
+    });
+    query.id = $idField.val();
+    $.post('/system/delete', query, function() {
+        hideAll();
+        toggleCollection(refreshCollection(query.collection));
+    });
+}
+
+function insertItem(query) {
+    console.log('Inserting item with query:', query);
+    $.post('/system/insert', query, function() {
+        hideAll();
+        toggleCollection(refreshCollection(query.collection));
+    });
+
 }
 
 /*
@@ -179,6 +272,30 @@ function writeValue($field, key, value) {
     } else if ($field.is('table')) {    //  Atmosphere 'Loops' or 'One-Shots' special field
         $field.html(parseAtmosphereChildren(value, key));
     }
+}
+
+function readValue($field, name) {
+    console.log('getting val for: ' + name);
+    if (name === 'tracks') {
+        return parseLoopTable($field);
+    } else if (name === 'oneshots') {
+        return parseOneshotTable($field);
+    }
+    console.log($field.val());
+    return $field.val();
+}
+
+function parseLoopTable($field) {
+    var loops = [];
+    $field.children().each((i, element) => {
+        console.log(element);
+    })
+    return loops;
+}
+
+function parseOneshotTable($field) {
+    var oneshots = [];
+    return oneshots;
 }
 
 function parseSamples(array) {
@@ -236,6 +353,7 @@ function generateChildHTML(child, collection) {
         )
     ).on('click', (event) => {
         $child.remove();
+        invalidateRecord();
     });
     $name = $('<td>').
     text('Loading name...');
@@ -310,13 +428,19 @@ function onDropboxDrop(event) {
     $table.append($child);
 }
 
+function invalidateRecord() {
+    // Display 'save' button
+    $saveBtn.show();
+    // TODO: prompt an 'are you sure?' alert when attempting to switch before saving
+}
+
 modify.$collection.change(function() {
     changeCollection(this.value);
 });
 
 modify.$id.on('input', function() {
     updateButtons(this.value);
-    fetchItem(getCollection(), this.value, populateFields);
+    fetchItem(getCollection(), this.value, populateInputs);
 });
 
 
@@ -328,15 +452,9 @@ modify.$button.on('click', function() {
     }
 });
 
-modify.$delete.on('click', deleteData);
-
 function clearFields() {
     modify.$fields.children('input, textarea').val('');
     updateButtons('');
-}
-
-function getCollection() {
-    return modify.$collection.filter(':checked').val();
 }
 
 function changeCollection(newCollection) {
@@ -397,14 +515,6 @@ function parseIDs(array, collection, showNames) {
     return ids.toString().split(',').join('\n');
 }
 
-function insertData() {
-    var query = getProperties();
-    $.post('/system/insert', query, function() {
-        loadCollection(getCollection());
-        clearFields();
-    });
-}
-
 function updateData() {
     var query = getProperties();
     query.id = getProperty('id');
@@ -413,16 +523,6 @@ function updateData() {
     });
 }
 
-function deleteData() {
-    var query = {
-        'collection': getCollection(),
-        'id': getProperty('id')
-    };
-    $.post('/system/delete', query, function() {
-        loadCollection(getCollection());
-        clearFields();
-    });
-}
 
 function getProperties() {
     var query = {
