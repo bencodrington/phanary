@@ -10544,6 +10544,7 @@ function populateInputs(data) {
 }
 
 function saveItem() {
+    // TODO: check for validity (esp. oneshot timings)
     var name;
     var query = {};
     query.collection = getCollection();
@@ -10583,7 +10584,6 @@ function deleteItem() {
 }
 
 function insertItem(query) {
-    console.log('Inserting item with query:', query);
     _jquery2.default.post('/system/insert', query, function () {
         hideAll();
         toggleCollection(refreshCollection(query.collection));
@@ -10619,21 +10619,34 @@ function readValue($field, name) {
     } else if (name === 'oneshots') {
         return parseOneshotTable($field);
     }
-    console.log($field.val());
     return $field.val();
 }
 
 function parseLoopTable($field) {
     var loops = [];
+    var loop;
     $field.children().each(function (i, element) {
-        console.log(element);
+        loop = {};
+        loop.id = element.getAttribute('data-id');
+        loop.volume = (0, _jquery2.default)(element).find('input[name=volume]').val();
+        loops.push(loop);
     });
-    return loops;
+    return JSON.stringify(loops);
 }
 
 function parseOneshotTable($field) {
     var oneshots = [];
-    return oneshots;
+    var oneshot, $element;
+    $field.children().each(function (i, element) {
+        oneshot = {};
+        $element = (0, _jquery2.default)(element);
+        oneshot.id = element.getAttribute('data-id');
+        oneshot.volume = $element.find('input[name=volume]').val();
+        oneshot.minIndex = $element.find('input[name=minIndex]').val();
+        oneshot.maxIndex = $element.find('input[name=maxIndex]').val();
+        oneshots.push(oneshot);
+    });
+    return JSON.stringify(oneshots);
 }
 
 function parseSamples(array) {
@@ -10685,7 +10698,7 @@ function generateChildHTML(child, collection) {
     });
     $name = (0, _jquery2.default)('<td>').text('Loading name...');
     if (collection === "oneshots") {
-        $indices = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<span>').text('MIN: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.minIndex }), (0, _jquery2.default)('<span>').text('MAX: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.maxIndex }));
+        $indices = (0, _jquery2.default)('<td>').append((0, _jquery2.default)('<span>').text('MIN: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'name': 'minIndex', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.minIndex }), (0, _jquery2.default)('<span>').text('MAX: '), (0, _jquery2.default)('<span>').addClass('system__timestep').text('n/a'), (0, _jquery2.default)('<input>', { 'type': 'number', 'name': 'maxIndex', 'min': 0, 'max': _OneShotTimesteps2.default.length - 1, 'value': child.maxIndex }));
         $indices.children('input').each(function (i, element) {
             updateTimestep(element);
         });
