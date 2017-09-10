@@ -176,6 +176,7 @@ class Atmosphere {
         // Prepare track data for template injection
         trackObject.id = this.idCounter;
         trackObject.atmosphereId = this.id;
+        trackObject.resourceId = trackData.id;
         this.idCounter++;
         
         // Create track data object
@@ -288,6 +289,11 @@ class Atmosphere {
             this.hidePlayButtons();
         }
         
+    }
+
+    getTitle() {
+        var $titleText = this.$atmosphereHTML.find(".section__heading__title__text");
+        return $titleText.text();
     }
 }
 

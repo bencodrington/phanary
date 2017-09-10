@@ -242,6 +242,10 @@ class OneShot extends Track {
         return OneShot.timesteps[index];
     }
 
+    getCollection() {
+        return 'oneshots';
+    }
+
 }
 
 export default OneShot;

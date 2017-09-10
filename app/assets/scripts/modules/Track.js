@@ -157,6 +157,10 @@ class Track {
         this.atmosphere.am.setTrackVolume(this.id, this.volume);
     }
 
+    getCollection() {
+        return 'tracks';
+    }
+
 }
 
 export default Track;

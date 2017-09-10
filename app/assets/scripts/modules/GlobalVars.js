@@ -5,6 +5,7 @@ import DataManager from './DataManager';
 import AtmosphereManager from './AtmosphereManager';
 import TrackManager from './TrackManager';
 import Sidebar from './Sidebar';
+import PersistenceManager from './PersistenceManager';
 
 class GlobalVars {
 
@@ -25,6 +26,38 @@ class GlobalVars {
         this.trackManager = new TrackManager();
         this.dataManager = new DataManager();
         this.sidebar = new Sidebar();
+
+        if (this.storageAvailable('localStorage')) {
+            this.pm = new PersistenceManager();
+        }
+    }
+
+    /*
+        From:
+        https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+    */
+    storageAvailable(type) {
+        try {
+            var storage = window[type],
+                x = '__storage_test__';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        }
+        catch(e) {
+            return e instanceof DOMException && (
+                // everything except Firefox
+                e.code === 22 ||
+                // Firefox
+                e.code === 1014 ||
+                // test name field too, because code might not be present
+                // everything except Firefox
+                e.name === 'QuotaExceededError' ||
+                // Firefox
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                // acknowledge QuotaExceededError only if there's something already stored
+                storage.length !== 0;
+        }
     }
 
     /* Highlights the contents of a given element, used when editing atmosphere titles */

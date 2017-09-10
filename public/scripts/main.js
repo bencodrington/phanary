@@ -10475,7 +10475,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _handlebars = __webpack_require__(48);
+var _handlebars = __webpack_require__(49);
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
@@ -10487,13 +10487,17 @@ var _AtmosphereManager = __webpack_require__(14);
 
 var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
 
-var _TrackManager = __webpack_require__(19);
+var _TrackManager = __webpack_require__(20);
 
 var _TrackManager2 = _interopRequireDefault(_TrackManager);
 
-var _Sidebar = __webpack_require__(18);
+var _Sidebar = __webpack_require__(19);
 
 var _Sidebar2 = _interopRequireDefault(_Sidebar);
+
+var _PersistenceManager = __webpack_require__(18);
+
+var _PersistenceManager2 = _interopRequireDefault(_PersistenceManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10519,12 +10523,46 @@ var GlobalVars = function () {
         this.trackManager = new _TrackManager2.default();
         this.dataManager = new _DataManager2.default();
         this.sidebar = new _Sidebar2.default();
+
+        if (this.storageAvailable('localStorage')) {
+            this.pm = new _PersistenceManager2.default();
+        }
     }
 
-    /* Highlights the contents of a given element, used when editing atmosphere titles */
+    /*
+        From:
+        https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+    */
 
 
     _createClass(GlobalVars, [{
+        key: 'storageAvailable',
+        value: function storageAvailable(type) {
+            try {
+                var storage = window[type],
+                    x = '__storage_test__';
+                storage.setItem(x, x);
+                storage.removeItem(x);
+                return true;
+            } catch (e) {
+                return e instanceof DOMException && (
+                // everything except Firefox
+                e.code === 22 ||
+                // Firefox
+                e.code === 1014 ||
+                // test name field too, because code might not be present
+                // everything except Firefox
+                e.name === 'QuotaExceededError' ||
+                // Firefox
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                // acknowledge QuotaExceededError only if there's something already stored
+                storage.length !== 0;
+            }
+        }
+
+        /* Highlights the contents of a given element, used when editing atmosphere titles */
+
+    }, {
         key: 'selectElementContents',
         value: function selectElementContents(el) {
             var range = document.createRange();
@@ -10671,11 +10709,11 @@ var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(37);
+var _helpers = __webpack_require__(38);
 
-var _decorators = __webpack_require__(35);
+var _decorators = __webpack_require__(36);
 
-var _logger = __webpack_require__(45);
+var _logger = __webpack_require__(46);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10933,7 +10971,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(23);
+__webpack_require__(24);
 
 var Track = function () {
 
@@ -11102,6 +11140,11 @@ var Track = function () {
         value: function updateVolume() {
             this.atmosphere.am.setTrackVolume(this.id, this.volume);
         }
+    }, {
+        key: 'getCollection',
+        value: function getCollection() {
+            return 'tracks';
+        }
     }]);
 
     return Track;
@@ -11173,7 +11216,7 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
 
 /***/ }),
 /* 10 */
@@ -11545,8 +11588,7 @@ var _About2 = _interopRequireDefault(_About);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var searchBar = new _SearchBar2.default();
-_GlobalVars.g.searchBar = searchBar;
+_GlobalVars.g.searchBar = new _SearchBar2.default();
 _GlobalVars.g.about = new _About2.default();
 
 /***/ }),
@@ -11584,7 +11626,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(20);
+__webpack_require__(21);
 
 var Atmosphere = function () {
     function Atmosphere(atmosphereData, id) {
@@ -11773,6 +11815,7 @@ var Atmosphere = function () {
             // Prepare track data for template injection
             trackObject.id = this.idCounter;
             trackObject.atmosphereId = this.id;
+            trackObject.resourceId = trackData.id;
             this.idCounter++;
 
             // Create track data object
@@ -11898,6 +11941,12 @@ var Atmosphere = function () {
             if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
                 this.hidePlayButtons();
             }
+        }
+    }, {
+        key: 'getTitle',
+        value: function getTitle() {
+            var $titleText = this.$atmosphereHTML.find(".section__heading__title__text");
+            return $titleText.text();
         }
     }]);
 
@@ -12282,7 +12331,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(22);
+__webpack_require__(23);
 
 var DataManager = function () {
 
@@ -12427,7 +12476,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-__webpack_require__(21);
+__webpack_require__(22);
 
 // The different values that "Playing every _ to _ seconds" can hold.
 
@@ -12722,6 +12771,11 @@ var OneShot = function (_Track) {
 
         /* Semantic method for accessing the static timesteps array given a min or max index */
 
+    }, {
+        key: 'getCollection',
+        value: function getCollection() {
+            return 'oneshots';
+        }
     }], [{
         key: 'getTimeStep',
         value: function getTimeStep(index) {
@@ -12736,6 +12790,138 @@ exports.default = OneShot;
 
 /***/ }),
 /* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _GlobalVars = __webpack_require__(2);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PersistenceManager = function () {
+    function PersistenceManager() {
+        _classCallCheck(this, PersistenceManager);
+
+        if (this.storageEmpty()) {
+            // Initialize storage
+            localStorage.setItem('atmospheres', JSON.stringify([]));
+        } else {
+            console.log('full');
+            // TODO: reload stored atmospheres
+            loadAtmospheres();
+        }
+    }
+
+    _createClass(PersistenceManager, [{
+        key: 'storageEmpty',
+        value: function storageEmpty() {
+            return !localStorage.getItem('atmospheres');
+        }
+
+        // TODO: call this whenever a setting is changed (atmosphere volume, atmosphere name, track volume, one-shot timing, atmosphere creation/deletion, track creation/deletion)
+        // TODO: store global volume as well (?)
+
+    }, {
+        key: 'storeAtmospheres',
+        value: function storeAtmospheres() {
+            var atmospheres = [];
+            var currentAtmosphere, currentTrack, collection;
+            // Loop through g.am.atmospheres
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = _GlobalVars.g.atmosphereManager.atmospheres[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var atmosphere = _step.value;
+
+                    // If the current atmosphere is null, skip it
+                    if (atmosphere) {
+                        // Else, reinitialize currentAtmosphere to an empty object
+                        currentAtmosphere = {};
+                        currentAtmosphere.name = atmosphere.getTitle(); // Store its name
+                        currentAtmosphere.volume = atmosphere.am.volume; // Store its volume
+                        currentAtmosphere.tracks = [];
+
+                        // Loop through the current atmosphere's tracks
+                        var _iteratorNormalCompletion2 = true;
+                        var _didIteratorError2 = false;
+                        var _iteratorError2 = undefined;
+
+                        try {
+                            for (var _iterator2 = atmosphere.tracks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                var track = _step2.value;
+
+                                collection = track.getCollection();
+                                console.log('collection:', collection);
+                                currentTrack = {};
+                                currentTrack.id = track.data.resourceId; // Store its id
+                                currentTrack.collection = collection; // Store its collection ('track' or 'oneshot')
+                                currentTrack.volume = track.volume; // Store its volume
+                                // If the current track is a one-shot, store its timings
+                                if (collection === 'oneshots') {
+                                    currentTrack.minIndex = track.minIndex;
+                                    currentTrack.maxIndex = track.maxIndex;
+                                }
+                                currentAtmosphere.tracks.push(currentTrack);
+                            }
+                        } catch (err) {
+                            _didIteratorError2 = true;
+                            _iteratorError2 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                    _iterator2.return();
+                                }
+                            } finally {
+                                if (_didIteratorError2) {
+                                    throw _iteratorError2;
+                                }
+                            }
+                        }
+
+                        atmospheres.push(currentAtmosphere);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            console.log(atmospheres);
+            localStorage.setItem('atmospheres', JSON.stringify(atmospheres));
+        }
+    }, {
+        key: 'loadAtmospheres',
+        value: function loadAtmospheres() {
+            //TODO:
+        }
+    }]);
+
+    return PersistenceManager;
+}();
+
+exports.default = PersistenceManager;
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12817,7 +13003,7 @@ var Sidebar = function () {
 exports.default = Sidebar;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12851,7 +13037,7 @@ function TrackManager() {
 exports.default = TrackManager;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12868,7 +13054,7 @@ exports.default = TrackManager;
 })();
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12902,7 +13088,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12928,7 +13114,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12962,8 +13148,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 24 */,
-/* 25 */
+/* 25 */,
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12974,7 +13160,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(26);
+var _handlebarsRuntime = __webpack_require__(27);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -12984,11 +13170,11 @@ var _handlebarsCompilerAst = __webpack_require__(8);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(27);
+var _handlebarsCompilerBase = __webpack_require__(28);
 
-var _handlebarsCompilerCompiler = __webpack_require__(29);
+var _handlebarsCompilerCompiler = __webpack_require__(30);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(31);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(32);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -13035,7 +13221,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13057,7 +13243,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(47);
+var _handlebarsSafeString = __webpack_require__(48);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -13069,7 +13255,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(46);
+var _handlebarsRuntime = __webpack_require__(47);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -13108,7 +13294,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13124,15 +13310,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(32);
+var _parser = __webpack_require__(33);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(34);
+var _whitespaceControl = __webpack_require__(35);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(30);
+var _helpers = __webpack_require__(31);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -13163,7 +13349,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13336,7 +13522,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13916,7 +14102,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14153,7 +14339,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14172,7 +14358,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(28);
+var _codeGen = __webpack_require__(29);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -15288,7 +15474,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16034,7 +16220,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16227,7 +16413,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16455,7 +16641,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16467,7 +16653,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(36);
+var _decoratorsInline = __webpack_require__(37);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -16478,7 +16664,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16514,7 +16700,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16526,31 +16712,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(38);
+var _helpersBlockHelperMissing = __webpack_require__(39);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(39);
+var _helpersEach = __webpack_require__(40);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(40);
+var _helpersHelperMissing = __webpack_require__(41);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(41);
+var _helpersIf = __webpack_require__(42);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(42);
+var _helpersLog = __webpack_require__(43);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(43);
+var _helpersLookup = __webpack_require__(44);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(44);
+var _helpersWith = __webpack_require__(45);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -16567,7 +16753,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16613,7 +16799,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16714,7 +16900,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16746,7 +16932,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16782,7 +16968,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16815,7 +17001,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16834,7 +17020,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16874,7 +17060,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16928,7 +17114,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17242,7 +17428,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17264,7 +17450,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -17273,9 +17459,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(25)['default'];
+var handlebars = __webpack_require__(26)['default'];
 
-var printer = __webpack_require__(33);
+var printer = __webpack_require__(34);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -17295,7 +17481,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports) {
 
 var g;
