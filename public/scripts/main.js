@@ -10979,7 +10979,7 @@ var Track = function () {
         The data object behind loop and one-shot tracks.
     */
 
-    function Track(trackData, atmosphere, volume) {
+    function Track(trackData, atmosphere, volume, ignoreAutoplay) {
         _classCallCheck(this, Track);
 
         if (trackData == undefined) {
@@ -10992,7 +10992,7 @@ var Track = function () {
         this.volume = volume; // the volume modifier specific to this track
 
         this.createElement(trackData);
-        this.createAudio(trackData);
+        this.createAudio(ignoreAutoplay);
         this.updateVolumeSlider(this.volume); // update the volume slider to match the predefined volume from this atmosphere, if one exists
     }
 
@@ -11029,6 +11029,7 @@ var Track = function () {
             this.$volumeSlider.on('input', function () {
                 this.volume = this.$volumeSlider.val();
                 this.updateVolume();
+                _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
             $trackHTML.find(".btn--mute" // mute button
             ).on('click', function () {
@@ -11050,7 +11051,7 @@ var Track = function () {
 
     }, {
         key: 'createAudio',
-        value: function createAudio() {
+        value: function createAudio(ignoreAutoplay) {
             // Prepend path and append track postfixes to the sample name
             var filenames = _GlobalVars.g.convertToFilenames(this.data.filename);
 
@@ -11062,7 +11063,7 @@ var Track = function () {
                 autoplay: false, // handled manually
                 loop: true
             }));
-            if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
+            if (_GlobalVars.g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
                 this.begin();
             }
         }
@@ -11590,6 +11591,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _GlobalVars.g.searchBar = new _SearchBar2.default();
 _GlobalVars.g.about = new _About2.default();
+_GlobalVars.g.pm.loadAtmospheres();
 
 /***/ }),
 /* 13 */
@@ -11629,7 +11631,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 __webpack_require__(21);
 
 var Atmosphere = function () {
-    function Atmosphere(atmosphereData, id) {
+    function Atmosphere(atmosphereData, id, ignoreAutoplay) {
         _classCallCheck(this, Atmosphere);
 
         this.tracks = []; // An array of all loops and one-shots contained in this atmosphere
@@ -11638,10 +11640,17 @@ var Atmosphere = function () {
         this.idCounter = 0; // Used for assigning instantiated tracks a unique integer ID
         this.am = new _AudioManager2.default(); // Controls this atmosphere's list of audio sources
 
+        this.$volumeSlider;
+
         this.createElement();
-        this.instantiateTracks(atmosphereData.tracks, 'tracks', 'track');
-        this.instantiateTracks(atmosphereData.oneshots, 'oneshots', 'oneshot');
-        this.handleAutoplay(); // Only display relevant buttons based on whether or not atmosphere should autoplay
+        this.instantiateTracks(atmosphereData.tracks, 'tracks', ignoreAutoplay);
+        this.instantiateTracks(atmosphereData.oneshots, 'oneshots', ignoreAutoplay);
+        this.handleAutoplay(ignoreAutoplay); // Only display relevant buttons based on whether or not atmosphere should autoplay
+
+        // If atmosphere has a predefined volume (e.g. loading from localStorage), set it
+        if (atmosphereData.volume === 0 || atmosphereData.volume) {
+            this.setVolumeSlider(atmosphereData.volume);
+        }
     }
 
     /* Creates and adds a corresponding atmosphere div element to the DOM */
@@ -11735,9 +11744,8 @@ var Atmosphere = function () {
             // Exit edit mode when enter is pressed
             $titleText.on('keydown', function (e) {
                 if (e.keyCode == "13") {
-                    // enter was pressed, so exit edit mode
-                    $titleText.prop('contenteditable', false).toggleClass('editable');
-                    _GlobalVars.g.atmosphereManager.$editingTitle = null;
+                    // enter was pressed, must be in edit mode, so exit edit mode
+                    that.toggleTitleEditable($titleText);
                 }
             });
 
@@ -11762,8 +11770,6 @@ var Atmosphere = function () {
                 _GlobalVars.g.atmosphereManager.$editingTitle = $titleText;
                 //  and select it with the cursor.
                 $titleText.focus();
-                // .delay(100).select();
-                // .select();
             } else {
                 $titleText.removeClass("editable");
             }
@@ -11772,9 +11778,12 @@ var Atmosphere = function () {
         key: 'rigVolumeControls',
         value: function rigVolumeControls($atmosphereHTML) {
             var that = this;
-            var $volumeSlider = $atmosphereHTML.find('.volume input[type=range]');
-            $volumeSlider.on('input', function () {
-                that.setVolume($volumeSlider.val());
+            this.$volumeSlider = $atmosphereHTML.find('.volume input[type=range]');
+            this.$volumeSlider.on('input', function () {
+                that.setVolume(that.$volumeSlider.val());
+                if (_GlobalVars.g.pm) {
+                    _GlobalVars.g.pm.storeAtmospheres();
+                }
             });
             var $muteBtn = $atmosphereHTML.find(".btn--mute");
             $muteBtn.on('click', function () {
@@ -11783,20 +11792,20 @@ var Atmosphere = function () {
         }
     }, {
         key: 'instantiateTracks',
-        value: function instantiateTracks(tracks, collection) {
+        value: function instantiateTracks(tracks, collection, ignoreAutoplay) {
             if (!tracks) {
                 // Atmosphere contains no loops, no one-shots, or neither
                 return;
             }
             tracks.forEach(function (trackData) {
                 _GlobalVars.g.dataManager.getData(collection, trackData.id, function (result) {
-                    this.addTrack(result, collection, trackData);
+                    this.addTrack(result, collection, trackData, ignoreAutoplay);
                 }.bind(this));
             }, this);
         }
 
         /*
-            trackObject: contains track-specific information pulled from the database (filename, etc.)
+            trackObject: contains track-specific information pulled from the database (filename, resource ID, etc.)
             collection: "oneshots" or "tracks"
             trackData: contains track-specific information as specified by the containing atmosphere, such as:
                 volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
@@ -11806,7 +11815,7 @@ var Atmosphere = function () {
 
     }, {
         key: 'addTrack',
-        value: function addTrack(trackObject, collection, trackData) {
+        value: function addTrack(trackObject, collection, trackData, ignoreAutoplay) {
             var volume = 1; // Assume full volume by default
             if (trackData && trackData.volume) {
                 // Track included in the preconfigured atmosphere
@@ -11815,7 +11824,6 @@ var Atmosphere = function () {
             // Prepare track data for template injection
             trackObject.id = this.idCounter;
             trackObject.atmosphereId = this.id;
-            trackObject.resourceId = trackData.id;
             this.idCounter++;
 
             // Create track data object
@@ -11824,17 +11832,20 @@ var Atmosphere = function () {
                 // OneShot
                 if (trackData && trackData.minIndex && trackData.maxIndex) {
                     // One-shot included in the preconfigured atmosphere
-                    track = new _OneShot2.default(trackObject, this, volume, trackData.minIndex, trackData.maxIndex);
+                    track = new _OneShot2.default(trackObject, this, volume, trackData.minIndex, trackData.maxIndex, ignoreAutoplay);
                 } else {
-                    track = new _OneShot2.default(trackObject, this, volume); // Resort to timestep defaults
+                    track = new _OneShot2.default(trackObject, this, volume, _OneShot2.default.startMinIndex, _OneShot2.default.startMaxIndex, ignoreAutoplay); // Resort to timestep defaults
                 }
             } else {
                 // Default
-                track = new _Track2.default(trackObject, this, volume);
+                track = new _Track2.default(trackObject, this, volume, ignoreAutoplay);
             }
 
             // Add track to array
             this.tracks.push(track);
+
+            // Update localStorage
+            _GlobalVars.g.pm.storeAtmospheres();
         }
 
         /* 
@@ -11851,6 +11862,7 @@ var Atmosphere = function () {
                     this.tracks.splice(i, 1);
                 }
             }
+            _GlobalVars.g.pm.storeAtmospheres();
         }
     }, {
         key: 'hideTracks',
@@ -11871,6 +11883,12 @@ var Atmosphere = function () {
         value: function toggleMute() {
             this.am.toggleMuteMultiplier();
             this.updateTrackVolumes();
+        }
+    }, {
+        key: 'setVolumeSlider',
+        value: function setVolumeSlider(newVolume) {
+            this.$volumeSlider.val(newVolume);
+            this.setVolume(newVolume);
         }
     }, {
         key: 'setVolume',
@@ -11934,11 +11952,13 @@ var Atmosphere = function () {
                 _GlobalVars.g.atmosphereManager.activeAtmosphere = null;
             }
             _GlobalVars.g.atmosphereManager.atmospheres[this.id] = null; //TODO: replace with splicing to avoid wasted array spaces
+            // Update localStorage
+            _GlobalVars.g.pm.storeAtmospheres();
         }
     }, {
         key: 'handleAutoplay',
-        value: function handleAutoplay() {
-            if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
+        value: function handleAutoplay(ignoreAutoplay) {
+            if (_GlobalVars.g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
                 this.hidePlayButtons();
             }
         }
@@ -11989,7 +12009,7 @@ var AtmosphereManager = function () {
         _classCallCheck(this, AtmosphereManager);
 
         this.id_counter = 0; // Used for assigning instantiated tracks a unique integer ID
-        this.muteMultiplier = 1; // 0 if global mute is on, 1 if it's not (TODO: look into howler.js global mute method)
+        this.muteMultiplier = 1; // 0 if global mute is on, 1 if it's not
         this.volume = 1; // The global volume modifier, affects all sounds
         this.atmospheres = []; // An array of all atmospheres
         this.activeAtmosphere = null; // The currently selected atmosphere, whose tracks are being displayed
@@ -12059,11 +12079,12 @@ var AtmosphereManager = function () {
 
     }, {
         key: 'addAtmosphere',
-        value: function addAtmosphere(atmosphereData) {
-            var atmosphere = new _Atmosphere2.default(atmosphereData, this.id_counter);
+        value: function addAtmosphere(atmosphereData, ignoreAutoplay) {
+            var atmosphere = new _Atmosphere2.default(atmosphereData, this.id_counter, ignoreAutoplay);
             this.id_counter++;
             this.atmospheres.push(atmosphere);
             this.setActiveAtmosphere(atmosphere);
+            _GlobalVars.g.pm.storeAtmospheres();
         }
     }, {
         key: 'setActiveAtmosphere',
@@ -12098,12 +12119,12 @@ var AtmosphereManager = function () {
 
     }, {
         key: 'addTrack',
-        value: function addTrack(trackData, collection) {
+        value: function addTrack(trackObject, collection) {
             if (this.activeAtmosphere == null) {
                 this.newAtmosphere();
             }
 
-            this.activeAtmosphere.addTrack(trackData, collection);
+            this.activeAtmosphere.addTrack(trackObject, collection);
         }
     }, {
         key: 'switchTo',
@@ -12159,6 +12180,7 @@ var AtmosphereManager = function () {
             if (this.$editingTitle != null) {
                 this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
                 this.$editingTitle = null;
+                _GlobalVars.g.pm.storeAtmospheres();
             }
         }
     }]);
@@ -12504,10 +12526,10 @@ var OneShot = function (_Track) {
         }
     }]);
 
-    function OneShot(trackData, atmosphere, volume, minIndex, maxIndex) {
+    function OneShot(trackData, atmosphere, volume, minIndex, maxIndex, ignoreAutoplay) {
         _classCallCheck(this, OneShot);
 
-        var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere, volume));
+        var _this = _possibleConstructorReturn(this, (OneShot.__proto__ || Object.getPrototypeOf(OneShot)).call(this, trackData, atmosphere, volume, ignoreAutoplay));
 
         _this.frameLength = 10; // milliseconds between progress bar updates
 
@@ -12524,7 +12546,7 @@ var OneShot = function (_Track) {
 
         // These lines are found in Track.createAudio(), but must be called after
         //  setting the sample firing frequency, and so are moved here in this class
-        if (_GlobalVars.g.$autoplayCheckbox.is(":checked")) {
+        if (_GlobalVars.g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
             _this.begin(); // start the timer
         }
         return _this;
@@ -12590,20 +12612,24 @@ var OneShot = function (_Track) {
             this.$trackHTML.find('.oneshot-min.btn--more' // Increase
             ).on('click', function () {
                 this.changeRange('min', 1);
+                _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
             this.$trackHTML.find('.oneshot-min.btn--less' // Decrease
             ).on('click', function () {
                 this.changeRange('min', -1);
+                _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
 
             // Change frequency range maximum by one step
             this.$trackHTML.find('.oneshot-max.btn--more' // Increase
             ).on('click', function () {
                 this.changeRange('max', 1);
+                _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
             this.$trackHTML.find('.oneshot-max.btn--less' // Decrease
             ).on('click', function () {
                 this.changeRange('max', -1);
+                _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
         }
 
@@ -12812,10 +12838,6 @@ var PersistenceManager = function () {
         if (this.storageEmpty()) {
             // Initialize storage
             localStorage.setItem('atmospheres', JSON.stringify([]));
-        } else {
-            console.log('full');
-            // TODO: reload stored atmospheres
-            loadAtmospheres();
         }
     }
 
@@ -12825,8 +12847,13 @@ var PersistenceManager = function () {
             return !localStorage.getItem('atmospheres');
         }
 
-        // TODO: call this whenever a setting is changed (atmosphere volume, atmosphere name, track volume, one-shot timing, atmosphere creation/deletion, track creation/deletion)
-        // TODO: store global volume as well (?)
+        /*
+            Records the current state of the app in the browser's localStorage,
+            overwriting whatever was previously stored.
+            Called whenever a recorded setting is changed.
+                (atmosphere volume, atmosphere name, track volume,
+                one-shot timing, atmosphere creation/deletion, track creation/deletion)
+        */
 
     }, {
         key: 'storeAtmospheres',
@@ -12849,6 +12876,7 @@ var PersistenceManager = function () {
                         currentAtmosphere.name = atmosphere.getTitle(); // Store its name
                         currentAtmosphere.volume = atmosphere.am.volume; // Store its volume
                         currentAtmosphere.tracks = [];
+                        currentAtmosphere.oneshots = [];
 
                         // Loop through the current atmosphere's tracks
                         var _iteratorNormalCompletion2 = true;
@@ -12860,17 +12888,18 @@ var PersistenceManager = function () {
                                 var track = _step2.value;
 
                                 collection = track.getCollection();
-                                console.log('collection:', collection);
                                 currentTrack = {};
-                                currentTrack.id = track.data.resourceId; // Store its id
-                                currentTrack.collection = collection; // Store its collection ('track' or 'oneshot')
+                                currentTrack.id = track.data._id; // Store its id
+                                // currentTrack.collection = collection;   // Store its collection ('track' or 'oneshot') TODO: this line will be required when loops & oneshots are all in one array
                                 currentTrack.volume = track.volume; // Store its volume
                                 // If the current track is a one-shot, store its timings
                                 if (collection === 'oneshots') {
                                     currentTrack.minIndex = track.minIndex;
                                     currentTrack.maxIndex = track.maxIndex;
+                                    currentAtmosphere.oneshots.push(currentTrack);
+                                } else {
+                                    currentAtmosphere.tracks.push(currentTrack);
                                 }
-                                currentAtmosphere.tracks.push(currentTrack);
                             }
                         } catch (err) {
                             _didIteratorError2 = true;
@@ -12905,13 +12934,36 @@ var PersistenceManager = function () {
                 }
             }
 
-            console.log(atmospheres);
             localStorage.setItem('atmospheres', JSON.stringify(atmospheres));
         }
     }, {
         key: 'loadAtmospheres',
         value: function loadAtmospheres() {
-            //TODO:
+            var atmospheres = JSON.parse(localStorage.getItem('atmospheres'));
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = atmospheres[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var atmosphere = _step3.value;
+
+                    _GlobalVars.g.atmosphereManager.addAtmosphere(atmosphere, true);
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
         }
     }]);
 

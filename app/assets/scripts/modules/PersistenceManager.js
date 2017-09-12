@@ -7,10 +7,6 @@ class PersistenceManager {
         if (this.storageEmpty()) {
             // Initialize storage
             localStorage.setItem('atmospheres', JSON.stringify([]));
-        } else {
-            console.log('full');
-            // TODO: reload stored atmospheres
-            loadAtmospheres();
         }
     }
 
@@ -18,9 +14,14 @@ class PersistenceManager {
         return !localStorage.getItem('atmospheres');
     }
 
-    // TODO: call this whenever a setting is changed (atmosphere volume, atmosphere name, track volume, one-shot timing, atmosphere creation/deletion, track creation/deletion)
-    // TODO: store global volume as well (?)
-    storeAtmospheres() {
+    /*
+        Records the current state of the app in the browser's localStorage,
+        overwriting whatever was previously stored.
+        Called whenever a recorded setting is changed.
+            (atmosphere volume, atmosphere name, track volume,
+            one-shot timing, atmosphere creation/deletion, track creation/deletion)
+    */
+     storeAtmospheres() {
         var atmospheres = [];
         var currentAtmosphere, currentTrack, collection;
         // Loop through g.am.atmospheres
@@ -32,34 +33,36 @@ class PersistenceManager {
                 currentAtmosphere.name = atmosphere.getTitle();     // Store its name
                 currentAtmosphere.volume = atmosphere.am.volume;    // Store its volume
                 currentAtmosphere.tracks = [];
+                currentAtmosphere.oneshots = [];
 
                 // Loop through the current atmosphere's tracks
                 for (let track of atmosphere.tracks) {
                     collection = track.getCollection();
-                    console.log('collection:', collection);
                     currentTrack = {};
-                    currentTrack.id = track.data.resourceId;    // Store its id
-                    currentTrack.collection = collection;       // Store its collection ('track' or 'oneshot')
-                    currentTrack.volume = track.volume;         // Store its volume
+                    currentTrack.id = track.data._id;       // Store its id
+                    // currentTrack.collection = collection;   // Store its collection ('track' or 'oneshot') TODO: this line will be required when loops & oneshots are all in one array
+                    currentTrack.volume = track.volume;     // Store its volume
                     // If the current track is a one-shot, store its timings
                     if (collection === 'oneshots') {
                         currentTrack.minIndex = track.minIndex;
                         currentTrack.maxIndex = track.maxIndex;
+                        currentAtmosphere.oneshots.push(currentTrack);
+                    } else {
+                        currentAtmosphere.tracks.push(currentTrack);
                     }
-                    currentAtmosphere.tracks.push(currentTrack);
                 }
 
                 atmospheres.push(currentAtmosphere);
             }
         }
-        
-        console.log(atmospheres);
         localStorage.setItem('atmospheres', JSON.stringify(atmospheres));
-        
     }
 
     loadAtmospheres() {
-        //TODO:
+        var atmospheres = JSON.parse(localStorage.getItem('atmospheres'));
+        for (let atmosphere of atmospheres) {
+            g.atmosphereManager.addAtmosphere(atmosphere, true);
+        }
     }
 
 }

@@ -8,7 +8,7 @@ class Track {
         The data object behind loop and one-shot tracks.
     */
 
-    constructor(trackData, atmosphere, volume) {
+    constructor(trackData, atmosphere, volume, ignoreAutoplay) {
         if (trackData == undefined) {
             console.error('No accessible data for selected track.')
         }
@@ -19,7 +19,7 @@ class Track {
         this.volume = volume;        // the volume modifier specific to this track
 
         this.createElement(trackData);
-        this.createAudio(trackData);
+        this.createAudio(ignoreAutoplay);
         this.updateVolumeSlider(this.volume);   // update the volume slider to match the predefined volume from this atmosphere, if one exists
     }
 
@@ -57,6 +57,7 @@ class Track {
         this.$volumeSlider.on('input', function() {
             this.volume = this.$volumeSlider.val();
             this.updateVolume();
+            g.pm.storeAtmospheres();
         }.bind(this))
         $trackHTML.find(".btn--mute")                   // mute button
         .on('click', function() {
@@ -75,7 +76,7 @@ class Track {
     }
 
     /* Handles the creation of the actual Howler audio object */
-    createAudio() {
+    createAudio(ignoreAutoplay) {
         // Prepend path and append track postfixes to the sample name
         var filenames = g.convertToFilenames(this.data.filename);
 
@@ -90,7 +91,7 @@ class Track {
                 loop: true
             })
         );
-        if (g.$autoplayCheckbox.is(":checked")) {
+        if (g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
             this.begin();
         }
     }

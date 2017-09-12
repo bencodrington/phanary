@@ -15,8 +15,8 @@ class OneShot extends Track {
     static get startMinIndex() { return _startMinIndex; }
     static get startMaxIndex() { return _startMaxIndex; }
 
-    constructor(trackData, atmosphere, volume, minIndex, maxIndex) {
-        super(trackData, atmosphere, volume);
+    constructor(trackData, atmosphere, volume, minIndex, maxIndex, ignoreAutoplay) {
+        super(trackData, atmosphere, volume, ignoreAutoplay);
 
         this.frameLength = 10;  // milliseconds between progress bar updates
 
@@ -32,7 +32,7 @@ class OneShot extends Track {
 
         // These lines are found in Track.createAudio(), but must be called after
         //  setting the sample firing frequency, and so are moved here in this class
-        if (g.$autoplayCheckbox.is(":checked")) {
+        if (g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
             this.begin(); // start the timer
         }
     }
@@ -87,20 +87,24 @@ class OneShot extends Track {
         this.$trackHTML.find('.oneshot-min.btn--more')  // Increase
         .on('click', function() {
             this.changeRange('min', 1);
+            g.pm.storeAtmospheres();
         }.bind(this));
         this.$trackHTML.find('.oneshot-min.btn--less')  // Decrease
         .on('click', function() {
             this.changeRange('min', -1);
+            g.pm.storeAtmospheres();
         }.bind(this));
 
         // Change frequency range maximum by one step
         this.$trackHTML.find('.oneshot-max.btn--more')  // Increase
         .on('click', function() {
             this.changeRange('max', 1);
+            g.pm.storeAtmospheres();
         }.bind(this));
         this.$trackHTML.find('.oneshot-max.btn--less')  // Decrease
         .on('click', function() {
             this.changeRange('max', -1);
+            g.pm.storeAtmospheres();
         }.bind(this));
     }
 
