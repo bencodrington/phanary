@@ -11643,9 +11643,17 @@ var Atmosphere = function () {
         this.$volumeSlider;
 
         this.createElement();
-        this.instantiateTracks(atmosphereData.tracks, 'tracks', ignoreAutoplay);
-        this.instantiateTracks(atmosphereData.oneshots, 'oneshots', ignoreAutoplay);
-        this.handleAutoplay(ignoreAutoplay); // Only display relevant buttons based on whether or not atmosphere should autoplay
+        // combinedTracks only exists if the atmosphere is being loadec from localStrage, so that tracks can be regenerated in
+        //  the order that they were saved
+        if (atmosphereData.combinedTracks) {
+            this.instantiateCombinedTracks(atmosphereData.combinedTracks);
+        } else {
+            this.instantiateTracks(atmosphereData.tracks, 'tracks', ignoreAutoplay);
+            this.instantiateTracks(atmosphereData.oneshots, 'oneshots', ignoreAutoplay);
+        }
+
+        // Only display relevant buttons based on whether or not atmosphere should autoplay
+        this.handleAutoplay(ignoreAutoplay);
 
         // If atmosphere has a predefined volume (e.g. loading from localStorage), set it
         if (atmosphereData.volume === 0 || atmosphereData.volume) {
@@ -11800,6 +11808,19 @@ var Atmosphere = function () {
             tracks.forEach(function (trackData) {
                 _GlobalVars.g.dataManager.getData(collection, trackData.id, function (result) {
                     this.addTrack(result, collection, trackData, ignoreAutoplay);
+                }.bind(this));
+            }, this);
+        }
+    }, {
+        key: 'instantiateCombinedTracks',
+        value: function instantiateCombinedTracks(tracks) {
+            if (!tracks) {
+                // Atmosphere contains no loops, no one-shots, or neither
+                return;
+            }
+            tracks.forEach(function (track) {
+                _GlobalVars.g.dataManager.getData(track.collection, track.id, function (result) {
+                    this.addTrack(result, track.collection, track, true);
                 }.bind(this));
             }, this);
         }
@@ -12875,6 +12896,7 @@ var PersistenceManager = function () {
                         currentAtmosphere = {};
                         currentAtmosphere.name = atmosphere.getTitle(); // Store its name
                         currentAtmosphere.volume = atmosphere.am.volume; // Store its volume
+                        currentAtmosphere.combinedTracks = [];
                         currentAtmosphere.tracks = [];
                         currentAtmosphere.oneshots = [];
 
@@ -12890,7 +12912,7 @@ var PersistenceManager = function () {
                                 collection = track.getCollection();
                                 currentTrack = {};
                                 currentTrack.id = track.data._id; // Store its id
-                                // currentTrack.collection = collection;   // Store its collection ('track' or 'oneshot') TODO: this line will be required when loops & oneshots are all in one array
+                                currentTrack.collection = collection; // Store its collection ('track' or 'oneshot')
                                 currentTrack.volume = track.volume; // Store its volume
                                 // If the current track is a one-shot, store its timings
                                 if (collection === 'oneshots') {
@@ -12900,6 +12922,7 @@ var PersistenceManager = function () {
                                 } else {
                                     currentAtmosphere.tracks.push(currentTrack);
                                 }
+                                currentAtmosphere.combinedTracks.push(currentTrack);
                             }
                         } catch (err) {
                             _didIteratorError2 = true;

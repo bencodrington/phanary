@@ -18,9 +18,17 @@ class Atmosphere {
         this.$volumeSlider;
 
         this.createElement();
-        this.instantiateTracks(atmosphereData.tracks, 'tracks', ignoreAutoplay);
-        this.instantiateTracks(atmosphereData.oneshots, 'oneshots', ignoreAutoplay);
-        this.handleAutoplay(ignoreAutoplay); // Only display relevant buttons based on whether or not atmosphere should autoplay
+        // combinedTracks only exists if the atmosphere is being loadec from localStrage, so that tracks can be regenerated in
+        //  the order that they were saved
+        if (atmosphereData.combinedTracks) {
+            this.instantiateCombinedTracks(atmosphereData.combinedTracks);
+        } else {
+            this.instantiateTracks(atmosphereData.tracks, 'tracks', ignoreAutoplay);
+            this.instantiateTracks(atmosphereData.oneshots, 'oneshots', ignoreAutoplay);
+        }
+        
+        // Only display relevant buttons based on whether or not atmosphere should autoplay
+        this.handleAutoplay(ignoreAutoplay);
         
         // If atmosphere has a predefined volume (e.g. loading from localStorage), set it
         if (atmosphereData.volume === 0 || atmosphereData.volume) {
@@ -157,12 +165,23 @@ class Atmosphere {
     }
 
     instantiateTracks(tracks, collection, ignoreAutoplay) {
-        if (!tracks) { // Atmosphere contains no loops, no one-shots, or neither
+        if (!tracks) {  // Atmosphere contains no loops, no one-shots, or neither
             return;
         }
         tracks.forEach(function(trackData) {
             g.dataManager.getData(collection, trackData.id, function(result) {
                 this.addTrack(result, collection, trackData, ignoreAutoplay);
+            }.bind(this));
+        }, this);
+    }
+
+    instantiateCombinedTracks(tracks) {
+        if (!tracks) {  // Atmosphere contains no loops, no one-shots, or neither
+            return;
+        }
+        tracks.forEach(function(track) {
+            g.dataManager.getData(track.collection, track.id, function(result) {
+                this.addTrack(result, track.collection, track, true);
             }.bind(this));
         }, this);
     }

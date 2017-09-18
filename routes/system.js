@@ -131,7 +131,6 @@ router.get('/search', function(req, res, next) {
     nameResults: [],
     tagResults: []
   };
-  // console.log('/search query: ' + query);
   models.forEach(function(model, index) {
     model.
       // Search to see if name contains search query
@@ -141,8 +140,6 @@ router.get('/search', function(req, res, next) {
       ).
       exec(function(err, results) {
         // TODO: error handling
-        // console.log("/search results: ");
-        // console.log(results);
         if (results) {
           // Append results from this operation
           queryResults.nameResults = queryResults.nameResults.concat(results);
@@ -167,8 +164,6 @@ router.get('/search', function(req, res, next) {
           console.error('Search failed: ' + err);
           return res.end(JSON.stringify({}));
         }
-        // console.log("/search results: ");
-        // console.log(results);
         if (results) {
           // Append results from this operation
           queryResults.tagResults = queryResults.tagResults.concat(results);
@@ -176,7 +171,6 @@ router.get('/search', function(req, res, next) {
         completed++;
         // If this is the last 'find' operation to complete
         if (completed == 2 * models.length) {
-          console.log(queryResults.tagResults);
           // Return the results
           return res.end(sortResults(queryResults));
         }
@@ -185,9 +179,6 @@ router.get('/search', function(req, res, next) {
 });
 
 function sortResults(queryResults) {
-  // console.log('sortResults: queryResults:');
-  // console.log(queryResults);
-
   // If there are results common to both sets of results, display those
   var returnResults = [];
   for (var i = 0; i < queryResults.tagResults.length; i++) {
@@ -314,7 +305,6 @@ router.post('/update', function(req, res, next) {
 });
 
 function updateItem(body, res) {
-  // console.log('body:', body); //TODO: remove
   var collection = body.collection;
   var id = body.id;
 

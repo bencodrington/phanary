@@ -32,6 +32,7 @@ class PersistenceManager {
                 currentAtmosphere = {};
                 currentAtmosphere.name = atmosphere.getTitle();     // Store its name
                 currentAtmosphere.volume = atmosphere.am.volume;    // Store its volume
+                currentAtmosphere.combinedTracks = [];
                 currentAtmosphere.tracks = [];
                 currentAtmosphere.oneshots = [];
 
@@ -40,7 +41,7 @@ class PersistenceManager {
                     collection = track.getCollection();
                     currentTrack = {};
                     currentTrack.id = track.data._id;       // Store its id
-                    // currentTrack.collection = collection;   // Store its collection ('track' or 'oneshot') TODO: this line will be required when loops & oneshots are all in one array
+                    currentTrack.collection = collection;   // Store its collection ('track' or 'oneshot')
                     currentTrack.volume = track.volume;     // Store its volume
                     // If the current track is a one-shot, store its timings
                     if (collection === 'oneshots') {
@@ -50,6 +51,7 @@ class PersistenceManager {
                     } else {
                         currentAtmosphere.tracks.push(currentTrack);
                     }
+                    currentAtmosphere.combinedTracks.push(currentTrack);
                 }
 
                 atmospheres.push(currentAtmosphere);
