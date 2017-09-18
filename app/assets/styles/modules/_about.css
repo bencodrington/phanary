@@ -54,6 +54,18 @@
         & strong {
             color: $whiteBlue;
         }
+
+        & a {
+            color: $phanary;
+
+            &:hover {
+                color: $vanilla;
+            }
+
+            &:focus {
+                text-decoration: underline;
+            }
+        }
     }
 
     &__phonetics {
