@@ -9,7 +9,7 @@ class AtmosphereManager {
 
     constructor() {
         this.id_counter         = 0;    // Used for assigning instantiated tracks a unique integer ID
-        this.muteMultiplier     = 1;    // 0 if global mute is on, 1 if it's not (TODO: look into howler.js global mute method)
+        this.muteMultiplier     = 1;    // 0 if global mute is on, 1 if it's not
         this.volume             = 1;    // The global volume modifier, affects all sounds
         this.atmospheres        = [];   // An array of all atmospheres
         this.activeAtmosphere   = null; // The currently selected atmosphere, whose tracks are being displayed
@@ -55,11 +55,11 @@ class AtmosphereManager {
         var id = $selected.data('db-id');
         if ($selected.hasClass("result--track")) {
             g.dataManager.getData('tracks', id, function(result) {
-                this.addTrack(result, 'track');
+                this.addTrack(result, 'tracks');
             }.bind(this));
         } else if ($selected.hasClass("result--oneshot")) {
             g.dataManager.getData('oneshots', id, function(result) {
-                this.addTrack(result, 'oneshot');
+                this.addTrack(result, 'oneshots');
             }.bind(this));
         } else if ($selected.hasClass("result--atmosphere")) {
             g.dataManager.getData('atmospheres', id, function(result) {
@@ -70,11 +70,12 @@ class AtmosphereManager {
 
     // Called when enter is pressed in the search bar, while a track is highlighted.
     //  Also called by this.newAtmosphere();
-    addAtmosphere(atmosphereData) {
-        var atmosphere = new Atmosphere(atmosphereData, this.id_counter);
+    addAtmosphere(atmosphereData, ignoreAutoplay) {
+        var atmosphere = new Atmosphere(atmosphereData, this.id_counter, ignoreAutoplay);
         this.id_counter++;
         this.atmospheres.push(atmosphere)
         this.setActiveAtmosphere(atmosphere);
+        g.pm.storeAtmospheres();
     }
 
     setActiveAtmosphere(atmosphere) {
@@ -104,12 +105,12 @@ class AtmosphereManager {
     }
 
     // Called when enter is pressed in the search bar, while a track is highlighted.
-    addTrack(trackData, type) {
+    addTrack(trackObject, collection) {
         if (this.activeAtmosphere == null) {
             this.newAtmosphere();
         }
 
-        this.activeAtmosphere.addTrack(trackData, type);
+        this.activeAtmosphere.addTrack(trackObject, collection);
     }
 
     switchTo(atmosphere) {
@@ -160,6 +161,7 @@ class AtmosphereManager {
         if (this.$editingTitle != null) {
             this.$editingTitle.prop('contenteditable', false).toggleClass('editable');
             this.$editingTitle = null;
+            g.pm.storeAtmospheres();
         }
     }
 

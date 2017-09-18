@@ -4,9 +4,7 @@ require('./templates/oneshot');
 import { g } from "./GlobalVars.js";
 
 // The different values that "Playing every _ to _ seconds" can hold.
-let _timesteps = [
-    0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180
-];
+import _timesteps from './OneShotTimesteps';
 
 let _startMinIndex = 3; // the index of the default minimum timestep
 let _startMaxIndex = 4; // the index of the default maximum timestep
@@ -17,20 +15,24 @@ class OneShot extends Track {
     static get startMinIndex() { return _startMinIndex; }
     static get startMaxIndex() { return _startMaxIndex; }
 
-    constructor(trackData, atmosphere) {
-        super(trackData, atmosphere);
+    constructor(trackData, atmosphere, volume, minIndex, maxIndex, ignoreAutoplay) {
+        super(trackData, atmosphere, volume, ignoreAutoplay);
 
         this.frameLength = 10;  // milliseconds between progress bar updates
 
         // Set the frequency of sample firing to the timestep defaults
         this.minIndex = OneShot.startMinIndex;
         this.maxIndex = OneShot.startMaxIndex;
+        if (minIndex && maxIndex) { // One-shot timesteps are specified in the containing atmosphere
+            this.minIndex = minIndex;
+            this.maxIndex = maxIndex;
+        }
 
         this.updateLabels();    // update labels to reflect the initialized indices
 
         // These lines are found in Track.createAudio(), but must be called after
         //  setting the sample firing frequency, and so are moved here in this class
-        if (g.$autoplayCheckbox.is(":checked")) {
+        if (g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
             this.begin(); // start the timer
         }
     }
@@ -85,20 +87,24 @@ class OneShot extends Track {
         this.$trackHTML.find('.oneshot-min.btn--more')  // Increase
         .on('click', function() {
             this.changeRange('min', 1);
+            g.pm.storeAtmospheres();
         }.bind(this));
         this.$trackHTML.find('.oneshot-min.btn--less')  // Decrease
         .on('click', function() {
             this.changeRange('min', -1);
+            g.pm.storeAtmospheres();
         }.bind(this));
 
         // Change frequency range maximum by one step
         this.$trackHTML.find('.oneshot-max.btn--more')  // Increase
         .on('click', function() {
             this.changeRange('max', 1);
+            g.pm.storeAtmospheres();
         }.bind(this));
         this.$trackHTML.find('.oneshot-max.btn--less')  // Decrease
         .on('click', function() {
             this.changeRange('max', -1);
+            g.pm.storeAtmospheres();
         }.bind(this));
     }
 
@@ -238,6 +244,10 @@ class OneShot extends Track {
     /* Semantic method for accessing the static timesteps array given a min or max index */
     static getTimeStep(index) {
         return OneShot.timesteps[index];
+    }
+
+    getCollection() {
+        return 'oneshots';
     }
 
 }

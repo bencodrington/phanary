@@ -1,0 +1,137 @@
+.system-section-title, .system-sidebar__section__title {
+    color: $deepSea;
+    text-shadow: 1px 1px $mediumBlue;
+    margin: 0;
+}
+
+.system-sidebar__list {
+    border-top: 1px solid $mediumBlue;
+    border-bottom: 1px solid $mediumBlue;
+
+    & li {
+        background-color: $mediumBlue;
+        color: $deepSea;
+        cursor: pointer;
+    }
+
+    & li:nth-child(even) {
+        background-color: rgba($mediumBlue, 0.5);
+    }
+
+    & li:hover {
+        color: $whiteBlue;
+    }
+}
+
+.system-sidebar__section__title {
+    cursor: pointer;
+
+    & i {
+        pointer-events: none;   /* Stops the caret from blocking the click event */
+    }
+}
+
+.system__hidden {
+    display: none;
+}
+
+.system__section {
+
+    &__table {
+        width: 100%;
+        border-top: 1px solid $mediumBlue;
+        color: $deepSea;
+        font-weight: bold;
+    }
+
+    &__table input, &__table textarea {
+        width: 100%;
+    }
+
+    &__table textarea {
+        min-height: 8rem;
+    }
+
+    &__table input[type=number] {
+        width: 4rem;
+        margin: 0 1rem;
+    }
+
+    & h1 {
+        margin: 0;
+        color: rgba($blueberry, 0.25);
+    }
+
+    & h2 {
+        margin-top: 1rem;
+        color: $deepSea;
+    }
+
+    &__dropbox {
+        height: 4rem;
+        background-color: $lighterGrey;
+        position: relative;
+    }
+
+    /* Dashed border */
+    &__dropbox::before {
+        content: '';
+        position: absolute;
+        display: block;
+        top: 10px;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        border: .15rem dashed $stormGrey;
+        border-radius: .5rem;
+    }
+
+    &__dropbox span {
+        pointer-events: none;
+        display: block;
+        position: relative;
+        width: 100%;
+        text-align: center;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $stormGrey;
+    }
+}
+
+.system__timestep {
+    display: inline-block;
+    width: 2rem;
+}
+
+.system__right {
+    float: right;
+}
+
+.system__btn--add {
+    height: 1.5rem;
+}
+
+.system__login-box {
+    background-color: $lighterGrey;
+    border-radius: 5px;
+    padding: 1rem;
+    text-align: center;
+    display: inline-block;
+
+    &__error {
+        color: #913F3F;
+    }
+
+    & h2 {
+        color: $deepSea;
+        margin-bottom: 0.5rem;
+    }
+
+    & input {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.system__login-container {
+    text-align: center;
+}

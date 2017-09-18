@@ -8,7 +8,7 @@ class Track {
         The data object behind loop and one-shot tracks.
     */
 
-    constructor(trackData, atmosphere) {
+    constructor(trackData, atmosphere, volume, ignoreAutoplay) {
         if (trackData == undefined) {
             console.error('No accessible data for selected track.')
         }
@@ -16,10 +16,11 @@ class Track {
 
         this.id = trackData.id; // used for identifying this track to the containing atmosphere's AudioManager
         this.atmosphere = atmosphere;
-        this.volume = 1;        // the volume modifier specific to this current track
+        this.volume = volume;        // the volume modifier specific to this track
 
         this.createElement(trackData);
-        this.createAudio(trackData);
+        this.createAudio(ignoreAutoplay);
+        this.updateVolumeSlider(this.volume);   // update the volume slider to match the predefined volume from this atmosphere, if one exists
     }
 
     template(data) {
@@ -51,10 +52,12 @@ class Track {
         }.bind(this));
 
         // Make volume controls affect the associated audio object
-        $trackHTML.find(".volume input[type=range]")    // volume slider
-        .on('input', function() {
-            this.volume = $volumeSlider.val();
+        this.$volumeSlider = 
+        $trackHTML.find(".volume input[type=range]");    // volume slider
+        this.$volumeSlider.on('input', function() {
+            this.volume = this.$volumeSlider.val();
             this.updateVolume();
+            g.pm.storeAtmospheres();
         }.bind(this))
         $trackHTML.find(".btn--mute")                   // mute button
         .on('click', function() {
@@ -73,7 +76,7 @@ class Track {
     }
 
     /* Handles the creation of the actual Howler audio object */
-    createAudio() {
+    createAudio(ignoreAutoplay) {
         // Prepend path and append track postfixes to the sample name
         var filenames = g.convertToFilenames(this.data.filename);
 
@@ -88,7 +91,7 @@ class Track {
                 loop: true
             })
         );
-        if (g.$autoplayCheckbox.is(":checked")) {
+        if (g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
             this.begin();
         }
     }
@@ -145,8 +148,18 @@ class Track {
         });
     }
 
+    updateVolumeSlider(newVolume) {
+        this.$volumeSlider.val(newVolume);
+        this.volume = newVolume;
+        this.updateVolume();
+    }
+
     updateVolume() {
         this.atmosphere.am.setTrackVolume(this.id, this.volume);
+    }
+
+    getCollection() {
+        return 'tracks';
     }
 
 }

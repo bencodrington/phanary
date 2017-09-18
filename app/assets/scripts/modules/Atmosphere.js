@@ -8,17 +8,34 @@ require('./templates/atmosphere');
 
 class Atmosphere {
 
-    constructor(atmosphereData, id) {
+    constructor(atmosphereData, id, ignoreAutoplay) {
         this.tracks = [];               // An array of all loops and one-shots contained in this atmosphere
         this.data = atmosphereData;     // Contains information like the atmosphere's name, currently only used upon instantiation
         this.id = id;                   // A unique integer used for accessing this atmosphere in the AtmosphereManager's array
         this.idCounter = 0;             // Used for assigning instantiated tracks a unique integer ID
         this.am = new AudioManager();   // Controls this atmosphere's list of audio sources
+        
+        this.$volumeSlider;
 
         this.createElement();
-        this.instantiateTracks(atmosphereData.tracks, 'tracks', 'track');
-        this.instantiateTracks(atmosphereData.oneshots, 'oneshots', 'oneshot');
-        this.handleAutoplay(); // Only display relevant buttons based on whether or not atmosphere should autoplay
+        // combinedTracks only exists if the atmosphere is being loadec from localStrage, so that tracks can be regenerated in
+        //  the order that they were saved
+        //  NOTE: The order can't be guaranteed until track data is loaded asynchronously.
+        //      Currently the tracks themselves won't be added to the DOM until after their data is loaded by g.dataManager.getData()
+        if (atmosphereData.combinedTracks) {
+            this.instantiateCombinedTracks(atmosphereData.combinedTracks);
+        } else {
+            this.instantiateTracks(atmosphereData.tracks, 'tracks', ignoreAutoplay);
+            this.instantiateTracks(atmosphereData.oneshots, 'oneshots', ignoreAutoplay);
+        }
+        
+        // Only display relevant buttons based on whether or not atmosphere should autoplay
+        this.handleAutoplay(ignoreAutoplay);
+        
+        // If atmosphere has a predefined volume (e.g. loading from localStorage), set it
+        if (atmosphereData.volume === 0 || atmosphereData.volume) {
+            this.setVolumeSlider(atmosphereData.volume);
+        }
     }
 
     /* Creates and adds a corresponding atmosphere div element to the DOM */
@@ -104,9 +121,8 @@ class Atmosphere {
         // Exit edit mode when enter is pressed
         $titleText.on('keydown', function(e) {
             if (e.keyCode == "13") {
-                // enter was pressed, so exit edit mode
-                $titleText.prop('contenteditable', false).toggleClass('editable');
-                g.atmosphereManager.$editingTitle = null;
+                // enter was pressed, must be in edit mode, so exit edit mode
+                that.toggleTitleEditable($titleText);
             }
         });
 
@@ -130,18 +146,19 @@ class Atmosphere {
             g.atmosphereManager.$editingTitle = $titleText;
             //  and select it with the cursor.
             $titleText.focus();
-            // .delay(100).select();
-            // .select();
         } else {
-            $titleText.removeClass("editable")
+            $titleText.removeClass("editable");
         }
     }
 
     rigVolumeControls($atmosphereHTML) {
         var that = this;
-        var $volumeSlider = $atmosphereHTML.find('.volume input[type=range]');
-        $volumeSlider.on('input', function() {
-            that.setVolume($volumeSlider.val());
+        this.$volumeSlider = $atmosphereHTML.find('.volume input[type=range]');
+        this.$volumeSlider.on('input', function() {
+            that.setVolume(that.$volumeSlider.val());
+            if (g.pm) {
+                g.pm.storeAtmospheres();
+            }
         });
         var $muteBtn = $atmosphereHTML.find(".btn--mute");
         $muteBtn.on('click', function() {
@@ -149,19 +166,41 @@ class Atmosphere {
         });
     }
 
-    instantiateTracks(tracks, collection, type) {
-        if (!tracks) { // empty atmosphere
+    instantiateTracks(tracks, collection, ignoreAutoplay) {
+        if (!tracks) {  // Atmosphere contains no loops, no one-shots, or neither
             return;
         }
-        tracks.forEach(function(trackObject) {
-            g.dataManager.getData(collection, trackObject.id, function(result) {
-                this.addTrack(result, type);
+        tracks.forEach(function(trackData) {
+            g.dataManager.getData(collection, trackData.id, function(result) {
+                this.addTrack(result, collection, trackData, ignoreAutoplay);
             }.bind(this));
-            // TODO: instantiate them with their atmosphere-defined settings (volume, loop, delay etc.)
         }, this);
     }
 
-    addTrack(trackObject, type) {
+    instantiateCombinedTracks(tracks) {
+        if (!tracks) {  // Atmosphere contains no loops, no one-shots, or neither
+            return;
+        }
+        tracks.forEach(function(track) {
+            g.dataManager.getData(track.collection, track.id, function(result) {
+                this.addTrack(result, track.collection, track, true);
+            }.bind(this));
+        }, this);
+    }
+
+    /*
+        trackObject: contains track-specific information pulled from the database (filename, resource ID, etc.)
+        collection: "oneshots" or "tracks"
+        trackData: contains track-specific information as specified by the containing atmosphere, such as:
+            volume: the volume at which to start the track, as specified by the containing atmosphere, if one exists
+            min- and
+            maxIndex: the indices that specify how often a one-shot is played
+    */
+    addTrack(trackObject, collection, trackData, ignoreAutoplay) {
+        var volume = 1; // Assume full volume by default
+        if (trackData && trackData.volume) {  // Track included in the preconfigured atmosphere
+            volume = trackData.volume; 
+        }
         // Prepare track data for template injection
         trackObject.id = this.idCounter;
         trackObject.atmosphereId = this.id;
@@ -169,16 +208,24 @@ class Atmosphere {
         
         // Create track data object
         var track;
-        if (type === "oneshot") {
+        if (collection === "oneshots") {
             // OneShot
-            track = new OneShot(trackObject, this);
+            if (trackData && trackData.minIndex && trackData.maxIndex) { // One-shot included in the preconfigured atmosphere
+                track = new OneShot(trackObject, this, volume, trackData.minIndex, trackData.maxIndex, ignoreAutoplay);
+            } else {
+                track = new OneShot(trackObject, this, volume, OneShot.startMinIndex, OneShot.startMaxIndex, ignoreAutoplay); // Resort to timestep defaults
+            }
+            
         } else {
             // Default
-            track = new Track(trackObject, this);
+            track = new Track(trackObject, this, volume, ignoreAutoplay);
         }
 
         // Add track to array
         this.tracks.push(track);
+
+        // Update localStorage
+        g.pm.storeAtmospheres();
     }
 
     /* 
@@ -192,6 +239,7 @@ class Atmosphere {
                 this.tracks.splice(i, 1);
             }
         }
+        g.pm.storeAtmospheres();
     }
 
     hideTracks(callback) {
@@ -209,6 +257,11 @@ class Atmosphere {
     toggleMute() {
         this.am.toggleMuteMultiplier();
         this.updateTrackVolumes();
+    }
+    
+    setVolumeSlider(newVolume) {
+        this.$volumeSlider.val(newVolume);
+        this.setVolume(newVolume);
     }
 
     setVolume(newVolume) {
@@ -265,13 +318,20 @@ class Atmosphere {
             g.atmosphereManager.activeAtmosphere = null;
         }
         g.atmosphereManager.atmospheres[this.id] = null; //TODO: replace with splicing to avoid wasted array spaces
+        // Update localStorage
+        g.pm.storeAtmospheres();
     }
 
-    handleAutoplay() {
-        if (g.$autoplayCheckbox.is(":checked")) {
+    handleAutoplay(ignoreAutoplay) {
+        if (g.$autoplayCheckbox.is(":checked") && !ignoreAutoplay) {
             this.hidePlayButtons();
         }
         
+    }
+
+    getTitle() {
+        var $titleText = this.$atmosphereHTML.find(".section__heading__title__text");
+        return $titleText.text();
     }
 }
 
