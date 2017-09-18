@@ -33,8 +33,6 @@ class PersistenceManager {
                 currentAtmosphere.name = atmosphere.getTitle();     // Store its name
                 currentAtmosphere.volume = atmosphere.am.volume;    // Store its volume
                 currentAtmosphere.combinedTracks = [];
-                currentAtmosphere.tracks = [];
-                currentAtmosphere.oneshots = [];
 
                 // Loop through the current atmosphere's tracks
                 for (let track of atmosphere.tracks) {
@@ -47,9 +45,6 @@ class PersistenceManager {
                     if (collection === 'oneshots') {
                         currentTrack.minIndex = track.minIndex;
                         currentTrack.maxIndex = track.maxIndex;
-                        currentAtmosphere.oneshots.push(currentTrack);
-                    } else {
-                        currentAtmosphere.tracks.push(currentTrack);
                     }
                     currentAtmosphere.combinedTracks.push(currentTrack);
                 }

@@ -11645,6 +11645,8 @@ var Atmosphere = function () {
         this.createElement();
         // combinedTracks only exists if the atmosphere is being loadec from localStrage, so that tracks can be regenerated in
         //  the order that they were saved
+        //  NOTE: The order can't be guaranteed until track data is loaded asynchronously.
+        //      Currently the tracks themselves won't be added to the DOM until after their data is loaded by g.dataManager.getData()
         if (atmosphereData.combinedTracks) {
             this.instantiateCombinedTracks(atmosphereData.combinedTracks);
         } else {
@@ -12897,8 +12899,6 @@ var PersistenceManager = function () {
                         currentAtmosphere.name = atmosphere.getTitle(); // Store its name
                         currentAtmosphere.volume = atmosphere.am.volume; // Store its volume
                         currentAtmosphere.combinedTracks = [];
-                        currentAtmosphere.tracks = [];
-                        currentAtmosphere.oneshots = [];
 
                         // Loop through the current atmosphere's tracks
                         var _iteratorNormalCompletion2 = true;
@@ -12918,9 +12918,6 @@ var PersistenceManager = function () {
                                 if (collection === 'oneshots') {
                                     currentTrack.minIndex = track.minIndex;
                                     currentTrack.maxIndex = track.maxIndex;
-                                    currentAtmosphere.oneshots.push(currentTrack);
-                                } else {
-                                    currentAtmosphere.tracks.push(currentTrack);
                                 }
                                 currentAtmosphere.combinedTracks.push(currentTrack);
                             }
