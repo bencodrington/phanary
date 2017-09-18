@@ -12070,8 +12070,7 @@ var AtmosphereManager = function () {
         value: function newAtmosphere() {
             var emptyAtmosphere = {
                 name: 'Custom Atmosphere',
-                tracks: [],
-                color: 'default'
+                tracks: []
             };
             this.addAtmosphere(emptyAtmosphere);
         }

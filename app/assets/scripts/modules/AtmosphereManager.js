@@ -44,8 +44,7 @@ class AtmosphereManager {
     newAtmosphere() {
         var emptyAtmosphere = {
             name: 'Custom Atmosphere',
-            tracks: [],
-            color: 'default'
+            tracks: []
         }
         this.addAtmosphere(emptyAtmosphere);
     }
