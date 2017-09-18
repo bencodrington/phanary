@@ -30,7 +30,7 @@ class Sidebar {
 
         // Toggle hidden class on sidebar upon when hide button is clicked
         $(".navbar__hide").click(function() {
-            this.hide();
+            this.hide(true);
         }.bind(this));
     }
 
@@ -38,8 +38,8 @@ class Sidebar {
         Apply the 'mobile-hidden' class to the sidebar,
         and the 'full-width' class to the main content div
     */
-    hide() {
-        if (this.$lockCheckbox.is(':checked')) {
+    hide(ignoreLockBox) {
+        if (!ignoreLockBox && this.$lockCheckbox.is(':checked')) {
             return;
         }
         this.$HTML.toggleClass("mobile-hidden");    // TODO: refactor 'mobile-hidden' to just 'hidden'?
