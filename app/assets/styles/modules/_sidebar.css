@@ -77,4 +77,20 @@
         display: flex;
         align-items: center;
     }
+
+    &__lock {
+        color: $stormGrey;
+        position: absolute;
+        top: 4.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
+        right: 18px; /* match the wrapper that contains the atmosphere list */
+        display: none;
+        
+        & i {
+            transition: color 0.3s ease-out;
+        }
+
+        @mixin atSmall {
+            display: block;
+        }
+    }
 }

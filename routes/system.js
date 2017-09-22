@@ -131,7 +131,6 @@ router.get('/search', function(req, res, next) {
     nameResults: [],
     tagResults: []
   };
-  // console.log('/search query: ' + query);
   models.forEach(function(model, index) {
     model.
       // Search to see if name contains search query
@@ -141,8 +140,6 @@ router.get('/search', function(req, res, next) {
       ).
       exec(function(err, results) {
         // TODO: error handling
-        // console.log("/search results: ");
-        // console.log(results);
         if (results) {
           // Append results from this operation
           queryResults.nameResults = queryResults.nameResults.concat(results);
@@ -167,8 +164,6 @@ router.get('/search', function(req, res, next) {
           console.error('Search failed: ' + err);
           return res.end(JSON.stringify({}));
         }
-        // console.log("/search results: ");
-        // console.log(results);
         if (results) {
           // Append results from this operation
           queryResults.tagResults = queryResults.tagResults.concat(results);
@@ -176,7 +171,6 @@ router.get('/search', function(req, res, next) {
         completed++;
         // If this is the last 'find' operation to complete
         if (completed == 2 * models.length) {
-          console.log(queryResults.tagResults);
           // Return the results
           return res.end(sortResults(queryResults));
         }
@@ -185,9 +179,6 @@ router.get('/search', function(req, res, next) {
 });
 
 function sortResults(queryResults) {
-  // console.log('sortResults: queryResults:');
-  // console.log(queryResults);
-
   // If there are results common to both sets of results, display those
   var returnResults = [];
   for (var i = 0; i < queryResults.tagResults.length; i++) {
@@ -265,13 +256,11 @@ function insertItem(body) {
     name: body.name,
     filename: body.filename,
     tags: parseMultilineInput(body.tags),
-    tracks: parseIDs(parseMultilineInput(body.tracks)),
-    oneshots: parseIDs(parseMultilineInput(body.oneshots)),
+    tracks: parseLoopArrayString(body.tracks),
+    oneshots: parseOneshotArrayString(body.oneshots),
     samples: parseSamples(parseMultilineInput(body.samples)),
     source: body.source
   };
-  // console.log('item');
-  // console.log(item);
   var doc;
 
   switch(collection) {
@@ -344,8 +333,8 @@ function updateItem(body, res) {
         } else {
           result.name = body.name;
           result.tags = parseMultilineInput(body.tags);
-          result.tracks = parseIDs(parseMultilineInput(body.tracks));
-          result.oneshots = parseIDs(parseMultilineInput(body.oneshots));
+          result.tracks = parseLoopArrayString(body.tracks);
+          result.oneshots = parseOneshotArrayString(body.oneshots);
           result.save();
           res.sendStatus(200);
         }
@@ -417,35 +406,50 @@ function deleteItem(body) {
 }
 
 function parseMultilineInput(textString) {
-  return textString.replace(/\r\n/g,"\n").split('\n');
+  if (textString) {
+    return textString.replace(/\r\n/g,"\n").split('\n');
+  } else {
+    return null;
+  }
+  
 }
 
-function parseIDs(idStringArray) {
-  var idArray = [];
-  var resourceObject;
-  idStringArray.forEach(function(value) {
-
-    // Skip if empty
-    if (value != '') {
-
-      try {
-        newID = mongoose.Types.ObjectId(value);
-      } catch (err) {
-        console.log('error: ' + err);
-        res.sendStatus(500);
-      }
-      resourceObject = {
-        'id': newID
-      };
-      idArray.push(resourceObject);
-
+function parseLoopArrayString(loopArrayString) {
+  if (!loopArrayString) {
+    return;
+  }
+  var loopArray = JSON.parse(loopArrayString);
+  loopArray.forEach(function(loop) {
+    try {
+      loop.id = mongoose.Types.ObjectId(loop.id); // Convert to a mongoose ObjectId
+    } catch (err) {
+      console.log('error: ' + err);
+      res.sendStatus(500);
     }
-    
   });
-  return idArray;
+  return loopArray;
+}
+
+function parseOneshotArrayString(oneshotArrayString) {
+  if (!oneshotArrayString) {
+    return;
+  }
+  var oneshotArray = JSON.parse(oneshotArrayString);
+  oneshotArray.forEach(function(oneshot) {
+    try {
+      oneshot.id = mongoose.Types.ObjectId(oneshot.id); // Convert to a mongoose ObjectId
+    } catch (err) {
+      console.log('error: ' + err);
+      res.sendStatus(500);
+    }
+  });
+  return oneshotArray;
 }
 
 function parseSamples(filenameStrings) {
+  if (!filenameStrings) {
+    return null;
+  }
   var samples = []
   var resourceObject;
   filenameStrings.forEach(function(value) {

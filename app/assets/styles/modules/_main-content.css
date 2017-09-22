@@ -4,7 +4,7 @@
     transition: width 0.3s ease-out;
 
     @mixin atSmall {
-        width: 66%;
+        width: 67%;
     }
 
     &.full-width {

@@ -1,4 +1,4 @@
-
 node_modules/
 app/assets/audio/
-.vscode/
+public/audio/converted/
+temp/
