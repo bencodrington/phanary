@@ -13059,7 +13059,7 @@ var Sidebar = function () {
         key: "events",
         value: function events() {
             // Deselect active atmosphere on sidebar background click
-            this.$HTML.on('click', function () {
+            this.$HTML.on('click', function (e) {
                 _GlobalVars.g.atmosphereManager.deselectActiveAtmosphere();
             }.bind(this));
 
@@ -13075,9 +13075,15 @@ var Sidebar = function () {
             }.bind(this));
 
             // Update PersistenceManager's model of the lock checkbox on click
-            this.$lockCheckbox.click(function () {
+            this.$lockCheckbox.on('click', function (e) {
                 _GlobalVars.g.pm.storeLockCheckboxState(this.$lockCheckbox.is(':checked'));
             }.bind(this));
+
+            // Stop lock checkbox click events from propagating and deselecting
+            //  currently active atmosphere
+            this.$lockCheckbox.parent().on('click', function (e) {
+                e.stopPropagation();
+            });
         }
 
         /*

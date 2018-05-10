@@ -1028,7 +1028,6 @@ a {
     display: block;
     cursor: pointer;
     padding-left: 30px;
-
 }
 
 .control input {
@@ -1049,6 +1048,7 @@ a {
         -webkit-transition: all 0.3s ease-out;
         transition: all 0.3s ease-out;
         border-radius: 2px;
+        pointer-events: none;           /* Necessary to stop lock checkbox clicks from propagating */
     }
 
 .control__indicator--medium {
