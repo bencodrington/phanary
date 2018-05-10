@@ -32,8 +32,14 @@ class Track {
         // Add to tracklist
         var $trackHTML = $(trackHTML)
             .hide()
-            .prependTo(g.trackManager.$list)
-            .show('fast');
+            .prependTo(g.trackManager.$list);
+
+        // Show track if it belongs to current atmosphere
+        //  Without this check all tracks are displayed when loading from localstorage
+        //  rather than only those belonging to the active atmosphere
+        if (this.atmosphere == g.atmosphereManager.activeAtmosphere) {
+            $trackHTML.show('fast');
+        }
 
         // Play and Stop buttons
         this.$playBtn = $trackHTML.find(".btn--play");

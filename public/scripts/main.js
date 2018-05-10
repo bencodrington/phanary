@@ -11006,7 +11006,12 @@ var Track = function () {
         value: function createElement() {
             var trackHTML = this.template(this.data); // convert object to HTML
             // Add to tracklist
-            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.trackManager.$list).show('fast');
+            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.trackManager.$list);
+
+            // Show track if it belongs to current atmosphere
+            if (this.atmosphere == _GlobalVars.g.atmosphereManager.activeAtmosphere) {
+                $trackHTML.show('fast');
+            }
 
             // Play and Stop buttons
             this.$playBtn = $trackHTML.find(".btn--play");

@@ -21,7 +21,7 @@ class PersistenceManager {
             (atmosphere volume, atmosphere name, track volume,
             one-shot timing, atmosphere creation/deletion, track creation/deletion)
     */
-     storeAtmospheres() {
+    storeAtmospheres() {
         var atmospheres = [];
         var currentAtmosphere, currentTrack, collection;
         // Loop through g.am.atmospheres
