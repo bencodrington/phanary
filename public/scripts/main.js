@@ -11009,6 +11009,8 @@ var Track = function () {
             var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.trackManager.$list);
 
             // Show track if it belongs to current atmosphere
+            //  Without this check all tracks are displayed when loading from localstorage
+            //  rather than only those belonging to the active atmosphere
             if (this.atmosphere == _GlobalVars.g.atmosphereManager.activeAtmosphere) {
                 $trackHTML.show('fast');
             }
@@ -11596,7 +11598,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _GlobalVars.g.searchBar = new _SearchBar2.default();
 _GlobalVars.g.about = new _About2.default();
-_GlobalVars.g.pm.loadAtmospheres();
+
+if (_GlobalVars.g.pm) {
+    _GlobalVars.g.pm.loadFromStorage();
+}
 
 /***/ }),
 /* 13 */
@@ -12862,16 +12867,20 @@ var PersistenceManager = function () {
     function PersistenceManager() {
         _classCallCheck(this, PersistenceManager);
 
-        if (this.storageEmpty()) {
-            // Initialize storage
+        // Initialize any missing storage elements
+        if (!localStorage.getItem('atmospheres')) {
             localStorage.setItem('atmospheres', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('lockCheckbox')) {
+            localStorage.setItem('lockCheckbox', false);
         }
     }
 
     _createClass(PersistenceManager, [{
-        key: 'storageEmpty',
-        value: function storageEmpty() {
-            return !localStorage.getItem('atmospheres');
+        key: 'loadFromStorage',
+        value: function loadFromStorage() {
+            this.loadAtmospheres();
+            this.loadLockCheckboxState();
         }
 
         /*
@@ -12989,6 +12998,16 @@ var PersistenceManager = function () {
                 }
             }
         }
+    }, {
+        key: 'storeLockCheckboxState',
+        value: function storeLockCheckboxState(newState) {
+            localStorage.setItem('lockCheckbox', newState);
+        }
+    }, {
+        key: 'loadLockCheckboxState',
+        value: function loadLockCheckboxState() {
+            _GlobalVars.g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
+        }
     }]);
 
     return PersistenceManager;
@@ -13054,6 +13073,11 @@ var Sidebar = function () {
             (0, _jquery2.default)(".navbar__hide").click(function () {
                 this.hide(true);
             }.bind(this));
+
+            // Update PersistenceManager's model of the lock checkbox on click
+            this.$lockCheckbox.click(function () {
+                _GlobalVars.g.pm.storeLockCheckboxState(this.$lockCheckbox.is(':checked'));
+            }.bind(this));
         }
 
         /*
@@ -13070,6 +13094,11 @@ var Sidebar = function () {
             this.$HTML.toggleClass("mobile-hidden"); // TODO: refactor 'mobile-hidden' to just 'hidden'?
             this.$footerHTML.toggleClass("mobile-hidden");
             this.$mainContent.toggleClass("full-width");
+        }
+    }, {
+        key: "setLockCheckboxState",
+        value: function setLockCheckboxState(isChecked) {
+            this.$lockCheckbox.prop('checked', isChecked);
         }
     }]);
 

@@ -6,5 +6,5 @@ g.searchBar = new SearchBar();
 g.about = new About();
 
 if (g.pm) {
-    g.pm.loadAtmospheres();
+    g.pm.loadFromStorage();
 }

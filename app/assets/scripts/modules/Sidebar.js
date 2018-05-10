@@ -32,6 +32,11 @@ class Sidebar {
         $(".navbar__hide").click(function() {
             this.hide(true);
         }.bind(this));
+
+        // Update PersistenceManager's model of the lock checkbox on click
+        this.$lockCheckbox.click(function() {
+            g.pm.storeLockCheckboxState(this.$lockCheckbox.is(':checked'));
+        }.bind(this));
     }
 
     /*
@@ -45,6 +50,10 @@ class Sidebar {
         this.$HTML.toggleClass("mobile-hidden");    // TODO: refactor 'mobile-hidden' to just 'hidden'?
         this.$footerHTML.toggleClass("mobile-hidden");
         this.$mainContent.toggleClass("full-width");
+    }
+
+    setLockCheckboxState(isChecked) {
+        this.$lockCheckbox.prop('checked', isChecked);
     }
 
 }

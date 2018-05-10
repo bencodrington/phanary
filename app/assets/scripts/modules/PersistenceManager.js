@@ -4,14 +4,18 @@ import { g } from './GlobalVars';
 class PersistenceManager {
 
     constructor() {
-        if (this.storageEmpty()) {
-            // Initialize storage
+        // Initialize any missing storage elements
+        if (!localStorage.getItem('atmospheres')) {
             localStorage.setItem('atmospheres', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('lockCheckbox')) {
+            localStorage.setItem('lockCheckbox', false);
         }
     }
 
-    storageEmpty() {
-        return !localStorage.getItem('atmospheres');
+    loadFromStorage() {
+        this.loadAtmospheres();
+        this.loadLockCheckboxState();
     }
 
     /*
@@ -60,6 +64,14 @@ class PersistenceManager {
         for (let atmosphere of atmospheres) {
             g.atmosphereManager.addAtmosphere(atmosphere, true);
         }
+    }
+
+    storeLockCheckboxState(newState) {
+        localStorage.setItem('lockCheckbox', newState);
+    }
+
+    loadLockCheckboxState() {
+        g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
     }
 
 }
