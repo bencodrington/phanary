@@ -461,6 +461,7 @@ body {
     margin: 0;
     background-color: #849AA8;
     font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
 }
 
 img {
@@ -1915,6 +1916,33 @@ input[type=range]:focus::-moz-range-track {
 
 }
     }
+
+.drag-icon {
+        width: 100px;
+        height: 4.5rem;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #AFC2CD;
+        display: none;
+        border-radius: 5px;
+        -webkit-box-shadow: 5px 5px 10px rgba(6,20,35, 0.5);
+                box-shadow: 5px 5px 10px rgba(6,20,35, 0.5);
+        overflow: hidden;
+        z-index: 10;
+    }
+
+/* Header */
+
+.drag-icon:after {
+            content: '';
+            width: 100px;
+            height: 2rem;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #2E5266;
+        }
 
 @-webkit-keyframes shake {
     0%, 50%, 60%, 100% {

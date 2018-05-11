@@ -2,6 +2,7 @@ body {
     margin: 0;
     background-color: $lightBlue;
     font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
 }
 
 img {

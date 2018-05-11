@@ -1,0 +1,26 @@
+.drag {
+    &-icon {
+        width: 100px;
+        height: 4.5rem;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: $lighterGrey;
+        display: none;
+        border-radius: 5px;
+        box-shadow: 5px 5px 10px rgba($deepSea, 0.5);
+        overflow: hidden;
+        z-index: 10;
+
+        /* Header */
+        &:after {
+            content: '';
+            width: 100px;
+            height: 2rem;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: $blueberry;
+        }
+    }
+}

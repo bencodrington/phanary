@@ -78,6 +78,24 @@ class Track {
             });
         });
 
+        $trackHTML.find(".btn--drag").on("mousedown", function(e) {
+            // this.moveElement();
+            g.trackManager.$dragIcon.show();
+            this.$trackHTML.addClass('TODO:TEST');
+            e.preventDefault();
+            $('html').on('mousemove', function(e) {
+                g.trackManager.$dragIcon.offset({
+                    top: e.pageY,
+                    left: e.pageX
+                })
+                e.preventDefault();
+            }).on('mouseup', function() {
+                // this.dropElement();
+                g.trackManager.$dragIcon.hide();
+                this.$trackHTML.removeClass('TODO:TEST');
+            }.bind(this))
+        }.bind(this));
+
         this.$trackHTML = $trackHTML;   // cache jquery object
     }
 
@@ -166,6 +184,14 @@ class Track {
 
     getCollection() {
         return 'tracks';
+    }
+
+    moveElement() {
+        g.$dragIcon.show();
+    }
+
+    dropElement() {
+        g.$dragIcon.hide();
     }
 
 }

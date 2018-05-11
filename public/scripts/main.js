@@ -11051,6 +11051,24 @@ var Track = function () {
                 });
             });
 
+            $trackHTML.find(".btn--drag").on("mousedown", function (e) {
+                // this.moveElement();
+                _GlobalVars.g.trackManager.$dragIcon.show();
+                this.$trackHTML.addClass('TODO:TEST');
+                e.preventDefault();
+                (0, _jquery2.default)('html').on('mousemove', function (e) {
+                    _GlobalVars.g.trackManager.$dragIcon.offset({
+                        top: e.pageY,
+                        left: e.pageX
+                    });
+                    e.preventDefault();
+                }).on('mouseup', function () {
+                    // this.dropElement();
+                    _GlobalVars.g.trackManager.$dragIcon.hide();
+                    this.$trackHTML.removeClass('TODO:TEST');
+                }.bind(this));
+            }.bind(this));
+
             this.$trackHTML = $trackHTML; // cache jquery object
         }
 
@@ -11152,6 +11170,16 @@ var Track = function () {
         key: 'getCollection',
         value: function getCollection() {
             return 'tracks';
+        }
+    }, {
+        key: 'moveElement',
+        value: function moveElement() {
+            _GlobalVars.g.$dragIcon.show();
+        }
+    }, {
+        key: 'dropElement',
+        value: function dropElement() {
+            _GlobalVars.g.$dragIcon.hide();
         }
     }]);
 
@@ -13137,12 +13165,15 @@ var TrackManager =
 /*
     Currently only used for caching a reference to the track list element.
     Felt like something that should be separated from the GlobalVars class.
+    TODO: update
 */
 
 function TrackManager() {
     _classCallCheck(this, TrackManager);
 
     this.$list = (0, _jquery2.default)("#trackList"); // The div containing all track elements
+    this.$dragIcon = (0, _jquery2.default)('.drag-icon'); // TODO: temp
+    this.draggingTrack = null; // TODO:
 };
 
 exports.default = TrackManager;
