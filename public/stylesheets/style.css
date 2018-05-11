@@ -817,9 +817,17 @@ a {
         background-color: transparent;
     }
 
-.btn--delete:hover {
+.btn--delete:hover, .section--track .btn--drag.btn:hover {
         background-color: transparent;
-        color: #FFFFDD;
+    }
+
+.btn--drag {
+        position: absolute;
+        top: 0;
+        right: 2rem;
+        border: none;
+        background-color: transparent;
+        height: 100%;
     }
 
 .btn--rounded {
