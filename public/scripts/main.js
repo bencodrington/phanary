@@ -10475,7 +10475,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _handlebars = __webpack_require__(49);
+var _handlebars = __webpack_require__(50);
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
@@ -10487,17 +10487,21 @@ var _AtmosphereManager = __webpack_require__(14);
 
 var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
 
-var _TrackManager = __webpack_require__(20);
+var _TrackManager = __webpack_require__(21);
 
 var _TrackManager2 = _interopRequireDefault(_TrackManager);
 
-var _Sidebar = __webpack_require__(19);
+var _Sidebar = __webpack_require__(20);
 
 var _Sidebar2 = _interopRequireDefault(_Sidebar);
 
-var _PersistenceManager = __webpack_require__(18);
+var _PersistenceManager = __webpack_require__(19);
 
 var _PersistenceManager2 = _interopRequireDefault(_PersistenceManager);
+
+var _DragManager = __webpack_require__(17);
+
+var _DragManager2 = _interopRequireDefault(_DragManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10523,6 +10527,7 @@ var GlobalVars = function () {
         this.trackManager = new _TrackManager2.default();
         this.dataManager = new _DataManager2.default();
         this.sidebar = new _Sidebar2.default();
+        this.dragManager = new _DragManager2.default();
 
         if (this.storageAvailable('localStorage')) {
             this.pm = new _PersistenceManager2.default();
@@ -10709,11 +10714,11 @@ var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(38);
+var _helpers = __webpack_require__(39);
 
-var _decorators = __webpack_require__(36);
+var _decorators = __webpack_require__(37);
 
-var _logger = __webpack_require__(46);
+var _logger = __webpack_require__(47);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -10971,7 +10976,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(24);
+__webpack_require__(25);
+
+var DRAG_OFFSET = {
+    x: 30,
+    y: 30
+};
 
 var Track = function () {
 
@@ -11051,22 +11061,41 @@ var Track = function () {
                 });
             });
 
+            // TODO:
+
             $trackHTML.find(".btn--drag").on("mousedown", function (e) {
-                // this.moveElement();
                 _GlobalVars.g.trackManager.$dragIcon.show();
-                this.$trackHTML.addClass('TODO:TEST');
+                _GlobalVars.g.trackManager.draggingTrack = this;
+                this.$trackHTML.slideUp();
                 e.preventDefault();
                 (0, _jquery2.default)('html').on('mousemove', function (e) {
                     _GlobalVars.g.trackManager.$dragIcon.offset({
-                        top: e.pageY,
-                        left: e.pageX
+                        top: e.pageY - DRAG_OFFSET.y,
+                        left: e.pageX - DRAG_OFFSET.x
                     });
                     e.preventDefault();
                 }).on('mouseup', function () {
-                    // this.dropElement();
                     _GlobalVars.g.trackManager.$dragIcon.hide();
-                    this.$trackHTML.removeClass('TODO:TEST');
+                    _GlobalVars.g.trackManager.draggingTrack = null;
+                    this.$trackHTML.slideDown();
                 }.bind(this));
+            }.bind(this));
+
+            $trackHTML.on("mouseover", function () {
+                if (_GlobalVars.g.trackManager.draggingTrack && _GlobalVars.g.trackManager.draggingTrack != this) {
+                    this.$trackHTML.addClass('section--show-drop-zone');
+                }
+            }.bind(this));
+
+            $trackHTML.on("mouseleave", function () {
+                this.$trackHTML.removeClass('section--show-drop-zone');
+            }.bind(this));
+
+            $trackHTML.on("mouseup", function () {
+                if (_GlobalVars.g.trackManager.draggingTrack) {
+                    this.$trackHTML.after(_GlobalVars.g.trackManager.draggingTrack.$trackHTML);
+                    this.$trackHTML.removeClass('section--show-drop-zone');
+                }
             }.bind(this));
 
             this.$trackHTML = $trackHTML; // cache jquery object
@@ -11171,16 +11200,6 @@ var Track = function () {
         value: function getCollection() {
             return 'tracks';
         }
-    }, {
-        key: 'moveElement',
-        value: function moveElement() {
-            _GlobalVars.g.$dragIcon.show();
-        }
-    }, {
-        key: 'dropElement',
-        value: function dropElement() {
-            _GlobalVars.g.$dragIcon.hide();
-        }
     }]);
 
     return Track;
@@ -11252,7 +11271,7 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51)))
 
 /***/ }),
 /* 10 */
@@ -11652,7 +11671,7 @@ var _Track = __webpack_require__(7);
 
 var _Track2 = _interopRequireDefault(_Track);
 
-var _OneShot = __webpack_require__(17);
+var _OneShot = __webpack_require__(18);
 
 var _OneShot2 = _interopRequireDefault(_OneShot);
 
@@ -11666,7 +11685,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(21);
+__webpack_require__(22);
 
 var Atmosphere = function () {
     function Atmosphere(atmosphereData, id, ignoreAutoplay) {
@@ -12413,7 +12432,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(23);
+__webpack_require__(24);
 
 var DataManager = function () {
 
@@ -12536,6 +12555,63 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DragManager = function () {
+
+    /*
+        TODO:
+    */
+
+    function DragManager() {
+        _classCallCheck(this, DragManager);
+
+        this.events();
+    }
+
+    _createClass(DragManager, [{
+        key: 'events',
+        value: function events() {
+            this.$sidebarDropZone = (0, _jquery2.default)('.drag-drop-zone--sidebar');
+            this.$mainDropZone = (0, _jquery2.default)('.drag-drop-zone--main');
+            // TODO: remove? ->
+            this.$bothDropZones = _jquery2.default.merge(this.$sidebarDropZone, this.$mainDropZone);
+
+            this.$mainDropZone.on('mouseenter', function () {
+                // If dragging tracks, expand drop zone
+                this.$mainDropZone.addClass('.drag-drop-zone--expanded');
+            }.bind(this));
+
+            this.$bothDropZones.on('mouseleave', function () {
+                this.$bothDropZones.removeClass('.drag-drop-zone--expanded');
+            }.bind(this));
+        }
+    }]);
+
+    return DragManager;
+}();
+
+exports.default = DragManager;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12558,7 +12634,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-__webpack_require__(22);
+__webpack_require__(23);
 
 // The different values that "Playing every _ to _ seconds" can hold.
 
@@ -12875,7 +12951,7 @@ var OneShot = function (_Track) {
 exports.default = OneShot;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13044,7 +13120,7 @@ var PersistenceManager = function () {
 exports.default = PersistenceManager;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13142,7 +13218,7 @@ var Sidebar = function () {
 exports.default = Sidebar;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13179,7 +13255,7 @@ function TrackManager() {
 exports.default = TrackManager;
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13196,7 +13272,7 @@ exports.default = TrackManager;
 })();
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13225,12 +13301,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-bars\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            \r\n            <div class=\"section__flex section__flex--spacing section__flex--wrap\">\r\n                <div class=\"section__flex__item section__flex__item--grow progress\">\r\n                    <div class=\"progress__bar\"></div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--yellow btn--medium-text section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <span>Play Once</span>\r\n                    </div>\r\n                </div>\r\n                <div class=\"section__flex__item\">\r\n                    <!-- TODO: disabled/enabled -->\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-bars\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            \r\n            <div class=\"section__flex section__flex--spacing section__flex--wrap\">\r\n                <div class=\"section__flex__item section__flex__item--grow progress\">\r\n                    <div class=\"progress__bar\"></div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--yellow btn--medium-text section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <span>Play Once</span>\r\n                    </div>\r\n                </div>\r\n                <div class=\"section__flex__item\">\r\n                    <!-- TODO: disabled/enabled -->\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"drag-drop-zone\"></div>\r\n</div>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13256,7 +13332,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13285,13 +13361,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-bars\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            <div class=\"section__flex\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <!-- TODO: disabled/enabled -->\r\n                <div class=\"section__flex__item\">\r\n                    <div class=\"btn--play btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-bars\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            <div class=\"section__flex\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <!-- TODO: disabled/enabled -->\r\n                <div class=\"section__flex__item\">\r\n                    <div class=\"btn--play btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"drag-drop-zone\"></div>\r\n</div>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 25 */,
-/* 26 */
+/* 26 */,
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13302,7 +13378,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(27);
+var _handlebarsRuntime = __webpack_require__(28);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -13312,11 +13388,11 @@ var _handlebarsCompilerAst = __webpack_require__(8);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(28);
+var _handlebarsCompilerBase = __webpack_require__(29);
 
-var _handlebarsCompilerCompiler = __webpack_require__(30);
+var _handlebarsCompilerCompiler = __webpack_require__(31);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(32);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(33);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -13363,7 +13439,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13385,7 +13461,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(48);
+var _handlebarsSafeString = __webpack_require__(49);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -13397,7 +13473,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(47);
+var _handlebarsRuntime = __webpack_require__(48);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -13436,7 +13512,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13452,15 +13528,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(33);
+var _parser = __webpack_require__(34);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(35);
+var _whitespaceControl = __webpack_require__(36);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(31);
+var _helpers = __webpack_require__(32);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -13491,7 +13567,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13664,7 +13740,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14244,7 +14320,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14481,7 +14557,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14500,7 +14576,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(29);
+var _codeGen = __webpack_require__(30);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -15616,7 +15692,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16362,7 +16438,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16555,7 +16631,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16783,7 +16859,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16795,7 +16871,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(37);
+var _decoratorsInline = __webpack_require__(38);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -16806,7 +16882,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16842,7 +16918,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16854,31 +16930,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(39);
+var _helpersBlockHelperMissing = __webpack_require__(40);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(40);
+var _helpersEach = __webpack_require__(41);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(41);
+var _helpersHelperMissing = __webpack_require__(42);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(42);
+var _helpersIf = __webpack_require__(43);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(43);
+var _helpersLog = __webpack_require__(44);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(44);
+var _helpersLookup = __webpack_require__(45);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(45);
+var _helpersWith = __webpack_require__(46);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -16895,7 +16971,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16941,7 +17017,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17042,7 +17118,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17074,7 +17150,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17110,7 +17186,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17143,7 +17219,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17162,7 +17238,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17202,7 +17278,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17256,7 +17332,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17570,7 +17646,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17592,7 +17668,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -17601,9 +17677,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(26)['default'];
+var handlebars = __webpack_require__(27)['default'];
 
-var printer = __webpack_require__(34);
+var printer = __webpack_require__(35);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -17623,7 +17699,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 var g;

@@ -64,6 +64,7 @@
         border: none;
         background-color: transparent;
         height: 100%;
+        cursor: move;
     }
 
     &--rounded {

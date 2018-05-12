@@ -8,9 +8,10 @@
         background-color: $lighterGrey;
         display: none;
         border-radius: 5px;
-        box-shadow: 5px 5px 10px rgba($deepSea, 0.5);
+        box-shadow: 2px 2px 20px rgba($deepSea, 0.75);
         overflow: hidden;
         z-index: 10;
+        pointer-events: none;
 
         /* Header */
         &:after {
@@ -22,5 +23,21 @@
             right: 0;
             background-color: $blueberry;
         }
+    }
+
+    &-drop-zone {
+        height: 0rem;
+        width: 100%;
+        transition: 0.1s ease-in-out;
+
+        &--top {
+            padding: 1rem 0;
+            height: auto;
+        }
+    }
+
+    .section--show-drop-zone &-drop-zone,
+    .drag-drop-zone--top {
+        height: 7rem;
     }
 }

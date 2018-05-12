@@ -574,7 +574,7 @@ a {
 /*overflow: auto;*/
 
 .wrapper--top-margin {
-        margin-top: 4.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
+        margin-top: 3.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
     }
 
 /* Took this out as it was interfering with tooltips */
@@ -829,6 +829,7 @@ a {
         border: none;
         background-color: transparent;
         height: 100%;
+        cursor: move;
     }
 
 .btn--rounded {
@@ -1164,9 +1165,13 @@ a {
 
 .section {
     border-radius: 5px;
-    margin-bottom: 20px;
+    padding-bottom: 20px;   /* if this were margin, dragging would be choppy */
     position: relative;
     overflow: hidden;
+    -webkit-transition: height 13s ease-in-out;
+    transition: height 13s ease-in-out;
+    display: block;
+    max-height: 100%;
 
 }
 
@@ -1252,7 +1257,7 @@ a {
             top: 0;
             z-index: 2;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 20px);  /* 20px comes from the bottom padding */
             opacity: 0;  
             border-radius: 5px;
             border: 1px solid #F4E2A1;
@@ -1303,19 +1308,6 @@ a {
 
 .section--track .section__body {
             background-color: #AFC2CD;
-        }
-
-.section--track .section__body:after {
-            content: '';
-            display: block;
-            position: absolute;
-            top: 3rem;
-            bottom: 0;
-            right: -.5rem;
-            width: 1rem;
-            background-color: #AFC2CD;
-            -webkit-filter: blur(.25rem);
-                    filter: blur(.25rem)
         }
 
 .section__body {
@@ -1556,7 +1548,6 @@ input[type=range]:focus::-moz-range-track {
     font-family: 'Slabo 27px', serif;
     font-weight: bold;
     color: #AFC2CD;
-    margin-bottom: 1rem;
 }
 
 .content-title--inverted {
@@ -1926,10 +1917,11 @@ input[type=range]:focus::-moz-range-track {
         background-color: #AFC2CD;
         display: none;
         border-radius: 5px;
-        -webkit-box-shadow: 5px 5px 10px rgba(6,20,35, 0.5);
-                box-shadow: 5px 5px 10px rgba(6,20,35, 0.5);
+        -webkit-box-shadow: 2px 2px 20px rgba(6,20,35, 0.75);
+                box-shadow: 2px 2px 20px rgba(6,20,35, 0.75);
         overflow: hidden;
         z-index: 10;
+        pointer-events: none;
     }
 
 /* Header */
@@ -1943,6 +1935,23 @@ input[type=range]:focus::-moz-range-track {
             right: 0;
             background-color: #2E5266;
         }
+
+.drag-drop-zone {
+        height: 0rem;
+        width: 100%;
+        -webkit-transition: 0.1s ease-in-out;
+        transition: 0.1s ease-in-out;
+    }
+
+.drag-drop-zone--top {
+            padding: 1rem 0;
+            height: auto;
+        }
+
+.section--show-drop-zone .drag-drop-zone,
+    .drag .drag-drop-zone--top {
+        height: 7rem;
+    }
 
 @-webkit-keyframes shake {
     0%, 50%, 60%, 100% {

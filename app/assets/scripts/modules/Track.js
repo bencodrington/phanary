@@ -2,6 +2,11 @@ import $ from 'jquery';
 import { g } from "./GlobalVars.js";
 require('./templates/track');
 
+const DRAG_OFFSET = {
+    x: 30,
+    y: 30
+}
+
 class Track {
 
     /*
@@ -78,22 +83,41 @@ class Track {
             });
         });
 
+        // TODO:
+
         $trackHTML.find(".btn--drag").on("mousedown", function(e) {
-            // this.moveElement();
             g.trackManager.$dragIcon.show();
-            this.$trackHTML.addClass('TODO:TEST');
+            g.trackManager.draggingTrack = this;
+            this.$trackHTML.slideUp();
             e.preventDefault();
             $('html').on('mousemove', function(e) {
                 g.trackManager.$dragIcon.offset({
-                    top: e.pageY,
-                    left: e.pageX
+                    top: e.pageY - DRAG_OFFSET.y,
+                    left: e.pageX - DRAG_OFFSET.x
                 })
                 e.preventDefault();
             }).on('mouseup', function() {
-                // this.dropElement();
                 g.trackManager.$dragIcon.hide();
-                this.$trackHTML.removeClass('TODO:TEST');
+                g.trackManager.draggingTrack = null;
+                this.$trackHTML.slideDown();
             }.bind(this))
+        }.bind(this));
+
+        $trackHTML.on("mouseover", function() {
+            if (g.trackManager.draggingTrack && g.trackManager.draggingTrack != this) {
+                this.$trackHTML.addClass('section--show-drop-zone');
+            }
+        }.bind(this));
+
+        $trackHTML.on("mouseleave", function() {
+            this.$trackHTML.removeClass('section--show-drop-zone');
+        }.bind(this));
+
+        $trackHTML.on("mouseup", function() {
+            if (g.trackManager.draggingTrack) {
+                this.$trackHTML.after(g.trackManager.draggingTrack.$trackHTML);
+                this.$trackHTML.removeClass('section--show-drop-zone');
+            }
         }.bind(this));
 
         this.$trackHTML = $trackHTML;   // cache jquery object
@@ -184,14 +208,6 @@ class Track {
 
     getCollection() {
         return 'tracks';
-    }
-
-    moveElement() {
-        g.$dragIcon.show();
-    }
-
-    dropElement() {
-        g.$dragIcon.hide();
     }
 
 }

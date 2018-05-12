@@ -6,6 +6,7 @@ import AtmosphereManager from './AtmosphereManager';
 import TrackManager from './TrackManager';
 import Sidebar from './Sidebar';
 import PersistenceManager from './PersistenceManager';
+import DragManager from './DragManager';
 
 class GlobalVars {
 
@@ -22,10 +23,11 @@ class GlobalVars {
         this.trackPrefix        = "/audio/converted/";
         this.fileTypes          = ['.webm', '.mp3'];
 
-        this.atmosphereManager = new AtmosphereManager();
-        this.trackManager = new TrackManager();
-        this.dataManager = new DataManager();
-        this.sidebar = new Sidebar();
+        this.atmosphereManager  = new AtmosphereManager();
+        this.trackManager       = new TrackManager();
+        this.dataManager        = new DataManager();
+        this.sidebar            = new Sidebar();
+        this.dragManager        = new DragManager();
 
         if (this.storageAvailable('localStorage')) {
             this.pm = new PersistenceManager();
