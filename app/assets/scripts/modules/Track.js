@@ -2,11 +2,6 @@ import $ from 'jquery';
 import { g } from "./GlobalVars.js";
 require('./templates/track');
 
-const DRAG_OFFSET = {
-    x: 30,
-    y: 30
-}
-
 class Track {
 
     /*
@@ -86,25 +81,12 @@ class Track {
         // TODO:
 
         $trackHTML.find(".btn--drag").on("mousedown", function(e) {
-            g.trackManager.$dragIcon.show();
-            g.trackManager.draggingTrack = this;
-            this.$trackHTML.slideUp();
+            g.dragManager.startDraggingTrack(this);
             e.preventDefault();
-            $('html').on('mousemove', function(e) {
-                g.trackManager.$dragIcon.offset({
-                    top: e.pageY - DRAG_OFFSET.y,
-                    left: e.pageX - DRAG_OFFSET.x
-                })
-                e.preventDefault();
-            }).on('mouseup', function() {
-                g.trackManager.$dragIcon.hide();
-                g.trackManager.draggingTrack = null;
-                this.$trackHTML.slideDown();
-            }.bind(this))
         }.bind(this));
 
         $trackHTML.on("mouseover", function() {
-            if (g.trackManager.draggingTrack && g.trackManager.draggingTrack != this) {
+            if (g.dragManager.draggingTrack && g.dragManager.draggingTrack != this) {
                 this.$trackHTML.addClass('section--show-drop-zone');
             }
         }.bind(this));
@@ -114,8 +96,8 @@ class Track {
         }.bind(this));
 
         $trackHTML.on("mouseup", function() {
-            if (g.trackManager.draggingTrack) {
-                this.$trackHTML.after(g.trackManager.draggingTrack.$trackHTML);
+            if (g.dragManager.draggingTrack) {
+                this.$trackHTML.after(g.dragManager.draggingTrack.$trackHTML);
                 this.$trackHTML.removeClass('section--show-drop-zone');
             }
         }.bind(this));

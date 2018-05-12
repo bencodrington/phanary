@@ -10978,11 +10978,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 __webpack_require__(25);
 
-var DRAG_OFFSET = {
-    x: 30,
-    y: 30
-};
-
 var Track = function () {
 
     /*
@@ -11064,25 +11059,12 @@ var Track = function () {
             // TODO:
 
             $trackHTML.find(".btn--drag").on("mousedown", function (e) {
-                _GlobalVars.g.trackManager.$dragIcon.show();
-                _GlobalVars.g.trackManager.draggingTrack = this;
-                this.$trackHTML.slideUp();
+                _GlobalVars.g.dragManager.startDraggingTrack(this);
                 e.preventDefault();
-                (0, _jquery2.default)('html').on('mousemove', function (e) {
-                    _GlobalVars.g.trackManager.$dragIcon.offset({
-                        top: e.pageY - DRAG_OFFSET.y,
-                        left: e.pageX - DRAG_OFFSET.x
-                    });
-                    e.preventDefault();
-                }).on('mouseup', function () {
-                    _GlobalVars.g.trackManager.$dragIcon.hide();
-                    _GlobalVars.g.trackManager.draggingTrack = null;
-                    this.$trackHTML.slideDown();
-                }.bind(this));
             }.bind(this));
 
             $trackHTML.on("mouseover", function () {
-                if (_GlobalVars.g.trackManager.draggingTrack && _GlobalVars.g.trackManager.draggingTrack != this) {
+                if (_GlobalVars.g.dragManager.draggingTrack && _GlobalVars.g.dragManager.draggingTrack != this) {
                     this.$trackHTML.addClass('section--show-drop-zone');
                 }
             }.bind(this));
@@ -11092,8 +11074,8 @@ var Track = function () {
             }.bind(this));
 
             $trackHTML.on("mouseup", function () {
-                if (_GlobalVars.g.trackManager.draggingTrack) {
-                    this.$trackHTML.after(_GlobalVars.g.trackManager.draggingTrack.$trackHTML);
+                if (_GlobalVars.g.dragManager.draggingTrack) {
+                    this.$trackHTML.after(_GlobalVars.g.dragManager.draggingTrack.$trackHTML);
                     this.$trackHTML.removeClass('section--show-drop-zone');
                 }
             }.bind(this));
@@ -12565,21 +12547,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var DRAG_ICON_OFFSET = {
+    x: 30,
+    y: 30
+};
+
 var DragManager = function () {
 
     /*
-        TODO:
+        TODO: lots of comments
     */
 
     function DragManager() {
         _classCallCheck(this, DragManager);
 
         this.events();
+        this.$dragIcon = (0, _jquery2.default)('.drag-icon'); // TODO: temp
+        this.draggingTrack = null; // TODO:
     }
 
     _createClass(DragManager, [{
         key: 'events',
         value: function events() {
+
+            (0, _jquery2.default)('html').on('mousemove', function (e) {
+                if (this.draggingTrack) {
+                    // Update dragIcon location
+                    this.$dragIcon.offset({
+                        top: e.pageY - DRAG_ICON_OFFSET.y,
+                        left: e.pageX - DRAG_ICON_OFFSET.x
+                    });
+                    e.preventDefault();
+                }
+            }.bind(this)).on('mouseup', function () {
+                this.stopDraggingTrack();
+            }.bind(this));
+
             this.$sidebarDropZone = (0, _jquery2.default)('.drag-drop-zone--sidebar');
             this.$mainDropZone = (0, _jquery2.default)('.drag-drop-zone--main');
             // TODO: remove? ->
@@ -12587,12 +12590,35 @@ var DragManager = function () {
 
             this.$mainDropZone.on('mouseenter', function () {
                 // If dragging tracks, expand drop zone
-                this.$mainDropZone.addClass('.drag-drop-zone--expanded');
+                if (this.draggingTrack) {
+                    this.$mainDropZone.addClass('drag-drop-zone--expanded');
+                }
+            }.bind(this)).on('mouseup', function () {
+                if (this.draggingTrack) {
+                    this.$mainDropZone.after(this.draggingTrack.$trackHTML);
+                    this.$mainDropZone.removeClass('drag-drop-zone--expanded');
+                }
             }.bind(this));
 
             this.$bothDropZones.on('mouseleave', function () {
-                this.$bothDropZones.removeClass('.drag-drop-zone--expanded');
+                this.$bothDropZones.removeClass('drag-drop-zone--expanded');
             }.bind(this));
+        }
+    }, {
+        key: 'startDraggingTrack',
+        value: function startDraggingTrack(track) {
+            this.$dragIcon.show();
+            this.draggingTrack = track;
+            track.$trackHTML.slideUp();
+        }
+    }, {
+        key: 'stopDraggingTrack',
+        value: function stopDraggingTrack() {
+            this.$dragIcon.hide();
+            if (this.draggingTrack) {
+                this.draggingTrack.$trackHTML.slideDown();
+                this.draggingTrack = null;
+            }
         }
     }]);
 
@@ -13241,15 +13267,12 @@ var TrackManager =
 /*
     Currently only used for caching a reference to the track list element.
     Felt like something that should be separated from the GlobalVars class.
-    TODO: update
 */
 
 function TrackManager() {
     _classCallCheck(this, TrackManager);
 
     this.$list = (0, _jquery2.default)("#trackList"); // The div containing all track elements
-    this.$dragIcon = (0, _jquery2.default)('.drag-icon'); // TODO: temp
-    this.draggingTrack = null; // TODO:
 };
 
 exports.default = TrackManager;

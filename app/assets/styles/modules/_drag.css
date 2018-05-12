@@ -36,8 +36,12 @@
         }
     }
 
-    .section--show-drop-zone &-drop-zone,
-    .drag-drop-zone--top {
+    .section--show-drop-zone &-drop-zone {
         height: 7rem;
     }
+
+    &-drop-zone--expanded {
+        padding-bottom: 7rem;
+    }
+    
 }

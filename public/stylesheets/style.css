@@ -1948,9 +1948,12 @@ input[type=range]:focus::-moz-range-track {
             height: auto;
         }
 
-.section--show-drop-zone .drag-drop-zone,
-    .drag .drag-drop-zone--top {
+.section--show-drop-zone .drag-drop-zone {
         height: 7rem;
+    }
+
+.drag-drop-zone--expanded {
+        padding-bottom: 7rem;
     }
 
 @-webkit-keyframes shake {
