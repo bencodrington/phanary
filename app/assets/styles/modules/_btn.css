@@ -97,11 +97,14 @@
         color: $whitePurple;
     }
 
-    &--delete, .section--atmosphere--active .btn--delete {
-        background-color: transparent;
-    }
-
-    &--delete:hover, .section--atmosphere--active .btn--delete:hover {
+    &--delete,
+    .section--atmosphere--active .btn--delete,
+    &--drag,
+    .section--atmosphere--active .btn--drag,
+    &--delete:hover,
+    .section--atmosphere--active .btn--delete:hover,
+    &--drag:hover,
+    .section--atmosphere--active .btn--drag:hover {
         background-color: transparent;
     }
 }

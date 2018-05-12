@@ -864,11 +864,14 @@ a {
         color: #C7B1D8;
     }
 
-.section--atmosphere .btn--delete, .section--atmosphere .btn .section--atmosphere--active .btn--delete {
-        background-color: transparent;
-    }
-
-.section--atmosphere .btn--delete:hover, .section--atmosphere .btn .section--atmosphere--active .btn--delete:hover {
+.section--atmosphere .btn--delete,
+    .section--atmosphere .btn .section--atmosphere--active .btn--delete,
+    .section--atmosphere .btn--drag,
+    .section--atmosphere .btn .section--atmosphere--active .btn--drag,
+    .section--atmosphere .btn--delete:hover,
+    .section--atmosphere .btn .section--atmosphere--active .btn--delete:hover,
+    .section--atmosphere .btn--drag:hover,
+    .section--atmosphere .btn .section--atmosphere--active .btn--drag:hover {
         background-color: transparent;
     }
 
@@ -1168,10 +1171,9 @@ a {
     padding-bottom: 20px;   /* if this were margin, dragging would be choppy */
     position: relative;
     overflow: hidden;
-    -webkit-transition: height 13s ease-in-out;
-    transition: height 13s ease-in-out;
+    -webkit-transition: padding 0.075s ease-in-out;
+    transition: padding 0.075s ease-in-out;
     display: block;
-    max-height: 100%;
 
 }
 
@@ -1290,12 +1292,6 @@ a {
                 border-color: #2D1B33;
             }
 
-.section--track {
-        border-color: #2E5266;
-        -webkit-transition: border-color 0.5s ease-out;
-        transition: border-color 0.5s ease-out;
-    }
-
 .section--track .section__heading {
             background-color: #2E5266;
             -webkit-transition: background-color 0.5s ease-out;
@@ -1309,6 +1305,11 @@ a {
 .section--track .section__body {
             background-color: #AFC2CD;
         }
+
+.section--show-drop-zone {
+        padding-bottom: calc(7rem + 20px);
+        padding-bottom:  7rem;
+    }
 
 .section__body {
         padding: 0.5rem 0;
@@ -1936,20 +1937,11 @@ input[type=range]:focus::-moz-range-track {
             background-color: #2E5266;
         }
 
-.drag-drop-zone {
-        height: 0rem;
-        width: 100%;
-        -webkit-transition: 0.1s ease-in-out;
-        transition: 0.1s ease-in-out;
-    }
-
 .drag-drop-zone--top {
-            padding: 1rem 0;
-            height: auto;
-        }
-
-.section--show-drop-zone .drag-drop-zone {
-        height: 7rem;
+        width: 100%;
+        -webkit-transition: 0.075s ease-in-out;
+        transition: 0.075s ease-in-out;
+        padding: 1rem 0;
     }
 
 .drag-drop-zone--expanded {

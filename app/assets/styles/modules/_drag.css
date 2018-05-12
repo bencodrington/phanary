@@ -25,19 +25,10 @@
         }
     }
 
-    &-drop-zone {
-        height: 0rem;
+    &-drop-zone--top {
         width: 100%;
-        transition: 0.1s ease-in-out;
-
-        &--top {
-            padding: 1rem 0;
-            height: auto;
-        }
-    }
-
-    .section--show-drop-zone &-drop-zone {
-        height: 7rem;
+        transition: 0.075s ease-in-out;
+        padding: 1rem 0;
     }
 
     &-drop-zone--expanded {
