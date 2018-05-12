@@ -80,20 +80,22 @@ class Track {
 
         // TODO:
 
-        $trackHTML.find(".btn--drag").on("mousedown", function(e) {
+        $trackHTML.find(".btn--drag").on("mousedown touchstart", function(e) {
             g.dragManager.startDraggingTrack(this);
             e.preventDefault();
         }.bind(this));
 
-        $trackHTML.on("mouseover", function() {
-            if (g.dragManager.draggingTrack && g.dragManager.draggingTrack != this) {
-                this.$trackHTML.addClass('section--show-drop-zone');
-            }
-        }.bind(this));
+        $trackHTML.hover(
+            function() {
+                if (g.dragManager.draggingTrack && g.dragManager.draggingTrack != this) {
+                    this.$trackHTML.addClass('section--show-drop-zone');
+                }
+            }.bind(this),
 
-        $trackHTML.on("mouseleave", function() {
-            this.$trackHTML.removeClass('section--show-drop-zone');
-        }.bind(this));
+            function() {
+                this.$trackHTML.removeClass('section--show-drop-zone');
+            }.bind(this)
+        );
 
         $trackHTML.on("mouseup", function() {
             if (g.dragManager.draggingTrack) {

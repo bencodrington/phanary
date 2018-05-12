@@ -24,13 +24,13 @@ class DragManager {
             if (this.draggingTrack) {
                 // Update dragIcon location
                 this.$dragIcon.offset({
-                    top: e.pageY - DRAG_ICON_OFFSET.y,
-                    left: e.pageX - DRAG_ICON_OFFSET.x
+                    top: this.getDragIconCoords(e, 'top'),
+                    left: this.getDragIconCoords(e, 'left')
                 })
                 e.preventDefault();
             }
         }.bind(this))
-        .on('mouseup', function() {
+        .on('mouseup touchend', function() {
             this.stopDraggingTrack();
         }.bind(this))
 
@@ -69,6 +69,21 @@ class DragManager {
         if (this.draggingTrack) {
             this.draggingTrack.$trackHTML.slideDown();
             this.draggingTrack = null;
+        }
+    }
+
+    getDragIconCoords(event, attribute) {
+        if (attribute == 'top') {
+            return (event.type.toLowerCase() === 'mousemove')
+            ? event.pageY - DRAG_ICON_OFFSET.y
+            : window.event.touches[0].pageY - DRAG_ICON_OFFSET.y
+        } else if (attribute == 'left') {
+            return (event.type.toLowerCase() === 'mousemove')
+            ? event.pageX - DRAG_ICON_OFFSET.x
+            : window.event.touches[0].pageX - DRAG_ICON_OFFSET.x
+        } else {
+            // ERROR
+            return 0;
         }
     }
 }
