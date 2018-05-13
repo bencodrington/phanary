@@ -722,7 +722,7 @@ a {
     border-bottom-right-radius: 5px;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 15rem; /* 8 * 2rem(li height) - .5rem(so you can tell there are more) */
+    max-height: 15rem; /* 8 * 2rem(li height) - 1rem(so you can tell there are more) */
     -webkit-box-shadow: 0 0 5px #061423;
             box-shadow: 0 0 5px #061423;
 
@@ -749,6 +749,10 @@ a {
 
 .search-container__results li.selected .type-circle {
         border: 1px solid white;
+    }
+
+.search-container__results__name {
+        padding-left: 1rem;
     }
 
 .result--oneshot .type-circle {
