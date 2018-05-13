@@ -36,6 +36,7 @@ class Sidebar {
         // Update PersistenceManager's model of the lock checkbox on click
         this.$lockCheckbox.on('click', function(e) {
             g.pm.storeLockCheckboxState(this.$lockCheckbox.is(':checked'));
+            e.stopPropagation();
         }.bind(this));
 
         // Stop lock checkbox click events from propagating and deselecting

@@ -3,6 +3,7 @@ input[type=range] {
     margin: 10px 0;
     width: 100%;
     background-color: transparent;
+    cursor: pointer;
 
     &::-webkit-slider-runnable-track {
         width: 100%;

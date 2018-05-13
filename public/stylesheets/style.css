@@ -781,8 +781,8 @@ a {
     font-weight: 500;
     cursor: pointer;
     overflow: hidden;
-    -webkit-transition: all 0.2s ease-out;
-    transition: all 0.2s ease-out;
+    -webkit-transition: all 0.1s ease-out;
+    transition: all 0.1s ease-out;
 }
 
 .btn:hover {
@@ -1076,7 +1076,6 @@ a {
         -webkit-transition: all 0.3s ease-out;
         transition: all 0.3s ease-out;
         border-radius: 2px;
-        pointer-events: none;           /* Necessary to stop lock checkbox clicks from propagating */
     }
 
 .control__indicator--medium {
@@ -1374,6 +1373,7 @@ input[type=range] {
     margin: 10px 0;
     width: 100%;
     background-color: transparent;
+    cursor: pointer;
 }
 
 input[type=range]::-webkit-slider-runnable-track {
