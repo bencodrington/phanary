@@ -29,6 +29,7 @@
         width: 100%;
         transition: 0.075s ease-in-out;
         padding: 1rem 0;
+        pointer-events: none;
     }
 
     &-drop-zone--expanded {

@@ -572,7 +572,6 @@ a {
     /* Took this out as it was interfering with tooltips */
     /*overflow: auto;*/
     position: relative;
-    pointer-events: none;
 }
 
 .wrapper--top-margin {
@@ -594,8 +593,6 @@ a {
         display: block;
         width: 66%;
         height: 0px;
-        /* border-right: 200px solid transparent;
-        border-left: 200px solid transparent; */
         border-top: 1px solid #3A6982;
         border-bottom: 1px solid #AFC2CD;
     }
@@ -1020,6 +1017,7 @@ a {
         top: 4.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
         right: 18px; /* match the wrapper that contains the atmosphere list */
         display: none;
+        z-index: 1;
     }
 
 .sidebar__lock i {
@@ -1959,6 +1957,7 @@ input[type=range]:focus::-moz-range-track {
         -webkit-transition: 0.075s ease-in-out;
         transition: 0.075s ease-in-out;
         padding: 1rem 0;
+        pointer-events: none;
     }
 
 .drag-drop-zone--expanded {
