@@ -572,6 +572,7 @@ a {
     /* Took this out as it was interfering with tooltips */
     /*overflow: auto;*/
     position: relative;
+    pointer-events: none;
 }
 
 .wrapper--top-margin {
