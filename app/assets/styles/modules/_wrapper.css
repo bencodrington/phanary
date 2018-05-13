@@ -6,12 +6,30 @@
     margin-right: auto;
     /* Took this out as it was interfering with tooltips */
     /*overflow: auto;*/
+    position: relative;
 
     &--top-margin {
         margin-top: 3.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
     }
 
     &--bottom-margin {
-        margin-bottom: 8.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    &--atmospheres.wrapper--bottom-border::after {
+        border-top-color: $deepSea;
+        border-bottom-color: $mediumBlue;
+    }
+
+    &--bottom-border::after {
+        content: '';
+        margin-left: calc(17%);
+        display: block;
+        width: 66%;
+        height: 0px;
+        /* border-right: 200px solid transparent;
+        border-left: 200px solid transparent; */
+        border-top: 1px solid $mediumBlue;
+        border-bottom: 1px solid $lighterGrey;
     }
 }
