@@ -13,15 +13,16 @@ class DragManager {
 
     constructor() {
         this.events()
-        this.$dragIcon      = $('.drag-icon');  // TODO: temp
-        this.draggingTrack  = null;             // TODO:
+        this.$dragIcon          = $('.drag-icon');  // TODO: temp
+        this.draggingTrack      = null;             // TODO:
+        this.draggingAtmosphere = null;             // TODO:
     }
 
     events() {
 
         $('html')
         .on('mousemove', function(e) {
-            if (this.draggingTrack) {
+            if (this.draggingTrack || this.draggingAtmosphere) {
                 // Update dragIcon location
                 this.$dragIcon.offset({
                     top: this.getDragIconCoords(e, 'top'),
@@ -32,12 +33,12 @@ class DragManager {
         }.bind(this))
         .on('mouseup touchend', function() {
             this.stopDraggingTrack();
+            this.stopDraggingAtmosphere();
         }.bind(this))
 
         this.$sidebarDropZone = $('.drag-drop-zone--sidebar');
         this.$mainDropZone = $('.drag-drop-zone--main');
-        // TODO: remove? ->
-        this.$bothDropZones = $.merge(this.$sidebarDropZone, this.$mainDropZone);
+        this.$bothDropZones = this.$sidebarDropZone.add(this.$mainDropZone);
 
         this.$mainDropZone
         .on('mouseenter', function() {
@@ -50,6 +51,20 @@ class DragManager {
             if (this.draggingTrack) {
                 this.$mainDropZone.after(this.draggingTrack.$trackHTML);
                 this.$mainDropZone.removeClass('drag-drop-zone--expanded');
+            }
+        }.bind(this));
+
+        this.$sidebarDropZone
+        .on('mouseenter', function() {
+            // If dragging tracks, expand drop zone
+            if (this.draggingAtmosphere) {
+                this.$sidebarDropZone.addClass('drag-drop-zone--expanded');
+            }
+        }.bind(this))
+        .on('mouseup', function() {
+            if (this.draggingAtmosphere) {
+                this.$sidebarDropZone.after(this.draggingAtmosphere.$atmosphereHTML);
+                this.$sidebarDropZone.removeClass('drag-drop-zone--expanded');
             }
         }.bind(this));
 
@@ -69,6 +84,20 @@ class DragManager {
         if (this.draggingTrack) {
             this.draggingTrack.$trackHTML.slideDown();
             this.draggingTrack = null;
+        }
+    }
+
+    startDraggingAtmosphere(atmosphere) {
+        this.$dragIcon.show();
+        this.draggingAtmosphere = atmosphere;
+        atmosphere.$atmosphereHTML.slideUp();
+    }
+
+    stopDraggingAtmosphere() {
+        this.$dragIcon.hide();
+        if (this.draggingAtmosphere) {
+            this.draggingAtmosphere.$atmosphereHTML.slideDown();
+            this.draggingAtmosphere = null;
         }
     }
 

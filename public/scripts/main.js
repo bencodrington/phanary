@@ -11737,6 +11737,28 @@ var Atmosphere = function () {
             });
             $stopBtn.hide();
 
+            // TODO:
+
+            $atmosphereHTML.find(".btn--drag").on("mousedown touchstart", function (e) {
+                _GlobalVars.g.dragManager.startDraggingAtmosphere(this);
+                e.preventDefault();
+            }.bind(this));
+
+            $atmosphereHTML.hover(function () {
+                if (_GlobalVars.g.dragManager.draggingAtmosphere && _GlobalVars.g.dragManager.draggingAtmosphere != this) {
+                    this.$atmosphereHTML.addClass('section--show-drop-zone');
+                }
+            }.bind(this), function () {
+                this.$atmosphereHTML.removeClass('section--show-drop-zone');
+            }.bind(this));
+
+            $atmosphereHTML.on("mouseup", function () {
+                if (_GlobalVars.g.dragManager.draggingAtmosphere) {
+                    this.$atmosphereHTML.after(_GlobalVars.g.dragManager.draggingAtmosphere.$atmosphereHTML);
+                    this.$atmosphereHTML.removeClass('section--show-drop-zone');
+                }
+            }.bind(this));
+
             this.$atmosphereHTML = $atmosphereHTML; // Cache reference to the newly-added DOM element
         }
 
@@ -12562,6 +12584,7 @@ var DragManager = function () {
         this.events();
         this.$dragIcon = (0, _jquery2.default)('.drag-icon'); // TODO: temp
         this.draggingTrack = null; // TODO:
+        this.draggingAtmosphere = null; // TODO:
     }
 
     _createClass(DragManager, [{
@@ -12569,7 +12592,7 @@ var DragManager = function () {
         value: function events() {
 
             (0, _jquery2.default)('html').on('mousemove', function (e) {
-                if (this.draggingTrack) {
+                if (this.draggingTrack || this.draggingAtmosphere) {
                     // Update dragIcon location
                     this.$dragIcon.offset({
                         top: this.getDragIconCoords(e, 'top'),
@@ -12579,12 +12602,12 @@ var DragManager = function () {
                 }
             }.bind(this)).on('mouseup touchend', function () {
                 this.stopDraggingTrack();
+                this.stopDraggingAtmosphere();
             }.bind(this));
 
             this.$sidebarDropZone = (0, _jquery2.default)('.drag-drop-zone--sidebar');
             this.$mainDropZone = (0, _jquery2.default)('.drag-drop-zone--main');
-            // TODO: remove? ->
-            this.$bothDropZones = _jquery2.default.merge(this.$sidebarDropZone, this.$mainDropZone);
+            this.$bothDropZones = this.$sidebarDropZone.add(this.$mainDropZone);
 
             this.$mainDropZone.on('mouseenter', function () {
                 // If dragging tracks, expand drop zone
@@ -12595,6 +12618,18 @@ var DragManager = function () {
                 if (this.draggingTrack) {
                     this.$mainDropZone.after(this.draggingTrack.$trackHTML);
                     this.$mainDropZone.removeClass('drag-drop-zone--expanded');
+                }
+            }.bind(this));
+
+            this.$sidebarDropZone.on('mouseenter', function () {
+                // If dragging tracks, expand drop zone
+                if (this.draggingAtmosphere) {
+                    this.$sidebarDropZone.addClass('drag-drop-zone--expanded');
+                }
+            }.bind(this)).on('mouseup', function () {
+                if (this.draggingAtmosphere) {
+                    this.$sidebarDropZone.after(this.draggingAtmosphere.$atmosphereHTML);
+                    this.$sidebarDropZone.removeClass('drag-drop-zone--expanded');
                 }
             }.bind(this));
 
@@ -12616,6 +12651,22 @@ var DragManager = function () {
             if (this.draggingTrack) {
                 this.draggingTrack.$trackHTML.slideDown();
                 this.draggingTrack = null;
+            }
+        }
+    }, {
+        key: 'startDraggingAtmosphere',
+        value: function startDraggingAtmosphere(atmosphere) {
+            this.$dragIcon.show();
+            this.draggingAtmosphere = atmosphere;
+            atmosphere.$atmosphereHTML.slideUp();
+        }
+    }, {
+        key: 'stopDraggingAtmosphere',
+        value: function stopDraggingAtmosphere() {
+            this.$dragIcon.hide();
+            if (this.draggingAtmosphere) {
+                this.draggingAtmosphere.$atmosphereHTML.slideDown();
+                this.draggingAtmosphere = null;
             }
         }
     }, {

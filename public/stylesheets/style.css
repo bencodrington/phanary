@@ -1230,8 +1230,8 @@ a {
 
 .section--atmosphere {
         border: 1px solid transparent;
-        -webkit-transition: border-color 0.5s ease-out;
-        transition: border-color 0.5s ease-out;
+        -webkit-transition: border-color 0.5s ease-out, padding 0.075s ease-in-out;
+        transition: border-color 0.5s ease-out, padding 0.075s ease-in-out;
     }
 
 .section--atmosphere .section__heading {
@@ -1277,12 +1277,11 @@ a {
             opacity: 0;  
             border-radius: 5px;
             border: 1px solid #F4E2A1;
-            -webkit-transition: opacity 0.3s ease-out;
-            transition: opacity 0.3s ease-out;
+            -webkit-transition: opacity 0.3s ease-out, height 0.075s ease-in-out;
+            transition: opacity 0.3s ease-out, height 0.075s ease-in-out;
             pointer-events: none;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
-            
         }
 
 .section--atmosphere--active .section__heading {
@@ -1321,8 +1320,11 @@ a {
         }
 
 .section--show-drop-zone {
-        padding-bottom: calc(7rem + 20px);
         padding-bottom:  7rem;
+    }
+
+.section--show-drop-zone.section--atmosphere::after {
+        height: calc(100% - 7rem)   /* stops border from showing around dropzone padding */
     }
 
 .section__body {
@@ -1957,7 +1959,6 @@ input[type=range]:focus::-moz-range-track {
         -webkit-transition: 0.075s ease-in-out;
         transition: 0.075s ease-in-out;
         padding: 1rem 0;
-        pointer-events: none;
     }
 
 .drag-drop-zone--expanded {

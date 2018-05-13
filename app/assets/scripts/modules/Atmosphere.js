@@ -70,6 +70,32 @@ class Atmosphere {
             that.stop();
         })
         $stopBtn.hide();
+
+        // TODO:
+
+        $atmosphereHTML.find(".btn--drag").on("mousedown touchstart", function(e) {
+            g.dragManager.startDraggingAtmosphere(this);
+            e.preventDefault();
+        }.bind(this));
+
+        $atmosphereHTML.hover(
+            function() {
+                if (g.dragManager.draggingAtmosphere && g.dragManager.draggingAtmosphere != this) {
+                    this.$atmosphereHTML.addClass('section--show-drop-zone');
+                }
+            }.bind(this),
+
+            function() {
+                this.$atmosphereHTML.removeClass('section--show-drop-zone');
+            }.bind(this)
+        );
+
+        $atmosphereHTML.on("mouseup", function() {
+            if (g.dragManager.draggingAtmosphere) {
+                this.$atmosphereHTML.after(g.dragManager.draggingAtmosphere.$atmosphereHTML);
+                this.$atmosphereHTML.removeClass('section--show-drop-zone');
+            }
+        }.bind(this));
         
         this.$atmosphereHTML = $atmosphereHTML; // Cache reference to the newly-added DOM element
     }

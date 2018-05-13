@@ -45,7 +45,7 @@
 
     &--atmosphere {
         border: 1px solid transparent;
-        transition: border-color 0.5s ease-out;
+        transition: border-color 0.5s ease-out, padding 0.075s ease-in-out;
 
         & .section__heading {
             background-color: $blackPurple;
@@ -85,10 +85,9 @@
             opacity: 0;  
             border-radius: 5px;
             border: 1px solid $vanilla;
-            transition: opacity 0.3s ease-out;
+            transition: opacity 0.3s ease-out, height 0.075s ease-in-out;
             pointer-events: none;
             box-sizing: border-box;
-            
         }
 
         &--active {
@@ -134,8 +133,11 @@
     }
 
     &--show-drop-zone {
-        padding-bottom: calc(7rem + 20px);
         padding-bottom:  7rem;
+    }
+
+    &--show-drop-zone.section--atmosphere::after {
+        height: calc(100% - 7rem)   /* stops border from showing around dropzone padding */
     }
 
     &__body {
