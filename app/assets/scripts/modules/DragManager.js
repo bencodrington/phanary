@@ -88,6 +88,7 @@ class DragManager {
     }
 
     startDraggingAtmosphere(atmosphere) {
+        this.$dragIcon.addClass('drag-icon--atmosphere');
         this.$dragIcon.show();
         this.draggingAtmosphere = atmosphere;
         atmosphere.$atmosphereHTML.slideUp();
@@ -95,6 +96,7 @@ class DragManager {
 
     stopDraggingAtmosphere() {
         this.$dragIcon.hide();
+        this.$dragIcon.removeClass('drag-icon--atmosphere');
         if (this.draggingAtmosphere) {
             this.draggingAtmosphere.$atmosphereHTML.slideDown();
             this.draggingAtmosphere = null;

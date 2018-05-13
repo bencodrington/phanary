@@ -23,6 +23,14 @@
             right: 0;
             background-color: $blueberry;
         }
+
+        &--atmosphere {
+            background-color: $whitePurple;
+        }
+
+        &--atmosphere:after {
+            background-color: $darkPurple;
+        }
     }
 
     &-drop-zone--top {

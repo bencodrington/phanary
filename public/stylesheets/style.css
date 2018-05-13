@@ -1958,6 +1958,14 @@ input[type=range]:focus::-moz-range-track {
             background-color: #2E5266;
         }
 
+.drag-icon--atmosphere {
+            background-color: #C7B1D8;
+        }
+
+.drag-icon--atmosphere:after {
+            background-color: #442D49;
+        }
+
 .drag-drop-zone--top {
         width: 100%;
         -webkit-transition: 0.075s ease-in-out;
