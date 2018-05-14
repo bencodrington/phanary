@@ -893,6 +893,10 @@ a {
         background-color: transparent;
     }
 
+.section--atmosphere .btn--drag {
+        cursor: ns-resize;
+    }
+
 .section--track .btn {
     background-color: #2E5266;
     color: #849AA8;

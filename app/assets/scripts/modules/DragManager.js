@@ -23,11 +23,7 @@ class DragManager {
         $('html')
         .on('mousemove', function(e) {
             if (this.draggingTrack || this.draggingAtmosphere) {
-                // Update dragIcon location
-                this.$dragIcon.offset({
-                    top: this.getDragIconCoords(e, 'top'),
-                    left: this.getDragIconCoords(e, 'left')
-                })
+                this.updateDragIconLocation(e);
                 e.preventDefault();
             }
         }.bind(this))
@@ -73,7 +69,8 @@ class DragManager {
         }.bind(this));
     }
 
-    startDraggingTrack(track) {
+    startDraggingTrack(track, e) {
+        this.updateDragIconLocation(e);
         this.$dragIcon.show();
         this.draggingTrack = track;
         track.$trackHTML.slideUp();
@@ -87,7 +84,8 @@ class DragManager {
         }
     }
 
-    startDraggingAtmosphere(atmosphere) {
+    startDraggingAtmosphere(atmosphere, e) {
+        this.updateDragIconLocation(e);
         this.$dragIcon.addClass('drag-icon--atmosphere');
         this.$dragIcon.show();
         this.draggingAtmosphere = atmosphere;
@@ -103,13 +101,26 @@ class DragManager {
         }
     }
 
+    updateDragIconLocation(e) {
+        this.$dragIcon.offset({
+            top: this.getDragIconCoords(e, 'top'),
+            left: this.getDragIconCoords(e, 'left')
+        })
+    }
+
     getDragIconCoords(event, attribute) {
         if (attribute == 'top') {
-            return (event.type.toLowerCase() === 'mousemove')
+            return (
+                event.type.toLowerCase() === 'mousemove'
+                || event.type.toLowerCase() === 'mousedown'
+            )
             ? event.pageY - DRAG_ICON_OFFSET.y
             : window.event.touches[0].pageY - DRAG_ICON_OFFSET.y
         } else if (attribute == 'left') {
-            return (event.type.toLowerCase() === 'mousemove')
+            return (
+                event.type.toLowerCase() === 'mousemove'
+                || event.type.toLowerCase() === 'mousedown'
+            )
             ? event.pageX - DRAG_ICON_OFFSET.x
             : window.event.touches[0].pageX - DRAG_ICON_OFFSET.x
         } else {

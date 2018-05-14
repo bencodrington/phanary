@@ -81,7 +81,7 @@ class Track {
         // TODO:
 
         $trackHTML.find(".btn--drag").on("mousedown touchstart", function(e) {
-            g.dragManager.startDraggingTrack(this);
+            g.dragManager.startDraggingTrack(this, e);
             e.preventDefault();
         }.bind(this));
 

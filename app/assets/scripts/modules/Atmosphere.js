@@ -74,7 +74,7 @@ class Atmosphere {
         // TODO:
 
         $atmosphereHTML.find(".btn--drag").on("mousedown touchstart", function(e) {
-            g.dragManager.startDraggingAtmosphere(this);
+            g.dragManager.startDraggingAtmosphere(this, e);
             e.preventDefault();
         }.bind(this));
 

@@ -107,6 +107,10 @@
     .section--atmosphere--active .btn--drag:hover {
         background-color: transparent;
     }
+
+    &--drag {
+        cursor: ns-resize;
+    }
 }
 
 .section--track .btn {
