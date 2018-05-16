@@ -92,6 +92,8 @@ class Atmosphere {
 
         $atmosphereHTML.on("mouseup", function() {
             if (g.dragManager.draggingAtmosphere) {
+                // TODO: move draggingAtmosphere's position in the g.am's array
+                g.atmosphereManager.insertAtmosphereAtPosition(g.atmosphereManager.getPositionInArray(this));
                 this.$atmosphereHTML.after(g.dragManager.draggingAtmosphere.$atmosphereHTML);
                 this.$atmosphereHTML.removeClass('section--show-drop-zone');
             }
@@ -343,7 +345,7 @@ class Atmosphere {
         if (g.atmosphereManager.activeAtmosphere == this) {
             g.atmosphereManager.activeAtmosphere = null;
         }
-        g.atmosphereManager.atmospheres[this.id] = null; //TODO: replace with splicing to avoid wasted array spaces
+        g.atmosphereManager.removeAtmosphereFromArray(this);
         // Update localStorage
         g.pm.storeAtmospheres();
     }

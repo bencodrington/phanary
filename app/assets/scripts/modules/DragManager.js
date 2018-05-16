@@ -59,6 +59,7 @@ class DragManager {
         }.bind(this))
         .on('mouseup', function() {
             if (this.draggingAtmosphere) {
+                g.atmosphereManager.insertAtmosphereAtPosition(0);
                 this.$sidebarDropZone.after(this.draggingAtmosphere.$atmosphereHTML);
                 this.$sidebarDropZone.removeClass('drag-drop-zone--expanded');
             }

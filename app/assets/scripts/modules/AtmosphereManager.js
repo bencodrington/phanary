@@ -164,6 +164,35 @@ class AtmosphereManager {
         }
     }
 
+    // TODO: comments
+
+    removeAtmosphereFromArray(atmosphere) {
+        var indexOfAtmosphere = this.getPositionInArray(atmosphere);
+        this.atmospheres.splice(indexOfAtmosphere, 1);
+    }
+
+    getPositionInArray(atmosphere) {
+        var indexOfAtmosphere = this.atmospheres.indexOf(atmosphere);
+        if (indexOfAtmosphere < 0) {
+            console.error('AtmosphereManager.js:getPositionInArray(): Atmosphere not found');
+        }
+        return indexOfAtmosphere;
+    }
+
+    insertAtmosphereAtPosition(insertIndex) {
+        // Find current index of atmosphere that is being dragged
+        var indexOfDragging = this.atmospheres.indexOf(g.dragManager.draggingAtmosphere);
+        if (indexOfDragging < 0) {
+            console.error('AtmosphereManager.js:insertAtmosphereAfter(): Dragging atmosphere not found.');
+        }
+        // Remove atmosphere that is being dragged from 'atmospheres' array
+        var draggingAtmosphere = this.atmospheres.splice(indexOfDragging, 1)[0];
+        // Return it to the array at its new position
+        this.atmospheres.splice(insertIndex, 0, draggingAtmosphere);
+        // Update localStorage
+        g.pm.storeAtmospheres();
+    }
+
 }
 
 export default AtmosphereManager;
