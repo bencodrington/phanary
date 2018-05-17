@@ -12598,6 +12598,8 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _GlobalVars = __webpack_require__(2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12610,61 +12612,70 @@ var DRAG_ICON_OFFSET = {
 var DragManager = function () {
 
     /*
-        TODO: lots of comments
+        Responsible for as much of the drag and drop functionality as
+            can be excised from the other classes they interact with.
     */
 
     function DragManager() {
         _classCallCheck(this, DragManager);
 
-        this.events();
-        this.$dragIcon = (0, _jquery2.default)('.drag-icon'); // TODO: temp
-        this.draggingTrack = null; // TODO:
-        this.draggingAtmosphere = null; // TODO:
+        this.events
+        // The mini version of the track that follows the mouse when dragging
+        ();this.$dragIcon = (0, _jquery2.default)('.drag-icon');
+        this.draggingTrack = null; // Track that is currently being dragged, or null if there isn't one
+        this.draggingAtmosphere = null; // Atmosphere that is currently being dragged, or null if there isn't one
     }
 
     _createClass(DragManager, [{
         key: 'events',
         value: function events() {
+            // Cache references to drop zones
+            //  (areas at the top of each section where tracks can be dropped
+            //  to insert them into the first position)
+            this.$sidebarDropZone = (0, _jquery2.default)('.drag-drop-zone--sidebar');
+            this.$mainDropZone = (0, _jquery2.default)('.drag-drop-zone--main');
+            this.$bothDropZones = this.$sidebarDropZone.add(this.$mainDropZone);
 
-            (0, _jquery2.default)('html').on('mousemove', function (e) {
+            (0, _jquery2.default)('html').on('mousemove touchmove', function (e) {
+                // Check if drag icon's position needs to be updated on mousemove
                 if (this.draggingTrack || this.draggingAtmosphere) {
                     this.updateDragIconLocation(e);
                     e.preventDefault();
                 }
             }.bind(this)).on('mouseup touchend', function () {
+                // Stop dragging any applicable tracks or atmospheres
                 this.stopDraggingTrack();
                 this.stopDraggingAtmosphere();
             }.bind(this));
 
-            this.$sidebarDropZone = (0, _jquery2.default)('.drag-drop-zone--sidebar');
-            this.$mainDropZone = (0, _jquery2.default)('.drag-drop-zone--main');
-            this.$bothDropZones = this.$sidebarDropZone.add(this.$mainDropZone);
-
-            this.$mainDropZone.on('mouseenter', function () {
+            this.$mainDropZone.on('mouseenter touchenter', function () {
                 // If dragging tracks, expand drop zone
                 if (this.draggingTrack) {
                     this.$mainDropZone.addClass('drag-drop-zone--expanded');
                 }
-            }.bind(this)).on('mouseup', function () {
+            }.bind(this)).on('mouseup touchend', function () {
+                // Insert track at first position
                 if (this.draggingTrack) {
                     this.$mainDropZone.after(this.draggingTrack.$trackHTML);
                     this.$mainDropZone.removeClass('drag-drop-zone--expanded');
                 }
             }.bind(this));
 
-            this.$sidebarDropZone.on('mouseenter', function () {
-                // If dragging tracks, expand drop zone
+            this.$sidebarDropZone.on('mouseenter touchenter', function () {
+                // If dragging atmospheres, expand drop zone
                 if (this.draggingAtmosphere) {
                     this.$sidebarDropZone.addClass('drag-drop-zone--expanded');
                 }
-            }.bind(this)).on('mouseup', function () {
+            }.bind(this)).on('mouseup touchend', function () {
+                // Insert atmosphere at first position
                 if (this.draggingAtmosphere) {
-                    g.atmosphereManager.insertAtmosphereAtPosition(0);
+                    _GlobalVars.g.atmosphereManager.insertAtmosphereAtPosition(0); // Update g.atmosphereManager's array
                     this.$sidebarDropZone.after(this.draggingAtmosphere.$atmosphereHTML);
                     this.$sidebarDropZone.removeClass('drag-drop-zone--expanded');
                 }
             }.bind(this));
 
+            // Make sure drop zones are not expanded on mouseleave
             this.$bothDropZones.on('mouseleave', function () {
                 this.$bothDropZones.removeClass('drag-drop-zone--expanded');
             }.bind(this));
@@ -12705,6 +12716,10 @@ var DragManager = function () {
                 this.draggingAtmosphere = null;
             }
         }
+
+        // Update's the drag icon's location to be relative to the event
+        //  that is causing the drag.
+
     }, {
         key: 'updateDragIconLocation',
         value: function updateDragIconLocation(e) {
@@ -12713,15 +12728,39 @@ var DragManager = function () {
                 left: this.getDragIconCoords(e, 'left')
             });
         }
+
+        // Calculates the drag icon's new coordinates, adjusting for which 
+        //  event is causing the drag (mouse or touch) and for which 
+        //  attribute is to be calculated
+
     }, {
         key: 'getDragIconCoords',
         value: function getDragIconCoords(event, attribute) {
+            console.log(event.type.toLowerCase());
+            // 'Top' coordinate
             if (attribute == 'top') {
-                return event.type.toLowerCase() === 'mousemove' || event.type.toLowerCase() === 'mousedown' ? event.pageY - DRAG_ICON_OFFSET.y : window.event.touches[0].pageY - DRAG_ICON_OFFSET.y;
+
+                if (event.type.toLowerCase() === 'mousemove' || event.type.toLowerCase() === 'mousedown') {
+                    // Mouse event
+                    return event.pageY - DRAG_ICON_OFFSET.y;
+                } else {
+                    // Touch event
+                    return window.event.touches[0].pageY - DRAG_ICON_OFFSET.y;
+                }
+
+                // 'Left' coordinate
             } else if (attribute == 'left') {
-                return event.type.toLowerCase() === 'mousemove' || event.type.toLowerCase() === 'mousedown' ? event.pageX - DRAG_ICON_OFFSET.x : window.event.touches[0].pageX - DRAG_ICON_OFFSET.x;
+
+                if (event.type.toLowerCase() === 'mousemove' || event.type.toLowerCase() === 'mousedown') {
+                    // Mouse event
+                    return event.pageX - DRAG_ICON_OFFSET.x;
+                } else {
+                    // Touch event
+                    return window.event.touches[0].pageX - DRAG_ICON_OFFSET.x;
+                }
             } else {
-                // ERROR
+
+                // ERROR: attribute should always be either 'top' or 'left'
                 return 0;
             }
         }
@@ -13430,7 +13469,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrows-alt\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            \r\n            <div class=\"section__flex section__flex--spacing section__flex--wrap\">\r\n                <div class=\"section__flex__item section__flex__item--grow progress\">\r\n                    <div class=\"progress__bar\"></div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--yellow btn--medium-text section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <span>Play Once</span>\r\n                    </div>\r\n                </div>\r\n                <div class=\"section__flex__item\">\r\n                    <!-- TODO: disabled/enabled -->\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrows-alt\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            \r\n            <div class=\"section__flex section__flex--spacing section__flex--wrap\">\r\n                <div class=\"section__flex__item section__flex__item--grow progress\">\r\n                    <div class=\"progress__bar\"></div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--yellow btn--medium-text section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <span>Play Once</span>\r\n                    </div>\r\n                </div>\r\n                <div class=\"section__flex__item\">\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
     }, "useData": true });
 })();
 
