@@ -11062,15 +11062,12 @@ var Track = function () {
             var btnDrag = $trackHTML[0].getElementsByClassName("btn--drag")[0];
             btnDrag.addEventListener("pointerdown", function (e) {
                 _GlobalVars.g.dragManager.startDraggingTrack(this, e);
-                // TODO:
-                (0, _jquery2.default)('body').addClass('noscroll');
                 // e.preventDefault();
                 // TODO:
             }.bind(this), { passive: false });
             // $trackHTML.find(".btn--drag").on("pointerdown", function(e) {
             //     console.log(e);
             //     g.dragManager.startDraggingTrack(this, e);
-            //     $('body').addClass('noscroll');
             //     e.preventDefault();
             // }.bind(this));
 
@@ -12655,14 +12652,15 @@ var DragManager = function () {
                     this.updateDragIconLocation(e);
                     // Stop text from being highlighted
                     e.preventDefault();
-                    // TODO: check if over sidebar thingy
-                    var newEvent = _jquery2.default.Event('pointerenter');
-                    var elements = document.elementsFromPoint(e.clientX, e.clientY);
-                    (0, _jquery2.default)('.section--show-drop-zone').removeClass('section--show-drop-zone');
-                    var $elements = (0, _jquery2.default)(elements).filter('.drag-drop-zone--sidebar, .section--atmosphere, .section--track');
-                    if ($elements.length > 0) {
-                        $elements.first().trigger(newEvent);
-                    }
+                    // // TODO: check if over sidebar thingy
+                    // var newEvent = $.Event('pointerenter');
+                    // var elements = document.elementsFromPoint(e.clientX, e.clientY);
+                    // $('.section--show-drop-zone').removeClass('section--show-drop-zone');
+                    // $('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
+                    // var $elements = $(elements).filter('.drag-drop-zone--sidebar, .section--atmosphere, .section--track');
+                    // if ($elements.length > 0) {
+                    //     $elements.first().trigger(newEvent);
+                    // }
                 }
             }.bind(this)
             // TODO: mouseup touchend
@@ -12670,7 +12668,11 @@ var DragManager = function () {
                 // Stop dragging any applicable tracks or atmospheres
                 this.stopDraggingTrack();
                 this.stopDraggingAtmosphere();
+                // TODO: refactor
+                (0, _jquery2.default)('.section--show-drop-zone').removeClass('section--show-drop-zone');
+                (0, _jquery2.default)('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
                 (0, _jquery2.default)('body').removeClass('noscroll');
+                console.log('here');
             }.bind(this));
 
             this.$mainDropZone

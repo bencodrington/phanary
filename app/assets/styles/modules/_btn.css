@@ -65,6 +65,11 @@
         background-color: transparent;
         height: 100%;
         cursor: move;
+        display: none;
+
+        @mixin atMedium {
+            display: block;
+        }
     }
 
     &--rounded {

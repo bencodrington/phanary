@@ -20,8 +20,3 @@ a {
     text-decoration: none;
     cursor: pointer;
 }
-
-.noscroll {
-    touch-action: none;
-    overscroll-behavior: contain;
-}

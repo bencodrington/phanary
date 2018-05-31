@@ -37,14 +37,15 @@ class DragManager {
                 this.updateDragIconLocation(e);
                 // Stop text from being highlighted
                 e.preventDefault();
-                // TODO: check if over sidebar thingy
-                var newEvent = $.Event('pointerenter');
-                var elements = document.elementsFromPoint(e.clientX, e.clientY);
-                $('.section--show-drop-zone').removeClass('section--show-drop-zone');
-                var $elements = $(elements).filter('.drag-drop-zone--sidebar, .section--atmosphere, .section--track');
-                if ($elements.length > 0) {
-                    $elements.first().trigger(newEvent);
-                }
+                // // TODO: check if over sidebar thingy
+                // var newEvent = $.Event('pointerenter');
+                // var elements = document.elementsFromPoint(e.clientX, e.clientY);
+                // $('.section--show-drop-zone').removeClass('section--show-drop-zone');
+                // $('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
+                // var $elements = $(elements).filter('.drag-drop-zone--sidebar, .section--atmosphere, .section--track');
+                // if ($elements.length > 0) {
+                //     $elements.first().trigger(newEvent);
+                // }
             }
         }.bind(this))
         // TODO: mouseup touchend
@@ -52,7 +53,11 @@ class DragManager {
             // Stop dragging any applicable tracks or atmospheres
             this.stopDraggingTrack();
             this.stopDraggingAtmosphere();
+            // TODO: refactor
+            $('.section--show-drop-zone').removeClass('section--show-drop-zone');
+            $('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
             $('body').removeClass('noscroll');
+            console.log('here');
         }.bind(this))
 
         this.$mainDropZone

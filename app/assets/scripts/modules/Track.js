@@ -84,15 +84,12 @@ class Track {
         var btnDrag = $trackHTML[0].getElementsByClassName("btn--drag")[0];
         btnDrag.addEventListener("pointerdown", function(e) {
             g.dragManager.startDraggingTrack(this, e);
-            // TODO:
-            $('body').addClass('noscroll');
             // e.preventDefault();
             // TODO:
         }.bind(this), { passive: false });
         // $trackHTML.find(".btn--drag").on("pointerdown", function(e) {
         //     console.log(e);
         //     g.dragManager.startDraggingTrack(this, e);
-        //     $('body').addClass('noscroll');
         //     e.preventDefault();
         // }.bind(this));
 
