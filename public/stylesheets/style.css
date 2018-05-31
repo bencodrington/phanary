@@ -481,6 +481,12 @@ a {
     cursor: pointer;
 }
 
+.noscroll {
+    -ms-touch-action: none;
+        touch-action: none;
+    overscroll-behavior: contain;
+}
+
 .navbar {
     position: fixed;
     background-color: #2E5266;

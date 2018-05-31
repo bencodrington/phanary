@@ -80,24 +80,34 @@ class Track {
 
         // TODO:
 
-        $trackHTML.find(".btn--drag").on("mousedown touchstart", function(e) {
+        // TODO: mousedown touchstart
+        var btnDrag = $trackHTML[0].getElementsByClassName("btn--drag")[0];
+        btnDrag.addEventListener("pointerdown", function(e) {
             g.dragManager.startDraggingTrack(this, e);
-            e.preventDefault();
+            // TODO:
+            $('body').addClass('noscroll');
+            // e.preventDefault();
+            // TODO:
+        }.bind(this), { passive: false });
+        // $trackHTML.find(".btn--drag").on("pointerdown", function(e) {
+        //     console.log(e);
+        //     g.dragManager.startDraggingTrack(this, e);
+        //     $('body').addClass('noscroll');
+        //     e.preventDefault();
+        // }.bind(this));
+
+        $trackHTML
+        .on('pointerenter', function() {
+            if (g.dragManager.draggingTrack && g.dragManager.draggingTrack != this) {
+                this.$trackHTML.addClass('section--show-drop-zone');
+            }
+        }.bind(this))
+        .on('pointerleave', function() {
+            this.$trackHTML.removeClass('section--show-drop-zone');
         }.bind(this));
 
-        $trackHTML.hover(
-            function() {
-                if (g.dragManager.draggingTrack && g.dragManager.draggingTrack != this) {
-                    this.$trackHTML.addClass('section--show-drop-zone');
-                }
-            }.bind(this),
-
-            function() {
-                this.$trackHTML.removeClass('section--show-drop-zone');
-            }.bind(this)
-        );
-
-        $trackHTML.on("mouseup", function() {
+        // TODO: mouseup
+        $trackHTML.on("pointerup", function() {
             if (g.dragManager.draggingTrack) {
                 this.$trackHTML.after(g.dragManager.draggingTrack.$trackHTML);
                 this.$trackHTML.removeClass('section--show-drop-zone');

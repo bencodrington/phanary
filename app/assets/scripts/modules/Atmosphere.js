@@ -73,9 +73,9 @@ class Atmosphere {
 
         // TODO:
 
-        $atmosphereHTML.find(".btn--drag").on("mousedown touchstart", function(e) {
+        // TODO: mousedown touchstart
+        $atmosphereHTML.find(".btn--drag").on("pointerdown", function(e) {
             g.dragManager.startDraggingAtmosphere(this, e);
-            e.preventDefault();
         }.bind(this));
 
         $atmosphereHTML.hover(
@@ -90,7 +90,8 @@ class Atmosphere {
             }.bind(this)
         );
 
-        $atmosphereHTML.on("mouseup", function() {
+        // TODO: mouseup
+        $atmosphereHTML.on("pointerup", function() {
             if (g.dragManager.draggingAtmosphere) {
                 // TODO: move draggingAtmosphere's position in the g.am's array
                 g.atmosphereManager.insertAtmosphereAtPosition(g.atmosphereManager.getPositionInArray(this));

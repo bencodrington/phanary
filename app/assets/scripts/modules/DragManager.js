@@ -31,27 +31,40 @@ class DragManager {
         this.$bothDropZones = this.$sidebarDropZone.add(this.$mainDropZone);
 
         $('html')
-        .on('mousemove touchmove', function(e) {
+        .on('pointermove', function(e) {
             // Check if drag icon's position needs to be updated on mousemove
             if (this.draggingTrack || this.draggingAtmosphere) {
                 this.updateDragIconLocation(e);
+                // Stop text from being highlighted
                 e.preventDefault();
+                // TODO: check if over sidebar thingy
+                var newEvent = $.Event('pointerenter');
+                var elements = document.elementsFromPoint(e.clientX, e.clientY);
+                $('.section--show-drop-zone').removeClass('section--show-drop-zone');
+                var $elements = $(elements).filter('.drag-drop-zone--sidebar, .section--atmosphere, .section--track');
+                if ($elements.length > 0) {
+                    $elements.first().trigger(newEvent);
+                }
             }
         }.bind(this))
-        .on('mouseup touchend', function() {
+        // TODO: mouseup touchend
+        .on('pointerup', function() {
             // Stop dragging any applicable tracks or atmospheres
             this.stopDraggingTrack();
             this.stopDraggingAtmosphere();
+            $('body').removeClass('noscroll');
         }.bind(this))
 
         this.$mainDropZone
-        .on('mouseenter touchenter', function() {
+        // TODO: mouseenter
+        .on('pointerenter', function() {
             // If dragging tracks, expand drop zone
             if (this.draggingTrack) {
                 this.$mainDropZone.addClass('drag-drop-zone--expanded');
             }
         }.bind(this))
-        .on('mouseup touchend', function() {
+        // TODO: mouseup touchend
+        .on('pointerup', function() {
             // Insert track at first position
             if (this.draggingTrack) {
                 this.$mainDropZone.after(this.draggingTrack.$trackHTML);
@@ -60,13 +73,15 @@ class DragManager {
         }.bind(this));
 
         this.$sidebarDropZone
-        .on('mouseenter touchenter', function() {
+        // TODO: mouseenter
+        .on('pointerenter', function() {
             // If dragging atmospheres, expand drop zone
             if (this.draggingAtmosphere) {
                 this.$sidebarDropZone.addClass('drag-drop-zone--expanded');
             }
         }.bind(this))
-        .on('mouseup touchend', function() {
+        // TODO: mouseup touchend
+        .on('pointerup', function() {
             // Insert atmosphere at first position
             if (this.draggingAtmosphere) {
                 g.atmosphereManager.insertAtmosphereAtPosition(0);  // Update g.atmosphereManager's array
@@ -76,7 +91,8 @@ class DragManager {
         }.bind(this));
 
         // Make sure drop zones are not expanded on mouseleave
-        this.$bothDropZones.on('mouseleave', function() {
+        // TODO: mouseleave (pointerout?)
+        this.$bothDropZones.on('pointerleave', function() {
             this.$bothDropZones.removeClass('drag-drop-zone--expanded');
         }.bind(this));
     }
@@ -126,30 +142,15 @@ class DragManager {
     //  event is causing the drag (mouse or touch) and for which 
     //  attribute is to be calculated
     getDragIconCoords(event, attribute) {
-        console.log(event.type.toLowerCase());
         // 'Top' coordinate
         if (attribute == 'top') {
-
-            if (event.type.toLowerCase() === 'mousemove'
-                    || event.type.toLowerCase() === 'mousedown') {
-                // Mouse event
-                return event.pageY - DRAG_ICON_OFFSET.y;
-            } else {
-                // Touch event
-                return window.event.touches[0].pageY - DRAG_ICON_OFFSET.y;
-            }
+            // TODO: can this be combined into update dragIconLocation?
+            return event.clientY- DRAG_ICON_OFFSET.y;
 
         // 'Left' coordinate
         } else if (attribute == 'left') {
-
-            if (event.type.toLowerCase() === 'mousemove'
-                    || event.type.toLowerCase() === 'mousedown') {
-                // Mouse event
-                return event.pageX - DRAG_ICON_OFFSET.x;
-            } else {
-                // Touch event
-                return window.event.touches[0].pageX - DRAG_ICON_OFFSET.x;
-            }
+            // TODO:
+            return event.clientX- DRAG_ICON_OFFSET.x;
 
         } else {
 

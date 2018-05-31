@@ -11058,20 +11058,32 @@ var Track = function () {
 
             // TODO:
 
-            $trackHTML.find(".btn--drag").on("mousedown touchstart", function (e) {
+            // TODO: mousedown touchstart
+            var btnDrag = $trackHTML[0].getElementsByClassName("btn--drag")[0];
+            btnDrag.addEventListener("pointerdown", function (e) {
                 _GlobalVars.g.dragManager.startDraggingTrack(this, e);
-                e.preventDefault();
-            }.bind(this));
+                // TODO:
+                (0, _jquery2.default)('body').addClass('noscroll');
+                // e.preventDefault();
+                // TODO:
+            }.bind(this), { passive: false });
+            // $trackHTML.find(".btn--drag").on("pointerdown", function(e) {
+            //     console.log(e);
+            //     g.dragManager.startDraggingTrack(this, e);
+            //     $('body').addClass('noscroll');
+            //     e.preventDefault();
+            // }.bind(this));
 
-            $trackHTML.hover(function () {
+            $trackHTML.on('pointerenter', function () {
                 if (_GlobalVars.g.dragManager.draggingTrack && _GlobalVars.g.dragManager.draggingTrack != this) {
                     this.$trackHTML.addClass('section--show-drop-zone');
                 }
-            }.bind(this), function () {
+            }.bind(this)).on('pointerleave', function () {
                 this.$trackHTML.removeClass('section--show-drop-zone');
             }.bind(this));
 
-            $trackHTML.on("mouseup", function () {
+            // TODO: mouseup
+            $trackHTML.on("pointerup", function () {
                 if (_GlobalVars.g.dragManager.draggingTrack) {
                     this.$trackHTML.after(_GlobalVars.g.dragManager.draggingTrack.$trackHTML);
                     this.$trackHTML.removeClass('section--show-drop-zone');
@@ -11739,9 +11751,9 @@ var Atmosphere = function () {
 
             // TODO:
 
-            $atmosphereHTML.find(".btn--drag").on("mousedown touchstart", function (e) {
+            // TODO: mousedown touchstart
+            $atmosphereHTML.find(".btn--drag").on("pointerdown", function (e) {
                 _GlobalVars.g.dragManager.startDraggingAtmosphere(this, e);
-                e.preventDefault();
             }.bind(this));
 
             $atmosphereHTML.hover(function () {
@@ -11752,7 +11764,8 @@ var Atmosphere = function () {
                 this.$atmosphereHTML.removeClass('section--show-drop-zone');
             }.bind(this));
 
-            $atmosphereHTML.on("mouseup", function () {
+            // TODO: mouseup
+            $atmosphereHTML.on("pointerup", function () {
                 if (_GlobalVars.g.dragManager.draggingAtmosphere) {
                     // TODO: move draggingAtmosphere's position in the g.am's array
                     _GlobalVars.g.atmosphereManager.insertAtmosphereAtPosition(_GlobalVars.g.atmosphereManager.getPositionInArray(this));
@@ -12636,24 +12649,40 @@ var DragManager = function () {
             this.$mainDropZone = (0, _jquery2.default)('.drag-drop-zone--main');
             this.$bothDropZones = this.$sidebarDropZone.add(this.$mainDropZone);
 
-            (0, _jquery2.default)('html').on('mousemove touchmove', function (e) {
+            (0, _jquery2.default)('html').on('pointermove', function (e) {
                 // Check if drag icon's position needs to be updated on mousemove
                 if (this.draggingTrack || this.draggingAtmosphere) {
                     this.updateDragIconLocation(e);
+                    // Stop text from being highlighted
                     e.preventDefault();
+                    // TODO: check if over sidebar thingy
+                    var newEvent = _jquery2.default.Event('pointerenter');
+                    var elements = document.elementsFromPoint(e.clientX, e.clientY);
+                    (0, _jquery2.default)('.section--show-drop-zone').removeClass('section--show-drop-zone');
+                    var $elements = (0, _jquery2.default)(elements).filter('.drag-drop-zone--sidebar, .section--atmosphere, .section--track');
+                    if ($elements.length > 0) {
+                        $elements.first().trigger(newEvent);
+                    }
                 }
-            }.bind(this)).on('mouseup touchend', function () {
+            }.bind(this)
+            // TODO: mouseup touchend
+            ).on('pointerup', function () {
                 // Stop dragging any applicable tracks or atmospheres
                 this.stopDraggingTrack();
                 this.stopDraggingAtmosphere();
+                (0, _jquery2.default)('body').removeClass('noscroll');
             }.bind(this));
 
-            this.$mainDropZone.on('mouseenter touchenter', function () {
+            this.$mainDropZone
+            // TODO: mouseenter
+            .on('pointerenter', function () {
                 // If dragging tracks, expand drop zone
                 if (this.draggingTrack) {
                     this.$mainDropZone.addClass('drag-drop-zone--expanded');
                 }
-            }.bind(this)).on('mouseup touchend', function () {
+            }.bind(this)
+            // TODO: mouseup touchend
+            ).on('pointerup', function () {
                 // Insert track at first position
                 if (this.draggingTrack) {
                     this.$mainDropZone.after(this.draggingTrack.$trackHTML);
@@ -12661,12 +12690,16 @@ var DragManager = function () {
                 }
             }.bind(this));
 
-            this.$sidebarDropZone.on('mouseenter touchenter', function () {
+            this.$sidebarDropZone
+            // TODO: mouseenter
+            .on('pointerenter', function () {
                 // If dragging atmospheres, expand drop zone
                 if (this.draggingAtmosphere) {
                     this.$sidebarDropZone.addClass('drag-drop-zone--expanded');
                 }
-            }.bind(this)).on('mouseup touchend', function () {
+            }.bind(this)
+            // TODO: mouseup touchend
+            ).on('pointerup', function () {
                 // Insert atmosphere at first position
                 if (this.draggingAtmosphere) {
                     _GlobalVars.g.atmosphereManager.insertAtmosphereAtPosition(0); // Update g.atmosphereManager's array
@@ -12676,7 +12709,8 @@ var DragManager = function () {
             }.bind(this));
 
             // Make sure drop zones are not expanded on mouseleave
-            this.$bothDropZones.on('mouseleave', function () {
+            // TODO: mouseleave (pointerout?)
+            this.$bothDropZones.on('pointerleave', function () {
                 this.$bothDropZones.removeClass('drag-drop-zone--expanded');
             }.bind(this));
         }
@@ -12736,28 +12770,15 @@ var DragManager = function () {
     }, {
         key: 'getDragIconCoords',
         value: function getDragIconCoords(event, attribute) {
-            console.log(event.type.toLowerCase());
             // 'Top' coordinate
             if (attribute == 'top') {
-
-                if (event.type.toLowerCase() === 'mousemove' || event.type.toLowerCase() === 'mousedown') {
-                    // Mouse event
-                    return event.pageY - DRAG_ICON_OFFSET.y;
-                } else {
-                    // Touch event
-                    return window.event.touches[0].pageY - DRAG_ICON_OFFSET.y;
-                }
+                // TODO: can this be combined into update dragIconLocation?
+                return event.clientY - DRAG_ICON_OFFSET.y;
 
                 // 'Left' coordinate
             } else if (attribute == 'left') {
-
-                if (event.type.toLowerCase() === 'mousemove' || event.type.toLowerCase() === 'mousedown') {
-                    // Mouse event
-                    return event.pageX - DRAG_ICON_OFFSET.x;
-                } else {
-                    // Touch event
-                    return window.event.touches[0].pageX - DRAG_ICON_OFFSET.x;
-                }
+                // TODO:
+                return event.clientX - DRAG_ICON_OFFSET.x;
             } else {
 
                 // ERROR: attribute should always be either 'top' or 'left'
