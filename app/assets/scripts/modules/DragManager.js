@@ -56,7 +56,6 @@ class DragManager {
             // TODO: refactor
             $('.section--show-drop-zone').removeClass('section--show-drop-zone');
             $('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
-            $('body').removeClass('noscroll');
             console.log('here');
         }.bind(this))
 

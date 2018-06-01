@@ -12671,7 +12671,6 @@ var DragManager = function () {
                 // TODO: refactor
                 (0, _jquery2.default)('.section--show-drop-zone').removeClass('section--show-drop-zone');
                 (0, _jquery2.default)('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
-                (0, _jquery2.default)('body').removeClass('noscroll');
                 console.log('here');
             }.bind(this));
 
