@@ -47,10 +47,6 @@
         margin-right: 0.25rem;
     }
 
-    &--header:hover, .section--track &--header.btn:hover {
-        background-color: transparent;
-    }
-
     &--drag.btn--header {
         float: right;
         border: none;
@@ -70,6 +66,10 @@
         height: 2.5rem;
         width: 2rem;
         border: none;
+        background-color: transparent;
+    }
+
+    &--header:hover, .section--track &--header.btn:hover {
         background-color: transparent;
     }
 

@@ -15,23 +15,24 @@
         width: 100%;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        overflow: hidden;   /* expand to contain floated buttons instead */
+        overflow-y: hidden;   /* expand to contain floated buttons instead */
+        min-height: 2.5rem;
 
         &__title {
             margin: 0;
-            padding: 0.5rem;
+            padding: 0 0.5rem;
             color: $stormGrey;
             font-family: 'Slabo 27px', serif;
             font-weight: 800;
-            white-space: nowrap;
+            overflow: hidden;
             display: inline-block;
-            height: 2rem;
+            height: 2.5rem;
         }
 
         &__title__text {
             margin: 0;
+            padding: 0.5rem 0;
             display: inline-block;
-            max-width: 100%;
             overflow: hidden;
             border: 1px solid transparent;
             font-size: 1.15rem;
@@ -62,11 +63,19 @@
         }
 
         & .atmosphere__rename {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+            position: relative;
+            display: inline-block;
+            float: right;
+            height: 2.5rem;
+            width: 1.5rem;
             margin-left: .25rem;
             transition: all 0.3s ease-out;
+
+            & svg {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+            }
         }
 
         & .atmosphere__rename:hover {

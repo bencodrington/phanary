@@ -830,10 +830,6 @@ a {
         margin-right: 0.25rem;
     }
 
-.btn--header:hover, .section--track .btn--header.btn:hover {
-        background-color: transparent;
-    }
-
 .btn--drag.btn--header {
         float: right;
         border: none;
@@ -856,6 +852,10 @@ a {
         height: 2.5rem;
         width: 2rem;
         border: none;
+        background-color: transparent;
+    }
+
+.btn--header:hover, .section--track .btn--header.btn:hover {
         background-color: transparent;
     }
 
@@ -1223,26 +1223,25 @@ a {
         width: 100%;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        overflow: hidden;
+        overflow-y: hidden;   /* expand to contain floated buttons instead */
+        min-height: 2.5rem;
     }
-
-/* expand to contain floated buttons instead */
 
 .section__heading__title {
             margin: 0;
-            padding: 0.5rem;
+            padding: 0 0.5rem;
             color: #849AA8;
             font-family: 'Slabo 27px', serif;
             font-weight: 800;
-            white-space: nowrap;
+            overflow: hidden;
             display: inline-block;
-            height: 2rem;
+            height: 2.5rem;
         }
 
 .section__heading__title__text {
             margin: 0;
+            padding: 0.5rem 0;
             display: inline-block;
-            max-width: 100%;
             overflow: hidden;
             border: 1px solid transparent;
             font-size: 1.15rem;
@@ -1276,14 +1275,22 @@ a {
             }
 
 .section--atmosphere .atmosphere__rename {
-            position: absolute;
-            top: 50%;
-            -webkit-transform: translateY(-50%);
-                    transform: translateY(-50%);
+            position: relative;
+            display: inline-block;
+            float: right;
+            height: 2.5rem;
+            width: 1.5rem;
             margin-left: .25rem;
             -webkit-transition: all 0.3s ease-out;
             transition: all 0.3s ease-out;
         }
+
+.section--atmosphere .atmosphere__rename svg {
+                position: absolute;
+                top: 50%;
+                -webkit-transform: translateY(-50%);
+                        transform: translateY(-50%);
+            }
 
 .section--atmosphere .atmosphere__rename:hover {
             color: #C7B1D8;
