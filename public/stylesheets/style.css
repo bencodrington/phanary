@@ -827,34 +827,48 @@ a {
     }
 
 .btn--delete {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border-top-right-radius: 5px;
-        height: 100%;
-        border: none;
+        margin-right: 0.25rem;
+    }
+
+.btn--header:hover, .section--track .btn--header.btn:hover {
         background-color: transparent;
     }
 
-.btn--delete:hover, .section--track .btn--drag.btn:hover {
-        background-color: transparent;
-    }
-
-.btn--drag {
-        position: absolute;
-        top: 0;
-        right: 2rem;
+.btn--drag.btn--header {
+        float: right;
         border: none;
         background-color: transparent;
-        height: 100%;
         cursor: move;
         display: none;
     }
 
 @media (min-width: 800px) {
 
-.btn--drag {
-            display: block
+.btn--drag.btn--header {
+            display: inline-block
+    }
+    }
+
+.btn--header {
+        position: relative;
+        display: inline-block;
+        float: right;
+        height: 2.5rem;
+        width: 2rem;
+        border: none;
+        background-color: transparent;
+    }
+
+.btn--reorder {
+        display: inline-block;
+        top: 0;
+        float: right;
+    }
+
+@media (min-width: 800px) {
+
+.btn--reorder {
+            display: none
     }
     }
 
@@ -890,14 +904,7 @@ a {
         color: #C7B1D8;
     }
 
-.section--atmosphere .btn--delete,
-    .section--atmosphere .btn .section--atmosphere--active .btn--delete,
-    .section--atmosphere .btn--drag,
-    .section--atmosphere .btn .section--atmosphere--active .btn--drag,
-    .section--atmosphere .btn--delete:hover,
-    .section--atmosphere .btn .section--atmosphere--active .btn--delete:hover,
-    .section--atmosphere .btn--drag:hover,
-    .section--atmosphere .btn .section--atmosphere--active .btn--drag:hover {
+.section--atmosphere .btn--header, .section--atmosphere .btn--header:hover {
         background-color: transparent;
     }
 
@@ -1209,22 +1216,27 @@ a {
 
 .section__heading {
         background-color: #2E5266;
-        padding: 0.5rem 3rem 0.5rem 1rem;
+        padding: 0;
+        padding-left: 0.25rem;
         position: relative;
         display: block;
         width: 100%;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
+        overflow: hidden;
     }
+
+/* expand to contain floated buttons instead */
 
 .section__heading__title {
             margin: 0;
-            padding: 0;
+            padding: 0.5rem;
             color: #849AA8;
             font-family: 'Slabo 27px', serif;
             font-weight: 800;
             white-space: nowrap;
-            display: inline;
+            display: inline-block;
+            height: 2rem;
         }
 
 .section__heading__title__text {

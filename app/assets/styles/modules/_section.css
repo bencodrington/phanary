@@ -8,21 +8,24 @@
 
     &__heading {
         background-color: $blueberry;
-        padding: 0.5rem 3rem 0.5rem 1rem;
+        padding: 0;
+        padding-left: 0.25rem;
         position: relative;
         display: block;
         width: 100%;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
+        overflow: hidden;   /* expand to contain floated buttons instead */
 
         &__title {
             margin: 0;
-            padding: 0;
+            padding: 0.5rem;
             color: $stormGrey;
             font-family: 'Slabo 27px', serif;
             font-weight: 800;
             white-space: nowrap;
-            display: inline;
+            display: inline-block;
+            height: 2rem;
         }
 
         &__title__text {
