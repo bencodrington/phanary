@@ -16,7 +16,6 @@
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         overflow-y: hidden;   /* expand to contain floated buttons instead */
-        min-height: 2.5rem;
 
         &__title {
             margin: 0;
@@ -27,6 +26,7 @@
             overflow: hidden;
             display: inline-block;
             height: 2.5rem;
+            vertical-align: middle;
         }
 
         &__title__text {

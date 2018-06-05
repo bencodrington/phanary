@@ -1223,9 +1223,10 @@ a {
         width: 100%;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        overflow-y: hidden;   /* expand to contain floated buttons instead */
-        min-height: 2.5rem;
+        overflow-y: hidden;
     }
+
+/* expand to contain floated buttons instead */
 
 .section__heading__title {
             margin: 0;
@@ -1236,6 +1237,7 @@ a {
             overflow: hidden;
             display: inline-block;
             height: 2.5rem;
+            vertical-align: middle;
         }
 
 .section__heading__title__text {
