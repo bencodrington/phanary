@@ -12226,7 +12226,7 @@ var AtmosphereManager = function () {
             this.activeAtmosphere = null;
         }
 
-        // Called when enter is pressed in the search bar, while a track is highlighted.
+        // Called when enter is pressed in the search bar, while a track is highlighted
 
     }, {
         key: 'addTrack',
@@ -12294,38 +12294,48 @@ var AtmosphereManager = function () {
                 _GlobalVars.g.pm.storeAtmospheres();
             }
         }
-
-        // TODO: comments
-
     }, {
         key: 'removeAtmosphereFromArray',
         value: function removeAtmosphereFromArray(atmosphere) {
             var indexOfAtmosphere = this.getPositionInArray(atmosphere);
             this.atmospheres.splice(indexOfAtmosphere, 1);
         }
+
+        // Returns the integer position of the passed-in atmosphere
+
     }, {
         key: 'getPositionInArray',
         value: function getPositionInArray(atmosphere) {
             var indexOfAtmosphere = this.atmospheres.indexOf(atmosphere);
             if (indexOfAtmosphere < 0) {
+                // Atmosphere was not found in the array
                 console.error('AtmosphereManager.js:getPositionInArray(): Atmosphere not found');
             }
             return indexOfAtmosphere;
         }
+
+        // Inserts the atmosphere that is currently being dragged (if there is one)
+        //  at the given position in this class's array
+
     }, {
         key: 'insertDraggingAtmosphereAtPosition',
         value: function insertDraggingAtmosphereAtPosition(insertIndex) {
             // Find current index of atmosphere that is being dragged
             var indexOfDragging = this.atmospheres.indexOf(_GlobalVars.g.dragManager.draggingAtmosphere);
             if (indexOfDragging < 0) {
+                // Atmosphere was not found in the array
                 console.error('AtmosphereManager.js:insertDraggingAtmosphereAfter(): Dragging atmosphere not found.');
+                return;
             }
-
-            this.insertAtmosphereAtPosition(indexOfDragging, insertIndex);
+            this.moveAtmosphereAtPosition(indexOfDragging, insertIndex);
         }
+
+        // Moves the atmosphere at the first given position to the second
+        //  given position.
+
     }, {
-        key: 'insertAtmosphereAtPosition',
-        value: function insertAtmosphereAtPosition(currentIndex, insertIndex) {
+        key: 'moveAtmosphereAtPosition',
+        value: function moveAtmosphereAtPosition(currentIndex, insertIndex) {
             // Remove atmosphere that is being moved from 'atmospheres' array
             var movingAtmosphere = this.atmospheres.splice(currentIndex, 1)[0];
             // Return it to the array at its new position
@@ -12334,8 +12344,9 @@ var AtmosphereManager = function () {
             _GlobalVars.g.pm.storeAtmospheres();
         }
 
-        // TODO: comments
-        // modification: int
+        // Takes an atmosphere object and a positive or negative integer
+        //  and moves the atmosphere the number of positions and in the
+        //  direction specified by the integer.
 
     }, {
         key: 'modifyAtmospherePosition',
@@ -12347,7 +12358,7 @@ var AtmosphereManager = function () {
             // Ensure the new position is within the bounds of the array
             newPosition = _GlobalVars.g.clamp(0, newPosition, this.atmospheres.length - 1);
             // Finally, insert back into the array at its new position
-            this.insertAtmosphereAtPosition(currentPosition, newPosition);
+            this.moveAtmosphereAtPosition(currentPosition, newPosition);
         }
     }]);
 
