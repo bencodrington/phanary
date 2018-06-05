@@ -94,7 +94,7 @@ class Atmosphere {
         $atmosphereHTML.on("pointerup", function() {
             if (g.dragManager.draggingAtmosphere) {
                 // TODO: move draggingAtmosphere's position in the g.am's array
-                g.atmosphereManager.insertAtmosphereAtPosition(g.atmosphereManager.getPositionInArray(this));
+                g.atmosphereManager.insertDraggingAtmosphereAtPosition(g.atmosphereManager.getPositionInArray(this));
                 this.$atmosphereHTML.after(g.dragManager.draggingAtmosphere.$atmosphereHTML);
                 this.$atmosphereHTML.removeClass('section--show-drop-zone');
             }

@@ -179,18 +179,36 @@ class AtmosphereManager {
         return indexOfAtmosphere;
     }
 
-    insertAtmosphereAtPosition(insertIndex) {
+    insertDraggingAtmosphereAtPosition(insertIndex) {
         // Find current index of atmosphere that is being dragged
         var indexOfDragging = this.atmospheres.indexOf(g.dragManager.draggingAtmosphere);
         if (indexOfDragging < 0) {
-            console.error('AtmosphereManager.js:insertAtmosphereAfter(): Dragging atmosphere not found.');
+            console.error('AtmosphereManager.js:insertDraggingAtmosphereAfter(): Dragging atmosphere not found.');
         }
-        // Remove atmosphere that is being dragged from 'atmospheres' array
-        var draggingAtmosphere = this.atmospheres.splice(indexOfDragging, 1)[0];
+
+        this.insertAtmosphereAtPosition(indexOfDragging, insertIndex);
+    }
+
+    insertAtmosphereAtPosition(currentIndex, insertIndex) {
+        // Remove atmosphere that is being moved from 'atmospheres' array
+        var movingAtmosphere = this.atmospheres.splice(currentIndex, 1)[0];
         // Return it to the array at its new position
-        this.atmospheres.splice(insertIndex, 0, draggingAtmosphere);
+        this.atmospheres.splice(insertIndex, 0, movingAtmosphere);
         // Update localStorage
         g.pm.storeAtmospheres();
+    }
+
+    // TODO: comments
+    // modification: int
+    modifyAtmospherePosition(atmosphere, modification) {
+        // Get current position of atmosphere
+        var currentPosition = this.getPositionInArray(atmosphere);
+        // Modify that by the passed in value
+        var newPosition = currentPosition + modification;
+        // Ensure the new position is within the bounds of the array
+        newPosition = g.clamp(0, newPosition, this.atmospheres.length - 1);
+        // Finally, insert back into the array at its new position
+        this.insertAtmosphereAtPosition(currentPosition, newPosition);
     }
 
 }

@@ -87,7 +87,7 @@ class DragManager {
         .on('pointerup', function() {
             // Insert atmosphere at first position
             if (this.draggingAtmosphere) {
-                g.atmosphereManager.insertAtmosphereAtPosition(0);  // Update g.atmosphereManager's array
+                g.atmosphereManager.insertDraggingAtmosphereAtPosition(0);  // Update g.atmosphereManager's array
                 this.$sidebarDropZone.after(this.draggingAtmosphere.$atmosphereHTML);
                 this.$sidebarDropZone.removeClass('drag-drop-zone--expanded');
             }
@@ -172,8 +172,11 @@ class DragManager {
             $html.next('.section').after($html);
         } else {
             console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
+            return;
         }
-        // TODO: update persistanceManager
+        if (isAtmosphere) {
+            g.atmosphereManager.modifyAtmospherePosition(section, direction == 'up' ? -1 : +1);
+        }
     }
 }
 

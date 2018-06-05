@@ -11773,7 +11773,7 @@ var Atmosphere = function () {
             $atmosphereHTML.on("pointerup", function () {
                 if (_GlobalVars.g.dragManager.draggingAtmosphere) {
                     // TODO: move draggingAtmosphere's position in the g.am's array
-                    _GlobalVars.g.atmosphereManager.insertAtmosphereAtPosition(_GlobalVars.g.atmosphereManager.getPositionInArray(this));
+                    _GlobalVars.g.atmosphereManager.insertDraggingAtmosphereAtPosition(_GlobalVars.g.atmosphereManager.getPositionInArray(this));
                     this.$atmosphereHTML.after(_GlobalVars.g.dragManager.draggingAtmosphere.$atmosphereHTML);
                     this.$atmosphereHTML.removeClass('section--show-drop-zone');
                 }
@@ -12313,19 +12313,41 @@ var AtmosphereManager = function () {
             return indexOfAtmosphere;
         }
     }, {
-        key: 'insertAtmosphereAtPosition',
-        value: function insertAtmosphereAtPosition(insertIndex) {
+        key: 'insertDraggingAtmosphereAtPosition',
+        value: function insertDraggingAtmosphereAtPosition(insertIndex) {
             // Find current index of atmosphere that is being dragged
             var indexOfDragging = this.atmospheres.indexOf(_GlobalVars.g.dragManager.draggingAtmosphere);
             if (indexOfDragging < 0) {
-                console.error('AtmosphereManager.js:insertAtmosphereAfter(): Dragging atmosphere not found.');
+                console.error('AtmosphereManager.js:insertDraggingAtmosphereAfter(): Dragging atmosphere not found.');
             }
-            // Remove atmosphere that is being dragged from 'atmospheres' array
-            var draggingAtmosphere = this.atmospheres.splice(indexOfDragging, 1)[0];
+
+            this.insertAtmosphereAtPosition(indexOfDragging, insertIndex);
+        }
+    }, {
+        key: 'insertAtmosphereAtPosition',
+        value: function insertAtmosphereAtPosition(currentIndex, insertIndex) {
+            // Remove atmosphere that is being moved from 'atmospheres' array
+            var movingAtmosphere = this.atmospheres.splice(currentIndex, 1)[0];
             // Return it to the array at its new position
-            this.atmospheres.splice(insertIndex, 0, draggingAtmosphere);
+            this.atmospheres.splice(insertIndex, 0, movingAtmosphere);
             // Update localStorage
             _GlobalVars.g.pm.storeAtmospheres();
+        }
+
+        // TODO: comments
+        // modification: int
+
+    }, {
+        key: 'modifyAtmospherePosition',
+        value: function modifyAtmospherePosition(atmosphere, modification) {
+            // Get current position of atmosphere
+            var currentPosition = this.getPositionInArray(atmosphere);
+            // Modify that by the passed in value
+            var newPosition = currentPosition + modification;
+            // Ensure the new position is within the bounds of the array
+            newPosition = _GlobalVars.g.clamp(0, newPosition, this.atmospheres.length - 1);
+            // Finally, insert back into the array at its new position
+            this.insertAtmosphereAtPosition(currentPosition, newPosition);
         }
     }]);
 
@@ -12720,7 +12742,7 @@ var DragManager = function () {
             ).on('pointerup', function () {
                 // Insert atmosphere at first position
                 if (this.draggingAtmosphere) {
-                    _GlobalVars.g.atmosphereManager.insertAtmosphereAtPosition(0); // Update g.atmosphereManager's array
+                    _GlobalVars.g.atmosphereManager.insertDraggingAtmosphereAtPosition(0); // Update g.atmosphereManager's array
                     this.$sidebarDropZone.after(this.draggingAtmosphere.$atmosphereHTML);
                     this.$sidebarDropZone.removeClass('drag-drop-zone--expanded');
                 }
@@ -12816,8 +12838,11 @@ var DragManager = function () {
                 $html.next('.section').after($html);
             } else {
                 console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
+                return;
             }
-            // TODO: update persistanceManager
+            if (isAtmosphere) {
+                _GlobalVars.g.atmosphereManager.modifyAtmospherePosition(section, direction == 'up' ? -1 : +1);
+            }
         }
     }]);
 
