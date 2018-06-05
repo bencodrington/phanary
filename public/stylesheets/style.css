@@ -590,6 +590,7 @@ a {
 .wrapper--bottom-border::after {
         content: '';
         margin-left: calc(17%);
+        margin-bottom: 5.5rem;  /* necessary so sidebar footer doesn't cover bottom atmospheres/tracks */
         display: block;
         width: 66%;
         height: 0px;
