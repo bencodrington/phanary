@@ -32,6 +32,21 @@ class GlobalVars {
         if (this.storageAvailable('localStorage')) {
             this.pm = new PersistenceManager();
         }
+
+        this.events();
+        
+        // TODO:
+        // if (window.PointerEvent) { 
+        //     // Pointer events are supported. 
+        //   }
+    }
+
+    events() {
+        // Update PersistenceManager's model of the lock checkbox on click
+        this.$autoplayCheckbox.on('click', function(e) {
+            g.pm.storeAutoplayCheckboxState(this.$autoplayCheckbox.is(':checked'));
+            e.stopPropagation();
+        }.bind(this));
     }
 
     /*
@@ -97,6 +112,10 @@ class GlobalVars {
     */
     clamp(min, number, max) {
         return Math.min(Math.max(number, min), max);
+    }
+
+    setAutoplayCheckboxState(isChecked) {
+        this.$autoplayCheckbox.prop('checked', isChecked);
     }
 }
 

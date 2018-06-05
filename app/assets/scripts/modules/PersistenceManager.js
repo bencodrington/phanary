@@ -11,11 +11,15 @@ class PersistenceManager {
         if (!localStorage.getItem('lockCheckbox')) {
             localStorage.setItem('lockCheckbox', false);
         }
+        if (!localStorage.getItem('autoplayCheckbox')) {
+            localStorage.setItem('autoplayCheckbox', false);
+        }
     }
 
     loadFromStorage() {
         this.loadAtmospheres();
         this.loadLockCheckboxState();
+        this.loadAutoplayCheckboxState();
     }
 
     /*
@@ -72,6 +76,14 @@ class PersistenceManager {
 
     loadLockCheckboxState() {
         g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
+    }
+
+    storeAutoplayCheckboxState(newState) {
+        localStorage.setItem('autoplayCheckbox', newState);
+    }
+
+    loadAutoplayCheckboxState() {
+        g.setAutoplayCheckboxState(JSON.parse(localStorage.getItem('autoplayCheckbox')));
     }
 
 }

@@ -10532,15 +10532,31 @@ var GlobalVars = function () {
         if (this.storageAvailable('localStorage')) {
             this.pm = new _PersistenceManager2.default();
         }
+
+        this.events();
+
+        // TODO:
+        // if (window.PointerEvent) { 
+        //     // Pointer events are supported. 
+        //   }
     }
 
-    /*
-        From:
-        https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
-    */
-
-
     _createClass(GlobalVars, [{
+        key: 'events',
+        value: function events() {
+            // Update PersistenceManager's model of the lock checkbox on click
+            this.$autoplayCheckbox.on('click', function (e) {
+                g.pm.storeAutoplayCheckboxState(this.$autoplayCheckbox.is(':checked'));
+                e.stopPropagation();
+            }.bind(this));
+        }
+
+        /*
+            From:
+            https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+        */
+
+    }, {
         key: 'storageAvailable',
         value: function storageAvailable(type) {
             try {
@@ -10612,6 +10628,11 @@ var GlobalVars = function () {
         key: 'clamp',
         value: function clamp(min, number, max) {
             return Math.min(Math.max(number, min), max);
+        }
+    }, {
+        key: 'setAutoplayCheckboxState',
+        value: function setAutoplayCheckboxState(isChecked) {
+            this.$autoplayCheckbox.prop('checked', isChecked);
         }
     }]);
 
@@ -13214,6 +13235,9 @@ var PersistenceManager = function () {
         if (!localStorage.getItem('lockCheckbox')) {
             localStorage.setItem('lockCheckbox', false);
         }
+        if (!localStorage.getItem('autoplayCheckbox')) {
+            localStorage.setItem('autoplayCheckbox', false);
+        }
     }
 
     _createClass(PersistenceManager, [{
@@ -13221,6 +13245,7 @@ var PersistenceManager = function () {
         value: function loadFromStorage() {
             this.loadAtmospheres();
             this.loadLockCheckboxState();
+            this.loadAutoplayCheckboxState();
         }
 
         /*
@@ -13347,6 +13372,16 @@ var PersistenceManager = function () {
         key: 'loadLockCheckboxState',
         value: function loadLockCheckboxState() {
             _GlobalVars.g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
+        }
+    }, {
+        key: 'storeAutoplayCheckboxState',
+        value: function storeAutoplayCheckboxState(newState) {
+            localStorage.setItem('autoplayCheckbox', newState);
+        }
+    }, {
+        key: 'loadAutoplayCheckboxState',
+        value: function loadAutoplayCheckboxState() {
+            _GlobalVars.g.setAutoplayCheckboxState(JSON.parse(localStorage.getItem('autoplayCheckbox')));
         }
     }]);
 
