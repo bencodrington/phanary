@@ -164,14 +164,16 @@ class DragManager {
     }
 
     // TODO: comment
-    moveSection(section, direction) {
+    moveSection(section, direction, isAtmosphere) {
+        var $html = isAtmosphere ? section.$atmosphereHTML : section.$trackHTML;
         if (direction == 'up') {
-            section.$trackHTML.prev('.section--track').before(section.$trackHTML);
+            $html.prev('.section').before($html);
         } else if (direction == 'down') {
-            section.$trackHTML.next('.section--track').after(section.$trackHTML);
+            $html.next('.section').after($html);
         } else {
             console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
         }
+        // TODO: update persistanceManager
     }
 }
 

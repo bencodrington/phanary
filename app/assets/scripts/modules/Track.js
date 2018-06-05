@@ -113,10 +113,10 @@ class Track {
 
         // Reorder buttons
         $trackHTML.find('.btn--reorder-up').click(function() {
-            g.dragManager.moveSection(this, 'up');
+            g.dragManager.moveSection(this, 'up', false);
         }.bind(this));
         $trackHTML.find('.btn--reorder-down').click(function() {
-            g.dragManager.moveSection(this, 'down');
+            g.dragManager.moveSection(this, 'down', false);
         }.bind(this));
 
 

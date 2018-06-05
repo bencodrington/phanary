@@ -99,6 +99,16 @@ class Atmosphere {
                 this.$atmosphereHTML.removeClass('section--show-drop-zone');
             }
         }.bind(this));
+
+        // Reorder buttons
+        $atmosphereHTML.find('.btn--reorder-up').click(function(e) {
+            g.dragManager.moveSection(this, 'up', true);
+            e.stopPropagation();
+        }.bind(this));
+        $atmosphereHTML.find('.btn--reorder-down').click(function(e) {
+            g.dragManager.moveSection(this, 'down', true);
+            e.stopPropagation();
+        }.bind(this));
         
         this.$atmosphereHTML = $atmosphereHTML; // Cache reference to the newly-added DOM element
     }

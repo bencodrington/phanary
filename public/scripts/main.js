@@ -11089,10 +11089,10 @@ var Track = function () {
 
             // Reorder buttons
             $trackHTML.find('.btn--reorder-up').click(function () {
-                _GlobalVars.g.dragManager.moveSection(this, 'up');
+                _GlobalVars.g.dragManager.moveSection(this, 'up', false);
             }.bind(this));
             $trackHTML.find('.btn--reorder-down').click(function () {
-                _GlobalVars.g.dragManager.moveSection(this, 'down');
+                _GlobalVars.g.dragManager.moveSection(this, 'down', false);
             }.bind(this));
 
             this.$trackHTML = $trackHTML; // cache jquery object
@@ -11777,6 +11777,16 @@ var Atmosphere = function () {
                     this.$atmosphereHTML.after(_GlobalVars.g.dragManager.draggingAtmosphere.$atmosphereHTML);
                     this.$atmosphereHTML.removeClass('section--show-drop-zone');
                 }
+            }.bind(this));
+
+            // Reorder buttons
+            $atmosphereHTML.find('.btn--reorder-up').click(function (e) {
+                _GlobalVars.g.dragManager.moveSection(this, 'up', true);
+                e.stopPropagation();
+            }.bind(this));
+            $atmosphereHTML.find('.btn--reorder-down').click(function (e) {
+                _GlobalVars.g.dragManager.moveSection(this, 'down', true);
+                e.stopPropagation();
             }.bind(this));
 
             this.$atmosphereHTML = $atmosphereHTML; // Cache reference to the newly-added DOM element
@@ -12798,14 +12808,16 @@ var DragManager = function () {
 
     }, {
         key: 'moveSection',
-        value: function moveSection(section, direction) {
+        value: function moveSection(section, direction, isAtmosphere) {
+            var $html = isAtmosphere ? section.$atmosphereHTML : section.$trackHTML;
             if (direction == 'up') {
-                section.$trackHTML.prev('.section--track').before(section.$trackHTML);
+                $html.prev('.section').before($html);
             } else if (direction == 'down') {
-                section.$trackHTML.next('.section--track').after(section.$trackHTML);
+                $html.next('.section').after($html);
             } else {
                 console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
             }
+            // TODO: update persistanceManager
         }
     }]);
 
