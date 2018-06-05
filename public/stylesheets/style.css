@@ -957,7 +957,7 @@ a {
         display: none;
     }
 
-.sidebar.mobile-hidden {
+.sidebar.sidebar--hidden {
         width: 0%;
     }
 
@@ -982,7 +982,7 @@ a {
         max-height: 500px;
     }
 
-.sidebar__footer.mobile-hidden {
+.sidebar__footer.sidebar--hidden {
             max-height: 0;
             padding: 0;
         }
@@ -994,13 +994,13 @@ a {
             max-height: 500px
     }
 
-            .sidebar__footer.mobile-hidden {
+            .sidebar__footer.sidebar--hidden {
                 width: 100%;
                 max-height: 500px;
                 padding: 1rem 0;
             }
 
-            .sidebar__footer.mobile-hidden .sidebar__footer__label {
+            .sidebar__footer.sidebar--hidden .sidebar__footer__label {
                 display: inline;
             }
     }

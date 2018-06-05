@@ -12,7 +12,7 @@
         display: none;
     }
 
-    &.mobile-hidden {
+    &.sidebar--hidden {
         width: 0%;
     }
 
@@ -32,7 +32,7 @@
         z-index: 8;
         max-height: 500px;
 
-        &.mobile-hidden {
+        &.sidebar--hidden {
             max-height: 0;
             padding: 0;
         }
@@ -41,13 +41,13 @@
             width: 33%;
             max-height: 500px;
 
-            &.mobile-hidden {
+            &.sidebar--hidden {
                 width: 100%;
                 max-height: 500px;
                 padding: 1rem 0;
             }
 
-            &.mobile-hidden &__label {
+            &.sidebar--hidden &__label {
                 display: inline;
             }
 

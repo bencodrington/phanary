@@ -47,15 +47,15 @@ class Sidebar {
     }
 
     /*
-        Apply the 'mobile-hidden' class to the sidebar,
+        Apply the 'sidebar--hidden' class to the sidebar,
         and the 'full-width' class to the main content div
     */
     hide(ignoreLockBox) {
         if (!ignoreLockBox && this.$lockCheckbox.is(':checked')) {
             return;
         }
-        this.$HTML.toggleClass("mobile-hidden");    // TODO: refactor 'mobile-hidden' to just 'hidden'?
-        this.$footerHTML.toggleClass("mobile-hidden");
+        this.$HTML.toggleClass("sidebar--hidden");
+        this.$footerHTML.toggleClass("sidebar--hidden");
         this.$mainContent.toggleClass("full-width");
     }
 
