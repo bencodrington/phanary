@@ -2,6 +2,7 @@ import $ from 'jquery';
 
 import { g } from "./GlobalVars.js";
 
+// The distance that the drag icon appears from the cursor while being dragged
 const DRAG_ICON_OFFSET = {
     x: 30,
     y: 30
@@ -37,15 +38,6 @@ class DragManager {
                 this.updateDragIconLocation(e);
                 // Stop text from being highlighted
                 e.preventDefault();
-                // // TODO: check if over sidebar thingy
-                // var newEvent = $.Event('pointerenter');
-                // var elements = document.elementsFromPoint(e.clientX, e.clientY);
-                // $('.section--show-drop-zone').removeClass('section--show-drop-zone');
-                // $('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
-                // var $elements = $(elements).filter('.drag-drop-zone--sidebar, .section--atmosphere, .section--track');
-                // if ($elements.length > 0) {
-                //     $elements.first().trigger(newEvent);
-                // }
             }
         }.bind(this))
         // TODO: mouseup touchend
@@ -132,40 +124,23 @@ class DragManager {
         }
     }
 
-    // Update's the drag icon's location to be relative to the event
+    // Updates the drag icon's location to be relative to the event
     //  that is causing the drag.
     updateDragIconLocation(e) {
         this.$dragIcon.offset({
-            top: this.getDragIconCoords(e, 'top'),
-            left: this.getDragIconCoords(e, 'left')
+            top: event.clientY- DRAG_ICON_OFFSET.y,
+            left: event.clientX- DRAG_ICON_OFFSET.x
         })
     }
 
-    // Calculates the drag icon's new coordinates, adjusting for which 
-    //  event is causing the drag (mouse or touch) and for which 
-    //  attribute is to be calculated
-    getDragIconCoords(event, attribute) {
-        // 'Top' coordinate
-        if (attribute == 'top') {
-            // TODO: can this be combined into update dragIconLocation?
-            return event.clientY- DRAG_ICON_OFFSET.y;
-
-        // 'Left' coordinate
-        } else if (attribute == 'left') {
-            // TODO:
-            return event.clientX- DRAG_ICON_OFFSET.x;
-
-        } else {
-
-            // ERROR: attribute should always be either 'top' or 'left'
-            return 0;
-
-        }
-    }
-
-    // TODO: comment
+    // Handles the 'reorder' buttons on each section
+    //  section: either the track or atmosphere to be moved
+    //  direction: string: either 'up' or 'down'
+    //  isAtmosphere: boolean value
     moveSection(section, direction, isAtmosphere) {
+        // Store the jQuery object for the section, based on subclass
         var $html = isAtmosphere ? section.$atmosphereHTML : section.$trackHTML;
+        // Move the object to its new position
         if (direction == 'up') {
             $html.prev('.section').before($html);
         } else if (direction == 'down') {
@@ -174,6 +149,7 @@ class DragManager {
             console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
             return;
         }
+        // Update AtmosphereManager array for persistance if necessary
         if (isAtmosphere) {
             g.atmosphereManager.modifyAtmospherePosition(section, direction == 'up' ? -1 : +1);
         }
