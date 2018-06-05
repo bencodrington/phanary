@@ -111,6 +111,15 @@ class Track {
             }
         }.bind(this));
 
+        // Reorder buttons
+        $trackHTML.find('.btn--reorder-up').click(function() {
+            g.dragManager.moveSection(this, 'up');
+        }.bind(this));
+        $trackHTML.find('.btn--reorder-down').click(function() {
+            g.dragManager.moveSection(this, 'down');
+        }.bind(this));
+
+
         this.$trackHTML = $trackHTML;   // cache jquery object
     }
 

@@ -56,7 +56,6 @@ class DragManager {
             // TODO: refactor
             $('.section--show-drop-zone').removeClass('section--show-drop-zone');
             $('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
-            console.log('here');
         }.bind(this))
 
         this.$mainDropZone
@@ -102,10 +101,10 @@ class DragManager {
     }
 
     startDraggingTrack(track, e) {
-        this.updateDragIconLocation(e);
         this.$dragIcon.show();
         this.draggingTrack = track;
         track.$trackHTML.slideUp();
+        this.updateDragIconLocation(e);
     }
 
     stopDraggingTrack() {
@@ -117,11 +116,11 @@ class DragManager {
     }
 
     startDraggingAtmosphere(atmosphere, e) {
-        this.updateDragIconLocation(e);
         this.$dragIcon.addClass('drag-icon--atmosphere');
         this.$dragIcon.show();
         this.draggingAtmosphere = atmosphere;
         atmosphere.$atmosphereHTML.slideUp();
+        this.updateDragIconLocation(e);
     }
 
     stopDraggingAtmosphere() {
@@ -161,6 +160,17 @@ class DragManager {
             // ERROR: attribute should always be either 'top' or 'left'
             return 0;
 
+        }
+    }
+
+    // TODO: comment
+    moveSection(section, direction) {
+        if (direction == 'up') {
+            section.$trackHTML.prev('.section--track').before(section.$trackHTML);
+        } else if (direction == 'down') {
+            section.$trackHTML.next('.section--track').after(section.$trackHTML);
+        } else {
+            console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
         }
     }
 }

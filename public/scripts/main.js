@@ -11087,6 +11087,14 @@ var Track = function () {
                 }
             }.bind(this));
 
+            // Reorder buttons
+            $trackHTML.find('.btn--reorder-up').click(function () {
+                _GlobalVars.g.dragManager.moveSection(this, 'up');
+            }.bind(this));
+            $trackHTML.find('.btn--reorder-down').click(function () {
+                _GlobalVars.g.dragManager.moveSection(this, 'down');
+            }.bind(this));
+
             this.$trackHTML = $trackHTML; // cache jquery object
         }
 
@@ -12671,7 +12679,6 @@ var DragManager = function () {
                 // TODO: refactor
                 (0, _jquery2.default)('.section--show-drop-zone').removeClass('section--show-drop-zone');
                 (0, _jquery2.default)('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
-                console.log('here');
             }.bind(this));
 
             this.$mainDropZone
@@ -12718,10 +12725,10 @@ var DragManager = function () {
     }, {
         key: 'startDraggingTrack',
         value: function startDraggingTrack(track, e) {
-            this.updateDragIconLocation(e);
             this.$dragIcon.show();
             this.draggingTrack = track;
             track.$trackHTML.slideUp();
+            this.updateDragIconLocation(e);
         }
     }, {
         key: 'stopDraggingTrack',
@@ -12735,11 +12742,11 @@ var DragManager = function () {
     }, {
         key: 'startDraggingAtmosphere',
         value: function startDraggingAtmosphere(atmosphere, e) {
-            this.updateDragIconLocation(e);
             this.$dragIcon.addClass('drag-icon--atmosphere');
             this.$dragIcon.show();
             this.draggingAtmosphere = atmosphere;
             atmosphere.$atmosphereHTML.slideUp();
+            this.updateDragIconLocation(e);
         }
     }, {
         key: 'stopDraggingAtmosphere',
@@ -12784,6 +12791,20 @@ var DragManager = function () {
 
                 // ERROR: attribute should always be either 'top' or 'left'
                 return 0;
+            }
+        }
+
+        // TODO: comment
+
+    }, {
+        key: 'moveSection',
+        value: function moveSection(section, direction) {
+            if (direction == 'up') {
+                section.$trackHTML.prev('.section--track').before(section.$trackHTML);
+            } else if (direction == 'down') {
+                section.$trackHTML.next('.section--track').after(section.$trackHTML);
+            } else {
+                console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
             }
         }
     }]);
