@@ -1887,14 +1887,11 @@ input[type=range]:focus::-moz-range-track {
 
 .about__content a {
             color: #F7CE38;
+            text-decoration: underline;
         }
 
 .about__content a:hover {
                 color: #F4E2A1;
-            }
-
-.about__content a:focus {
-                text-decoration: underline;
             }
 
 .about__phonetics {

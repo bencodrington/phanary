@@ -57,13 +57,10 @@
 
         & a {
             color: $phanary;
+            text-decoration: underline;
 
             &:hover {
                 color: $vanilla;
-            }
-
-            &:focus {
-                text-decoration: underline;
             }
         }
     }
