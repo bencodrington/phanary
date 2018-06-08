@@ -16,7 +16,8 @@ class AtmosphereManager {
         this.$editingTitle      = null; // The title text element of the atmosphere which is currently being renamed
 
         this.$newAtmosphereBtn  = $('#newAtmosphereBtn');
-        this.$list              = $("#atmosphereList"); // The div containing all atmospheres
+        this.$list              = $("#atmosphereList");         // The div containing all atmospheres
+        this.$volumeSlider      = $('.volume__range-global');   // Global volume slider, affects this.volume
 
         this.events();
     }
@@ -125,15 +126,13 @@ class AtmosphereManager {
     }
 
     rigVolumeControls() {
-        var that = this;
         var $muteBtn = $(".volume__mute-btn-global");
         $muteBtn.on('click', function() {
-            that.toggleMute();
-        });
-        var $volumeSlider = $('.volume__range-global');
-        $volumeSlider.on('input', function() {
-            that.updateGlobalVolume($volumeSlider.val());
-        });
+            this.toggleMute();
+        }.bind(this));
+        this.$volumeSlider.on('input', function() {
+            this.updateGlobalVolume(this.$volumeSlider.val());
+        }.bind(this));
 
     }
 
@@ -145,6 +144,7 @@ class AtmosphereManager {
     updateGlobalVolume(newVolume) {
         this.volume = newVolume;
         this.updateAllVolumes();
+        g.pm.storeGlobalVolume(newVolume);
     }
 
     updateAllVolumes() {

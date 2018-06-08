@@ -12150,6 +12150,7 @@ var AtmosphereManager = function () {
 
         this.$newAtmosphereBtn = (0, _jquery2.default)('#newAtmosphereBtn');
         this.$list = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
+        this.$volumeSlider = (0, _jquery2.default)('.volume__range-global'); // Global volume slider, affects this.volume
 
         this.events();
     }
@@ -12274,15 +12275,13 @@ var AtmosphereManager = function () {
     }, {
         key: 'rigVolumeControls',
         value: function rigVolumeControls() {
-            var that = this;
             var $muteBtn = (0, _jquery2.default)(".volume__mute-btn-global");
             $muteBtn.on('click', function () {
-                that.toggleMute();
-            });
-            var $volumeSlider = (0, _jquery2.default)('.volume__range-global');
-            $volumeSlider.on('input', function () {
-                that.updateGlobalVolume($volumeSlider.val());
-            });
+                this.toggleMute();
+            }.bind(this));
+            this.$volumeSlider.on('input', function () {
+                this.updateGlobalVolume(this.$volumeSlider.val());
+            }.bind(this));
         }
     }, {
         key: 'toggleMute',
@@ -12295,6 +12294,7 @@ var AtmosphereManager = function () {
         value: function updateGlobalVolume(newVolume) {
             this.volume = newVolume;
             this.updateAllVolumes();
+            _GlobalVars.g.pm.storeGlobalVolume(newVolume);
         }
     }, {
         key: 'updateAllVolumes',
@@ -13238,6 +13238,9 @@ var PersistenceManager = function () {
         if (!localStorage.getItem('autoplayCheckbox')) {
             localStorage.setItem('autoplayCheckbox', false);
         }
+        if (!localStorage.getItem('globalVolume')) {
+            localStorage.setItem('globalVolume', 0.5);
+        }
     }
 
     _createClass(PersistenceManager, [{
@@ -13246,6 +13249,7 @@ var PersistenceManager = function () {
             this.loadAtmospheres();
             this.loadLockCheckboxState();
             this.loadAutoplayCheckboxState();
+            this.loadGlobalVolume();
         }
 
         /*
@@ -13382,6 +13386,18 @@ var PersistenceManager = function () {
         key: 'loadAutoplayCheckboxState',
         value: function loadAutoplayCheckboxState() {
             _GlobalVars.g.setAutoplayCheckboxState(JSON.parse(localStorage.getItem('autoplayCheckbox')));
+        }
+    }, {
+        key: 'storeGlobalVolume',
+        value: function storeGlobalVolume(newVolume) {
+            localStorage.setItem('globalVolume', newVolume);
+        }
+    }, {
+        key: 'loadGlobalVolume',
+        value: function loadGlobalVolume() {
+            var globalVolume = localStorage.getItem('globalVolume');
+            _GlobalVars.g.atmosphereManager.$volumeSlider.val(globalVolume);
+            _GlobalVars.g.atmosphereManager.updateGlobalVolume(globalVolume);
         }
     }]);
 

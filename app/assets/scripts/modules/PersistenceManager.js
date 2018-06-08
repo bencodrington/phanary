@@ -14,12 +14,16 @@ class PersistenceManager {
         if (!localStorage.getItem('autoplayCheckbox')) {
             localStorage.setItem('autoplayCheckbox', false);
         }
+        if (!localStorage.getItem('globalVolume')) {
+            localStorage.setItem('globalVolume', 0.5);
+        }
     }
 
     loadFromStorage() {
         this.loadAtmospheres();
         this.loadLockCheckboxState();
         this.loadAutoplayCheckboxState();
+        this.loadGlobalVolume();
     }
 
     /*
@@ -84,6 +88,16 @@ class PersistenceManager {
 
     loadAutoplayCheckboxState() {
         g.setAutoplayCheckboxState(JSON.parse(localStorage.getItem('autoplayCheckbox')));
+    }
+
+    storeGlobalVolume(newVolume) {
+        localStorage.setItem('globalVolume', newVolume);
+    }
+
+    loadGlobalVolume() {
+        var globalVolume = localStorage.getItem('globalVolume')
+        g.atmosphereManager.$volumeSlider.val(globalVolume);
+        g.atmosphereManager.updateGlobalVolume(globalVolume);
     }
 
 }
