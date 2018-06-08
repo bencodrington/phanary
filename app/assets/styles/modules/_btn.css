@@ -83,6 +83,16 @@
         }
     }
 
+    /* Hide 'up' button on first section */
+    .section:first-child &--reorder-up {
+        display: none;
+    }
+
+    /* Hide 'down' button on last section */
+    .section:last-child &--reorder-down {
+        display: none;
+    }
+
     &--rounded {
         border-radius: 5px;
     }

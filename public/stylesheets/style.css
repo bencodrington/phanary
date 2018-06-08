@@ -873,6 +873,18 @@ a {
     }
     }
 
+/* Hide 'up' button on first section */
+
+.section:first-child .btn--reorder-up {
+        display: none;
+    }
+
+/* Hide 'down' button on last section */
+
+.section:last-child .btn--reorder-down {
+        display: none;
+    }
+
 .btn--rounded {
         border-radius: 5px;
     }
