@@ -35,10 +35,12 @@ class GlobalVars {
 
         this.events();
         
-        // TODO:
-        // if (window.PointerEvent) { 
-        //     // Pointer events are supported. 
-        //   }
+        // Ensure only working controls show on browsers without
+        //  pointer event support
+        if (!window.PointerEvent) { 
+            // Pointer events aren't supported
+            $('html').addClass('no-pointer-events');
+          }
     }
 
     events() {

@@ -10646,10 +10646,12 @@ var GlobalVars = function () {
 
         this.events();
 
-        // TODO:
-        // if (window.PointerEvent) { 
-        //     // Pointer events are supported. 
-        //   }
+        // Ensure only working controls show on browsers without
+        //  pointer event support
+        if (!window.PointerEvent) {
+            // Pointer events aren't supported
+            (0, _jquery2.default)('html').addClass('no-pointer-events');
+        }
     }
 
     _createClass(GlobalVars, [{

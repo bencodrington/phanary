@@ -58,6 +58,11 @@
             display: inline-block;
         }
     }
+    
+    /* Ensure drag controls don't show if pointer-events aren't supported */
+    html.no-pointer-events &--drag {
+        display: none;
+    }
 
     &--header {
         position: relative;
@@ -81,6 +86,11 @@
         @mixin atMedium {
             display: none;
         }
+    }
+
+    /* Ensure reorder buttons show on browsers without pointer event support */
+    html.no-pointer-events &--reorder {
+        display: inline-block;
     }
 
     /* Hide 'up' button on first section */

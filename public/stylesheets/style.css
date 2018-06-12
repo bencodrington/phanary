@@ -847,6 +847,12 @@ a {
     }
     }
 
+/* Ensure drag controls don't show if pointer-events aren't supported */
+
+html.no-pointer-events .btn--drag {
+        display: none;
+    }
+
 .btn--header {
         position: relative;
         display: inline-block;
@@ -872,6 +878,12 @@ a {
 .btn--reorder {
             display: none
     }
+    }
+
+/* Ensure reorder buttons show on browsers without pointer event support */
+
+html.no-pointer-events .btn--reorder {
+        display: inline-block;
     }
 
 /* Hide 'up' button on first section */
