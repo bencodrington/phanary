@@ -44,7 +44,7 @@ class Atmosphere {
         var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
         // Add to tracklist
-        var $atmosphereHTML = $(atmosphereHTML).prependTo(g.atmosphereManager.$list).hide();
+        var $atmosphereHTML = $(atmosphereHTML).appendTo(g.atmosphereManager.$list).hide();
         
         // Hack that corrects the jQuery 'snapping' visual bug
         //  $atmosphereHTML.height() returns an unreliable result if called here, but it's fine 0ms later
@@ -70,6 +70,45 @@ class Atmosphere {
             that.stop();
         })
         $stopBtn.hide();
+
+        // TODO:
+
+        // TODO: mousedown touchstart
+        $atmosphereHTML.find(".btn--drag").on("pointerdown", function(e) {
+            g.dragManager.startDraggingAtmosphere(this, e);
+        }.bind(this));
+
+        $atmosphereHTML.hover(
+            function() {
+                if (g.dragManager.draggingAtmosphere && g.dragManager.draggingAtmosphere != this) {
+                    this.$atmosphereHTML.addClass('section--show-drop-zone');
+                }
+            }.bind(this),
+
+            function() {
+                this.$atmosphereHTML.removeClass('section--show-drop-zone');
+            }.bind(this)
+        );
+
+        // TODO: mouseup
+        $atmosphereHTML.on("pointerup", function() {
+            if (g.dragManager.draggingAtmosphere) {
+                // TODO: move draggingAtmosphere's position in the g.am's array
+                g.atmosphereManager.insertDraggingAtmosphereAtPosition(g.atmosphereManager.getPositionInArray(this));
+                this.$atmosphereHTML.after(g.dragManager.draggingAtmosphere.$atmosphereHTML);
+                this.$atmosphereHTML.removeClass('section--show-drop-zone');
+            }
+        }.bind(this));
+
+        // Reorder buttons
+        $atmosphereHTML.find('.btn--reorder-up').click(function(e) {
+            g.dragManager.moveSection(this, 'up', true);
+            e.stopPropagation();
+        }.bind(this));
+        $atmosphereHTML.find('.btn--reorder-down').click(function(e) {
+            g.dragManager.moveSection(this, 'down', true);
+            e.stopPropagation();
+        }.bind(this));
         
         this.$atmosphereHTML = $atmosphereHTML; // Cache reference to the newly-added DOM element
     }
@@ -317,7 +356,7 @@ class Atmosphere {
         if (g.atmosphereManager.activeAtmosphere == this) {
             g.atmosphereManager.activeAtmosphere = null;
         }
-        g.atmosphereManager.atmospheres[this.id] = null; //TODO: replace with splicing to avoid wasted array spaces
+        g.atmosphereManager.removeAtmosphereFromArray(this);
         // Update localStorage
         g.pm.storeAtmospheres();
     }

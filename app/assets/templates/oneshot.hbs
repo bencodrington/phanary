@@ -3,9 +3,24 @@
         <h4 class="section__heading__title">
             <span class="section__heading__title__text">{{name}}</span>
         </h4>
-        <div class="btn btn--delete btn--medium btn--inverted">
+        <div class="btn btn--delete btn--medium btn--inverted btn--header">
             <div class="btn__inner">
-            <i class="fa fa-close" aria-hidden="true"></i>
+            <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="btn btn--reorder btn--reorder-up btn--medium btn--inverted btn--header">
+            <div class="btn__inner">
+            <i class="fa fa-arrow-up" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="btn btn--reorder btn--reorder-down btn--medium btn--inverted btn--header">
+            <div class="btn__inner">
+            <i class="fa fa-arrow-down" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="btn btn--drag btn--medium btn--inverted btn--header">
+            <div class="btn__inner">
+            <i class="fa fa-arrows-alt" aria-hidden="true"></i>
             </div>
         </div>
     </div>
@@ -82,15 +97,14 @@
                     </div>
                 </div>
                 <div class="section__flex__item">
-                    <!-- TODO: disabled/enabled -->
                     <div class="btn--start btn btn--rounded btn--medium">
                         <div class="btn__inner">
-                            <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                            <i class="fa fa-play-circle" aria-hidden="true"></i>
                         </div>
                     </div>
                     <div class="btn--stop btn btn--rounded btn--medium">
                         <div class="btn__inner">
-                            <i class="fa fa-stop-circle-o" aria-hidden="true"></i>
+                            <i class="fa fa-stop-circle" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>

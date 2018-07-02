@@ -24,4 +24,5 @@
 @import "modules/_about";
 @import "modules/_login";
 @import "modules/_watermark";
+@import "modules/_drag";
 @import "modules/animations/_shake";

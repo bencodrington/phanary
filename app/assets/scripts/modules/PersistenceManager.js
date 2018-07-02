@@ -4,14 +4,26 @@ import { g } from './GlobalVars';
 class PersistenceManager {
 
     constructor() {
-        if (this.storageEmpty()) {
-            // Initialize storage
+        // Initialize any missing storage elements
+        if (!localStorage.getItem('atmospheres')) {
             localStorage.setItem('atmospheres', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('lockCheckbox')) {
+            localStorage.setItem('lockCheckbox', false);
+        }
+        if (!localStorage.getItem('autoplayCheckbox')) {
+            localStorage.setItem('autoplayCheckbox', false);
+        }
+        if (!localStorage.getItem('globalVolume')) {
+            localStorage.setItem('globalVolume', 0.5);
         }
     }
 
-    storageEmpty() {
-        return !localStorage.getItem('atmospheres');
+    loadFromStorage() {
+        this.loadAtmospheres();
+        this.loadLockCheckboxState();
+        this.loadAutoplayCheckboxState();
+        this.loadGlobalVolume();
     }
 
     /*
@@ -21,7 +33,7 @@ class PersistenceManager {
             (atmosphere volume, atmosphere name, track volume,
             one-shot timing, atmosphere creation/deletion, track creation/deletion)
     */
-     storeAtmospheres() {
+    storeAtmospheres() {
         var atmospheres = [];
         var currentAtmosphere, currentTrack, collection;
         // Loop through g.am.atmospheres
@@ -60,6 +72,32 @@ class PersistenceManager {
         for (let atmosphere of atmospheres) {
             g.atmosphereManager.addAtmosphere(atmosphere, true);
         }
+    }
+
+    storeLockCheckboxState(newState) {
+        localStorage.setItem('lockCheckbox', newState);
+    }
+
+    loadLockCheckboxState() {
+        g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
+    }
+
+    storeAutoplayCheckboxState(newState) {
+        localStorage.setItem('autoplayCheckbox', newState);
+    }
+
+    loadAutoplayCheckboxState() {
+        g.setAutoplayCheckboxState(JSON.parse(localStorage.getItem('autoplayCheckbox')));
+    }
+
+    storeGlobalVolume(newVolume) {
+        localStorage.setItem('globalVolume', newVolume);
+    }
+
+    loadGlobalVolume() {
+        var globalVolume = localStorage.getItem('globalVolume')
+        g.atmosphereManager.$volumeSlider.val(globalVolume);
+        g.atmosphereManager.updateGlobalVolume(globalVolume);
     }
 
 }

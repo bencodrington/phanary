@@ -16,7 +16,8 @@ class AtmosphereManager {
         this.$editingTitle      = null; // The title text element of the atmosphere which is currently being renamed
 
         this.$newAtmosphereBtn  = $('#newAtmosphereBtn');
-        this.$list              = $("#atmosphereList"); // The div containing all atmospheres
+        this.$list              = $("#atmosphereList");         // The div containing all atmospheres
+        this.$volumeSlider      = $('.volume__range-global');   // Global volume slider, affects this.volume
 
         this.events();
     }
@@ -103,7 +104,7 @@ class AtmosphereManager {
         this.activeAtmosphere = null;
     }
 
-    // Called when enter is pressed in the search bar, while a track is highlighted.
+    // Called when enter is pressed in the search bar, while a track is highlighted
     addTrack(trackObject, collection) {
         if (this.activeAtmosphere == null) {
             this.newAtmosphere();
@@ -125,15 +126,13 @@ class AtmosphereManager {
     }
 
     rigVolumeControls() {
-        var that = this;
         var $muteBtn = $(".volume__mute-btn-global");
         $muteBtn.on('click', function() {
-            that.toggleMute();
-        });
-        var $volumeSlider = $('.volume__range-global');
-        $volumeSlider.on('input', function() {
-            that.updateGlobalVolume($volumeSlider.val());
-        });
+            this.toggleMute();
+        }.bind(this));
+        this.$volumeSlider.on('input', function() {
+            this.updateGlobalVolume(this.$volumeSlider.val());
+        }.bind(this));
 
     }
 
@@ -145,6 +144,7 @@ class AtmosphereManager {
     updateGlobalVolume(newVolume) {
         this.volume = newVolume;
         this.updateAllVolumes();
+        g.pm.storeGlobalVolume(newVolume);
     }
 
     updateAllVolumes() {
@@ -162,6 +162,59 @@ class AtmosphereManager {
             this.$editingTitle = null;
             g.pm.storeAtmospheres();
         }
+    }
+
+    removeAtmosphereFromArray(atmosphere) {
+        var indexOfAtmosphere = this.getPositionInArray(atmosphere);
+        this.atmospheres.splice(indexOfAtmosphere, 1);
+    }
+
+    // Returns the integer position of the passed-in atmosphere
+    getPositionInArray(atmosphere) {
+        var indexOfAtmosphere = this.atmospheres.indexOf(atmosphere);
+        if (indexOfAtmosphere < 0) {
+            // Atmosphere was not found in the array
+            console.error('AtmosphereManager.js:getPositionInArray(): Atmosphere not found');
+        }
+        return indexOfAtmosphere;
+    }
+
+    // Inserts the atmosphere that is currently being dragged (if there is one)
+    //  at the given position in this class's array
+    insertDraggingAtmosphereAtPosition(insertIndex) {
+        // Find current index of atmosphere that is being dragged
+        var indexOfDragging = this.atmospheres.indexOf(g.dragManager.draggingAtmosphere);
+        if (indexOfDragging < 0) {
+            // Atmosphere was not found in the array
+            console.error('AtmosphereManager.js:insertDraggingAtmosphereAfter(): Dragging atmosphere not found.');
+            return;
+        }
+        this.moveAtmosphereAtPosition(indexOfDragging, insertIndex);
+    }
+
+    // Moves the atmosphere at the first given position to the second
+    //  given position.
+    moveAtmosphereAtPosition(currentIndex, insertIndex) {
+        // Remove atmosphere that is being moved from 'atmospheres' array
+        var movingAtmosphere = this.atmospheres.splice(currentIndex, 1)[0];
+        // Return it to the array at its new position
+        this.atmospheres.splice(insertIndex, 0, movingAtmosphere);
+        // Update localStorage
+        g.pm.storeAtmospheres();
+    }
+
+    // Takes an atmosphere object and a positive or negative integer
+    //  and moves the atmosphere the number of positions and in the
+    //  direction specified by the integer.
+    modifyAtmospherePosition(atmosphere, modification) {
+        // Get current position of atmosphere
+        var currentPosition = this.getPositionInArray(atmosphere);
+        // Modify that by the passed in value
+        var newPosition = currentPosition + modification;
+        // Ensure the new position is within the bounds of the array
+        newPosition = g.clamp(0, newPosition, this.atmospheres.length - 1);
+        // Finally, insert back into the array at its new position
+        this.moveAtmosphereAtPosition(currentPosition, newPosition);
     }
 
 }

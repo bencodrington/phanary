@@ -8,7 +8,7 @@ class TrackManager {
     */
 
     constructor() {
-        this.$list = $("#trackList");  // The div containing all track elements
+        this.$list          = $("#trackList");  // The div containing all track elements
     }
 
 }

@@ -202,7 +202,7 @@ function appendContextPath(contextPath, id) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * jQuery JavaScript Library v3.2.1
+ * jQuery JavaScript Library v3.3.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -212,7 +212,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2017-03-20T18:59Z
+ * Date: 2018-01-20T17:24Z
  */
 ( function( global, factory ) {
 
@@ -274,16 +274,57 @@ var ObjectFunctionString = fnToString.call( Object );
 
 var support = {};
 
+var isFunction = function isFunction( obj ) {
+
+      // Support: Chrome <=57, Firefox <=52
+      // In some browsers, typeof returns "function" for HTML <object> elements
+      // (i.e., `typeof document.createElement( "object" ) === "function"`).
+      // We don't want to classify *any* DOM node as a function.
+      return typeof obj === "function" && typeof obj.nodeType !== "number";
+  };
 
 
-	function DOMEval( code, doc ) {
+var isWindow = function isWindow( obj ) {
+		return obj != null && obj === obj.window;
+	};
+
+
+
+
+	var preservedScriptAttributes = {
+		type: true,
+		src: true,
+		noModule: true
+	};
+
+	function DOMEval( code, doc, node ) {
 		doc = doc || document;
 
-		var script = doc.createElement( "script" );
+		var i,
+			script = doc.createElement( "script" );
 
 		script.text = code;
+		if ( node ) {
+			for ( i in preservedScriptAttributes ) {
+				if ( node[ i ] ) {
+					script[ i ] = node[ i ];
+				}
+			}
+		}
 		doc.head.appendChild( script ).parentNode.removeChild( script );
 	}
+
+
+function toType( obj ) {
+	if ( obj == null ) {
+		return obj + "";
+	}
+
+	// Support: Android <=2.3 only (functionish RegExp)
+	return typeof obj === "object" || typeof obj === "function" ?
+		class2type[ toString.call( obj ) ] || "object" :
+		typeof obj;
+}
 /* global Symbol */
 // Defining this global in .eslintrc.json would create a danger of using the global
 // unguarded in another place, it seems safer to define global only for this module
@@ -291,7 +332,7 @@ var support = {};
 
 
 var
-	version = "3.2.1",
+	version = "3.3.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -303,16 +344,7 @@ var
 
 	// Support: Android <=4.0 only
 	// Make sure we trim BOM and NBSP
-	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
-
-	// Matches dashed string for camelizing
-	rmsPrefix = /^-ms-/,
-	rdashAlpha = /-([a-z])/g,
-
-	// Used by jQuery.camelCase as callback to replace()
-	fcamelCase = function( all, letter ) {
-		return letter.toUpperCase();
-	};
+	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
 
 jQuery.fn = jQuery.prototype = {
 
@@ -412,7 +444,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	}
 
 	// Handle case when target is a string or something (possible in deep copy)
-	if ( typeof target !== "object" && !jQuery.isFunction( target ) ) {
+	if ( typeof target !== "object" && !isFunction( target ) ) {
 		target = {};
 	}
 
@@ -478,28 +510,6 @@ jQuery.extend( {
 
 	noop: function() {},
 
-	isFunction: function( obj ) {
-		return jQuery.type( obj ) === "function";
-	},
-
-	isWindow: function( obj ) {
-		return obj != null && obj === obj.window;
-	},
-
-	isNumeric: function( obj ) {
-
-		// As of jQuery 3.0, isNumeric is limited to
-		// strings and numbers (primitives or objects)
-		// that can be coerced to finite numbers (gh-2662)
-		var type = jQuery.type( obj );
-		return ( type === "number" || type === "string" ) &&
-
-			// parseFloat NaNs numeric-cast false positives ("")
-			// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
-			// subtraction forces infinities to NaN
-			!isNaN( obj - parseFloat( obj ) );
-	},
-
 	isPlainObject: function( obj ) {
 		var proto, Ctor;
 
@@ -533,27 +543,9 @@ jQuery.extend( {
 		return true;
 	},
 
-	type: function( obj ) {
-		if ( obj == null ) {
-			return obj + "";
-		}
-
-		// Support: Android <=2.3 only (functionish RegExp)
-		return typeof obj === "object" || typeof obj === "function" ?
-			class2type[ toString.call( obj ) ] || "object" :
-			typeof obj;
-	},
-
 	// Evaluates a script in a global context
 	globalEval: function( code ) {
 		DOMEval( code );
-	},
-
-	// Convert dashed to camelCase; used by the css and data modules
-	// Support: IE <=9 - 11, Edge 12 - 13
-	// Microsoft forgot to hump their vendor prefix (#9572)
-	camelCase: function( string ) {
-		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
 	},
 
 	each: function( obj, callback ) {
@@ -676,37 +668,6 @@ jQuery.extend( {
 	// A global GUID counter for objects
 	guid: 1,
 
-	// Bind a function to a context, optionally partially applying any
-	// arguments.
-	proxy: function( fn, context ) {
-		var tmp, args, proxy;
-
-		if ( typeof context === "string" ) {
-			tmp = fn[ context ];
-			context = fn;
-			fn = tmp;
-		}
-
-		// Quick check to determine if target is callable, in the spec
-		// this throws a TypeError, but we will just return undefined.
-		if ( !jQuery.isFunction( fn ) ) {
-			return undefined;
-		}
-
-		// Simulated bind
-		args = slice.call( arguments, 2 );
-		proxy = function() {
-			return fn.apply( context || this, args.concat( slice.call( arguments ) ) );
-		};
-
-		// Set the guid of unique handler to the same of original handler, so it can be removed
-		proxy.guid = fn.guid = fn.guid || jQuery.guid++;
-
-		return proxy;
-	},
-
-	now: Date.now,
-
 	// jQuery.support is not used in Core but other projects attach their
 	// properties to it so it needs to exist.
 	support: support
@@ -729,9 +690,9 @@ function isArrayLike( obj ) {
 	// hasOwn isn't used here due to false negatives
 	// regarding Nodelist length in IE
 	var length = !!obj && "length" in obj && obj.length,
-		type = jQuery.type( obj );
+		type = toType( obj );
 
-	if ( type === "function" || jQuery.isWindow( obj ) ) {
+	if ( isFunction( obj ) || isWindow( obj ) ) {
 		return false;
 	}
 
@@ -3051,11 +3012,9 @@ var rsingleTag = ( /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|
 
 
 
-var risSimple = /^.[^:#\[\.,]*$/;
-
 // Implement the identical functionality for filter and not
 function winnow( elements, qualifier, not ) {
-	if ( jQuery.isFunction( qualifier ) ) {
+	if ( isFunction( qualifier ) ) {
 		return jQuery.grep( elements, function( elem, i ) {
 			return !!qualifier.call( elem, i, elem ) !== not;
 		} );
@@ -3075,16 +3034,8 @@ function winnow( elements, qualifier, not ) {
 		} );
 	}
 
-	// Simple selector that can be filtered directly, removing non-Elements
-	if ( risSimple.test( qualifier ) ) {
-		return jQuery.filter( qualifier, elements, not );
-	}
-
-	// Complex selector, compare the two sets, removing non-Elements
-	qualifier = jQuery.filter( qualifier, elements );
-	return jQuery.grep( elements, function( elem ) {
-		return ( indexOf.call( qualifier, elem ) > -1 ) !== not && elem.nodeType === 1;
-	} );
+	// Filtered directly for both simple and complex selectors
+	return jQuery.filter( qualifier, elements, not );
 }
 
 jQuery.filter = function( expr, elems, not ) {
@@ -3205,7 +3156,7 @@ var rootjQuery,
 						for ( match in context ) {
 
 							// Properties of context are called as methods if possible
-							if ( jQuery.isFunction( this[ match ] ) ) {
+							if ( isFunction( this[ match ] ) ) {
 								this[ match ]( context[ match ] );
 
 							// ...and otherwise set as attributes
@@ -3248,7 +3199,7 @@ var rootjQuery,
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
-		} else if ( jQuery.isFunction( selector ) ) {
+		} else if ( isFunction( selector ) ) {
 			return root.ready !== undefined ?
 				root.ready( selector ) :
 
@@ -3563,11 +3514,11 @@ jQuery.Callbacks = function( options ) {
 
 					( function add( args ) {
 						jQuery.each( args, function( _, arg ) {
-							if ( jQuery.isFunction( arg ) ) {
+							if ( isFunction( arg ) ) {
 								if ( !options.unique || !self.has( arg ) ) {
 									list.push( arg );
 								}
-							} else if ( arg && arg.length && jQuery.type( arg ) !== "string" ) {
+							} else if ( arg && arg.length && toType( arg ) !== "string" ) {
 
 								// Inspect recursively
 								add( arg );
@@ -3682,11 +3633,11 @@ function adoptValue( value, resolve, reject, noValue ) {
 	try {
 
 		// Check for promise aspect first to privilege synchronous behavior
-		if ( value && jQuery.isFunction( ( method = value.promise ) ) ) {
+		if ( value && isFunction( ( method = value.promise ) ) ) {
 			method.call( value ).done( resolve ).fail( reject );
 
 		// Other thenables
-		} else if ( value && jQuery.isFunction( ( method = value.then ) ) ) {
+		} else if ( value && isFunction( ( method = value.then ) ) ) {
 			method.call( value, resolve, reject );
 
 		// Other non-thenables
@@ -3744,14 +3695,14 @@ jQuery.extend( {
 						jQuery.each( tuples, function( i, tuple ) {
 
 							// Map tuples (progress, done, fail) to arguments (done, fail, progress)
-							var fn = jQuery.isFunction( fns[ tuple[ 4 ] ] ) && fns[ tuple[ 4 ] ];
+							var fn = isFunction( fns[ tuple[ 4 ] ] ) && fns[ tuple[ 4 ] ];
 
 							// deferred.progress(function() { bind to newDefer or newDefer.notify })
 							// deferred.done(function() { bind to newDefer or newDefer.resolve })
 							// deferred.fail(function() { bind to newDefer or newDefer.reject })
 							deferred[ tuple[ 1 ] ]( function() {
 								var returned = fn && fn.apply( this, arguments );
-								if ( returned && jQuery.isFunction( returned.promise ) ) {
+								if ( returned && isFunction( returned.promise ) ) {
 									returned.promise()
 										.progress( newDefer.notify )
 										.done( newDefer.resolve )
@@ -3805,7 +3756,7 @@ jQuery.extend( {
 										returned.then;
 
 									// Handle a returned thenable
-									if ( jQuery.isFunction( then ) ) {
+									if ( isFunction( then ) ) {
 
 										// Special processors (notify) just wait for resolution
 										if ( special ) {
@@ -3901,7 +3852,7 @@ jQuery.extend( {
 							resolve(
 								0,
 								newDefer,
-								jQuery.isFunction( onProgress ) ?
+								isFunction( onProgress ) ?
 									onProgress :
 									Identity,
 								newDefer.notifyWith
@@ -3913,7 +3864,7 @@ jQuery.extend( {
 							resolve(
 								0,
 								newDefer,
-								jQuery.isFunction( onFulfilled ) ?
+								isFunction( onFulfilled ) ?
 									onFulfilled :
 									Identity
 							)
@@ -3924,7 +3875,7 @@ jQuery.extend( {
 							resolve(
 								0,
 								newDefer,
-								jQuery.isFunction( onRejected ) ?
+								isFunction( onRejected ) ?
 									onRejected :
 									Thrower
 							)
@@ -3964,8 +3915,15 @@ jQuery.extend( {
 					// fulfilled_callbacks.disable
 					tuples[ 3 - i ][ 2 ].disable,
 
+					// rejected_handlers.disable
+					// fulfilled_handlers.disable
+					tuples[ 3 - i ][ 3 ].disable,
+
 					// progress_callbacks.lock
-					tuples[ 0 ][ 2 ].lock
+					tuples[ 0 ][ 2 ].lock,
+
+					// progress_handlers.lock
+					tuples[ 0 ][ 3 ].lock
 				);
 			}
 
@@ -4035,7 +3993,7 @@ jQuery.extend( {
 
 			// Use .then() to unwrap secondary thenables (cf. gh-3000)
 			if ( master.state() === "pending" ||
-				jQuery.isFunction( resolveValues[ i ] && resolveValues[ i ].then ) ) {
+				isFunction( resolveValues[ i ] && resolveValues[ i ].then ) ) {
 
 				return master.then();
 			}
@@ -4163,7 +4121,7 @@ var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
 		bulk = key == null;
 
 	// Sets many values
-	if ( jQuery.type( key ) === "object" ) {
+	if ( toType( key ) === "object" ) {
 		chainable = true;
 		for ( i in key ) {
 			access( elems, fn, i, key[ i ], true, emptyGet, raw );
@@ -4173,7 +4131,7 @@ var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
 	} else if ( value !== undefined ) {
 		chainable = true;
 
-		if ( !jQuery.isFunction( value ) ) {
+		if ( !isFunction( value ) ) {
 			raw = true;
 		}
 
@@ -4215,6 +4173,23 @@ var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
 
 	return len ? fn( elems[ 0 ], key ) : emptyGet;
 };
+
+
+// Matches dashed string for camelizing
+var rmsPrefix = /^-ms-/,
+	rdashAlpha = /-([a-z])/g;
+
+// Used by camelCase as callback to replace()
+function fcamelCase( all, letter ) {
+	return letter.toUpperCase();
+}
+
+// Convert dashed to camelCase; used by the css and data modules
+// Support: IE <=9 - 11, Edge 12 - 15
+// Microsoft forgot to hump their vendor prefix (#9572)
+function camelCase( string ) {
+	return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
+}
 var acceptData = function( owner ) {
 
 	// Accepts only:
@@ -4277,14 +4252,14 @@ Data.prototype = {
 		// Handle: [ owner, key, value ] args
 		// Always use camelCase key (gh-2257)
 		if ( typeof data === "string" ) {
-			cache[ jQuery.camelCase( data ) ] = value;
+			cache[ camelCase( data ) ] = value;
 
 		// Handle: [ owner, { properties } ] args
 		} else {
 
 			// Copy the properties one-by-one to the cache object
 			for ( prop in data ) {
-				cache[ jQuery.camelCase( prop ) ] = data[ prop ];
+				cache[ camelCase( prop ) ] = data[ prop ];
 			}
 		}
 		return cache;
@@ -4294,7 +4269,7 @@ Data.prototype = {
 			this.cache( owner ) :
 
 			// Always use camelCase key (gh-2257)
-			owner[ this.expando ] && owner[ this.expando ][ jQuery.camelCase( key ) ];
+			owner[ this.expando ] && owner[ this.expando ][ camelCase( key ) ];
 	},
 	access: function( owner, key, value ) {
 
@@ -4342,9 +4317,9 @@ Data.prototype = {
 
 				// If key is an array of keys...
 				// We always set camelCase keys, so remove that.
-				key = key.map( jQuery.camelCase );
+				key = key.map( camelCase );
 			} else {
-				key = jQuery.camelCase( key );
+				key = camelCase( key );
 
 				// If a key with the spaces exists, use it.
 				// Otherwise, create an array by matching non-whitespace
@@ -4490,7 +4465,7 @@ jQuery.fn.extend( {
 						if ( attrs[ i ] ) {
 							name = attrs[ i ].name;
 							if ( name.indexOf( "data-" ) === 0 ) {
-								name = jQuery.camelCase( name.slice( 5 ) );
+								name = camelCase( name.slice( 5 ) );
 								dataAttr( elem, name, data[ name ] );
 							}
 						}
@@ -4737,8 +4712,7 @@ var swap = function( elem, options, callback, args ) {
 
 
 function adjustCSS( elem, prop, valueParts, tween ) {
-	var adjusted,
-		scale = 1,
+	var adjusted, scale,
 		maxIterations = 20,
 		currentValue = tween ?
 			function() {
@@ -4756,30 +4730,33 @@ function adjustCSS( elem, prop, valueParts, tween ) {
 
 	if ( initialInUnit && initialInUnit[ 3 ] !== unit ) {
 
+		// Support: Firefox <=54
+		// Halve the iteration target value to prevent interference from CSS upper bounds (gh-2144)
+		initial = initial / 2;
+
 		// Trust units reported by jQuery.css
 		unit = unit || initialInUnit[ 3 ];
-
-		// Make sure we update the tween properties later on
-		valueParts = valueParts || [];
 
 		// Iteratively approximate from a nonzero starting point
 		initialInUnit = +initial || 1;
 
-		do {
+		while ( maxIterations-- ) {
 
-			// If previous iteration zeroed out, double until we get *something*.
-			// Use string for doubling so we don't accidentally see scale as unchanged below
-			scale = scale || ".5";
-
-			// Adjust and apply
-			initialInUnit = initialInUnit / scale;
+			// Evaluate and update our best guess (doubling guesses that zero out).
+			// Finish if the scale equals or crosses 1 (making the old*new product non-positive).
 			jQuery.style( elem, prop, initialInUnit + unit );
+			if ( ( 1 - scale ) * ( 1 - ( scale = currentValue() / initial || 0.5 ) ) <= 0 ) {
+				maxIterations = 0;
+			}
+			initialInUnit = initialInUnit / scale;
 
-		// Update scale, tolerating zero or NaN from tween.cur()
-		// Break the loop if scale is unchanged or perfect, or if we've just had enough.
-		} while (
-			scale !== ( scale = currentValue() / initial ) && scale !== 1 && --maxIterations
-		);
+		}
+
+		initialInUnit = initialInUnit * 2;
+		jQuery.style( elem, prop, initialInUnit + unit );
+
+		// Make sure we update the tween properties later on
+		valueParts = valueParts || [];
 	}
 
 	if ( valueParts ) {
@@ -4897,7 +4874,7 @@ var rcheckableType = ( /^(?:checkbox|radio)$/i );
 
 var rtagName = ( /<([a-z][^\/\0>\x20\t\r\n\f]+)/i );
 
-var rscriptType = ( /^$|\/(?:java|ecma)script/i );
+var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
 
 
 
@@ -4979,7 +4956,7 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 		if ( elem || elem === 0 ) {
 
 			// Add nodes directly
-			if ( jQuery.type( elem ) === "object" ) {
+			if ( toType( elem ) === "object" ) {
 
 				// Support: Android <=4.0 only, PhantomJS 1 only
 				// push.apply(_, arraylike) throws on ancient WebKit
@@ -5489,7 +5466,7 @@ jQuery.event = {
 			enumerable: true,
 			configurable: true,
 
-			get: jQuery.isFunction( hook ) ?
+			get: isFunction( hook ) ?
 				function() {
 					if ( this.originalEvent ) {
 							return hook( this.originalEvent );
@@ -5624,7 +5601,7 @@ jQuery.Event = function( src, props ) {
 	}
 
 	// Create a timestamp if incoming event doesn't have one
-	this.timeStamp = src && src.timeStamp || jQuery.now();
+	this.timeStamp = src && src.timeStamp || Date.now();
 
 	// Mark it as fixed
 	this[ jQuery.expando ] = true;
@@ -5823,14 +5800,13 @@ var
 
 	/* eslint-enable */
 
-	// Support: IE <=10 - 11, Edge 12 - 13
+	// Support: IE <=10 - 11, Edge 12 - 13 only
 	// In IE/Edge using regex groups here causes severe slowdowns.
 	// See https://connect.microsoft.com/IE/feedback/details/1736512/
 	rnoInnerhtml = /<script|<style|<link/i,
 
 	// checked="checked" or checked
 	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,
-	rscriptTypeMasked = /^true\/(.*)/,
 	rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
 
 // Prefer a tbody over its parent table for containing new rows
@@ -5838,7 +5814,7 @@ function manipulationTarget( elem, content ) {
 	if ( nodeName( elem, "table" ) &&
 		nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
 
-		return jQuery( ">tbody", elem )[ 0 ] || elem;
+		return jQuery( elem ).children( "tbody" )[ 0 ] || elem;
 	}
 
 	return elem;
@@ -5850,10 +5826,8 @@ function disableScript( elem ) {
 	return elem;
 }
 function restoreScript( elem ) {
-	var match = rscriptTypeMasked.exec( elem.type );
-
-	if ( match ) {
-		elem.type = match[ 1 ];
+	if ( ( elem.type || "" ).slice( 0, 5 ) === "true/" ) {
+		elem.type = elem.type.slice( 5 );
 	} else {
 		elem.removeAttribute( "type" );
 	}
@@ -5919,15 +5893,15 @@ function domManip( collection, args, callback, ignored ) {
 		l = collection.length,
 		iNoClone = l - 1,
 		value = args[ 0 ],
-		isFunction = jQuery.isFunction( value );
+		valueIsFunction = isFunction( value );
 
 	// We can't cloneNode fragments that contain checked, in WebKit
-	if ( isFunction ||
+	if ( valueIsFunction ||
 			( l > 1 && typeof value === "string" &&
 				!support.checkClone && rchecked.test( value ) ) ) {
 		return collection.each( function( index ) {
 			var self = collection.eq( index );
-			if ( isFunction ) {
+			if ( valueIsFunction ) {
 				args[ 0 ] = value.call( this, index, self.html() );
 			}
 			domManip( self, args, callback, ignored );
@@ -5981,14 +5955,14 @@ function domManip( collection, args, callback, ignored ) {
 						!dataPriv.access( node, "globalEval" ) &&
 						jQuery.contains( doc, node ) ) {
 
-						if ( node.src ) {
+						if ( node.src && ( node.type || "" ).toLowerCase()  !== "module" ) {
 
 							// Optional AJAX dependency, but won't run scripts if not present
 							if ( jQuery._evalUrl ) {
 								jQuery._evalUrl( node.src );
 							}
 						} else {
-							DOMEval( node.textContent.replace( rcleanScript, "" ), doc );
+							DOMEval( node.textContent.replace( rcleanScript, "" ), doc, node );
 						}
 					}
 				}
@@ -6268,8 +6242,6 @@ jQuery.each( {
 		return this.pushStack( ret );
 	};
 } );
-var rmargin = ( /^margin/ );
-
 var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
 
 var getStyles = function( elem ) {
@@ -6286,6 +6258,8 @@ var getStyles = function( elem ) {
 		return view.getComputedStyle( elem );
 	};
 
+var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
+
 
 
 ( function() {
@@ -6299,25 +6273,33 @@ var getStyles = function( elem ) {
 			return;
 		}
 
+		container.style.cssText = "position:absolute;left:-11111px;width:60px;" +
+			"margin-top:1px;padding:0;border:0";
 		div.style.cssText =
-			"box-sizing:border-box;" +
-			"position:relative;display:block;" +
+			"position:relative;display:block;box-sizing:border-box;overflow:scroll;" +
 			"margin:auto;border:1px;padding:1px;" +
-			"top:1%;width:50%";
-		div.innerHTML = "";
-		documentElement.appendChild( container );
+			"width:60%;top:1%";
+		documentElement.appendChild( container ).appendChild( div );
 
 		var divStyle = window.getComputedStyle( div );
 		pixelPositionVal = divStyle.top !== "1%";
 
 		// Support: Android 4.0 - 4.3 only, Firefox <=3 - 44
-		reliableMarginLeftVal = divStyle.marginLeft === "2px";
-		boxSizingReliableVal = divStyle.width === "4px";
+		reliableMarginLeftVal = roundPixelMeasures( divStyle.marginLeft ) === 12;
 
-		// Support: Android 4.0 - 4.3 only
+		// Support: Android 4.0 - 4.3 only, Safari <=9.1 - 10.1, iOS <=7.0 - 9.3
 		// Some styles come back with percentage values, even though they shouldn't
-		div.style.marginRight = "50%";
-		pixelMarginRightVal = divStyle.marginRight === "4px";
+		div.style.right = "60%";
+		pixelBoxStylesVal = roundPixelMeasures( divStyle.right ) === 36;
+
+		// Support: IE 9 - 11 only
+		// Detect misreporting of content dimensions for box-sizing:border-box elements
+		boxSizingReliableVal = roundPixelMeasures( divStyle.width ) === 36;
+
+		// Support: IE 9 only
+		// Detect overflow:scroll screwiness (gh-3699)
+		div.style.position = "absolute";
+		scrollboxSizeVal = div.offsetWidth === 36 || "absolute";
 
 		documentElement.removeChild( container );
 
@@ -6326,7 +6308,12 @@ var getStyles = function( elem ) {
 		div = null;
 	}
 
-	var pixelPositionVal, boxSizingReliableVal, pixelMarginRightVal, reliableMarginLeftVal,
+	function roundPixelMeasures( measure ) {
+		return Math.round( parseFloat( measure ) );
+	}
+
+	var pixelPositionVal, boxSizingReliableVal, scrollboxSizeVal, pixelBoxStylesVal,
+		reliableMarginLeftVal,
 		container = document.createElement( "div" ),
 		div = document.createElement( "div" );
 
@@ -6341,26 +6328,26 @@ var getStyles = function( elem ) {
 	div.cloneNode( true ).style.backgroundClip = "";
 	support.clearCloneStyle = div.style.backgroundClip === "content-box";
 
-	container.style.cssText = "border:0;width:8px;height:0;top:0;left:-9999px;" +
-		"padding:0;margin-top:1px;position:absolute";
-	container.appendChild( div );
-
 	jQuery.extend( support, {
-		pixelPosition: function() {
-			computeStyleTests();
-			return pixelPositionVal;
-		},
 		boxSizingReliable: function() {
 			computeStyleTests();
 			return boxSizingReliableVal;
 		},
-		pixelMarginRight: function() {
+		pixelBoxStyles: function() {
 			computeStyleTests();
-			return pixelMarginRightVal;
+			return pixelBoxStylesVal;
+		},
+		pixelPosition: function() {
+			computeStyleTests();
+			return pixelPositionVal;
 		},
 		reliableMarginLeft: function() {
 			computeStyleTests();
 			return reliableMarginLeftVal;
+		},
+		scrollboxSize: function() {
+			computeStyleTests();
+			return scrollboxSizeVal;
 		}
 	} );
 } )();
@@ -6392,7 +6379,7 @@ function curCSS( elem, name, computed ) {
 		// but width seems to be reliably pixels.
 		// This is against the CSSOM draft spec:
 		// https://drafts.csswg.org/cssom/#resolved-values
-		if ( !support.pixelMarginRight() && rnumnonpx.test( ret ) && rmargin.test( name ) ) {
+		if ( !support.pixelBoxStyles() && rnumnonpx.test( ret ) && rboxStyle.test( name ) ) {
 
 			// Remember the original values
 			width = style.width;
@@ -6497,87 +6484,120 @@ function setPositiveNumber( elem, value, subtract ) {
 		value;
 }
 
-function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
-	var i,
-		val = 0;
+function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computedVal ) {
+	var i = dimension === "width" ? 1 : 0,
+		extra = 0,
+		delta = 0;
 
-	// If we already have the right measurement, avoid augmentation
-	if ( extra === ( isBorderBox ? "border" : "content" ) ) {
-		i = 4;
-
-	// Otherwise initialize for horizontal or vertical properties
-	} else {
-		i = name === "width" ? 1 : 0;
+	// Adjustment may not be necessary
+	if ( box === ( isBorderBox ? "border" : "content" ) ) {
+		return 0;
 	}
 
 	for ( ; i < 4; i += 2 ) {
 
-		// Both box models exclude margin, so add it if we want it
-		if ( extra === "margin" ) {
-			val += jQuery.css( elem, extra + cssExpand[ i ], true, styles );
+		// Both box models exclude margin
+		if ( box === "margin" ) {
+			delta += jQuery.css( elem, box + cssExpand[ i ], true, styles );
 		}
 
-		if ( isBorderBox ) {
+		// If we get here with a content-box, we're seeking "padding" or "border" or "margin"
+		if ( !isBorderBox ) {
 
-			// border-box includes padding, so remove it if we want content
-			if ( extra === "content" ) {
-				val -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+			// Add padding
+			delta += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+
+			// For "border" or "margin", add border
+			if ( box !== "padding" ) {
+				delta += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
+
+			// But still keep track of it otherwise
+			} else {
+				extra += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
 
-			// At this point, extra isn't border nor margin, so remove border
-			if ( extra !== "margin" ) {
-				val -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
-			}
+		// If we get here with a border-box (content + padding + border), we're seeking "content" or
+		// "padding" or "margin"
 		} else {
 
-			// At this point, extra isn't content, so add padding
-			val += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+			// For "content", subtract padding
+			if ( box === "content" ) {
+				delta -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+			}
 
-			// At this point, extra isn't content nor padding, so add border
-			if ( extra !== "padding" ) {
-				val += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
+			// For "content" or "padding", subtract border
+			if ( box !== "margin" ) {
+				delta -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
 		}
 	}
 
-	return val;
+	// Account for positive content-box scroll gutter when requested by providing computedVal
+	if ( !isBorderBox && computedVal >= 0 ) {
+
+		// offsetWidth/offsetHeight is a rounded sum of content, padding, scroll gutter, and border
+		// Assuming integer scroll gutter, subtract the rest and round down
+		delta += Math.max( 0, Math.ceil(
+			elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
+			computedVal -
+			delta -
+			extra -
+			0.5
+		) );
+	}
+
+	return delta;
 }
 
-function getWidthOrHeight( elem, name, extra ) {
+function getWidthOrHeight( elem, dimension, extra ) {
 
 	// Start with computed style
-	var valueIsBorderBox,
-		styles = getStyles( elem ),
-		val = curCSS( elem, name, styles ),
-		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
+	var styles = getStyles( elem ),
+		val = curCSS( elem, dimension, styles ),
+		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+		valueIsBorderBox = isBorderBox;
 
-	// Computed unit is not pixels. Stop here and return.
+	// Support: Firefox <=54
+	// Return a confounding non-pixel value or feign ignorance, as appropriate.
 	if ( rnumnonpx.test( val ) ) {
-		return val;
+		if ( !extra ) {
+			return val;
+		}
+		val = "auto";
 	}
 
 	// Check for style in case a browser which returns unreliable values
 	// for getComputedStyle silently falls back to the reliable elem.style
-	valueIsBorderBox = isBorderBox &&
-		( support.boxSizingReliable() || val === elem.style[ name ] );
+	valueIsBorderBox = valueIsBorderBox &&
+		( support.boxSizingReliable() || val === elem.style[ dimension ] );
 
-	// Fall back to offsetWidth/Height when value is "auto"
+	// Fall back to offsetWidth/offsetHeight when value is "auto"
 	// This happens for inline elements with no explicit setting (gh-3571)
-	if ( val === "auto" ) {
-		val = elem[ "offset" + name[ 0 ].toUpperCase() + name.slice( 1 ) ];
+	// Support: Android <=4.1 - 4.3 only
+	// Also use offsetWidth/offsetHeight for misreported inline dimensions (gh-3602)
+	if ( val === "auto" ||
+		!parseFloat( val ) && jQuery.css( elem, "display", false, styles ) === "inline" ) {
+
+		val = elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ];
+
+		// offsetWidth/offsetHeight provide border-box values
+		valueIsBorderBox = true;
 	}
 
-	// Normalize "", auto, and prepare for extra
+	// Normalize "" and auto
 	val = parseFloat( val ) || 0;
 
-	// Use the active box-sizing model to add/subtract irrelevant styles
+	// Adjust for the element's box model
 	return ( val +
-		augmentWidthOrHeight(
+		boxModelAdjustment(
 			elem,
-			name,
+			dimension,
 			extra || ( isBorderBox ? "border" : "content" ),
 			valueIsBorderBox,
-			styles
+			styles,
+
+			// Provide the current computed size to request scroll gutter calculation (gh-3589)
+			val
 		)
 	) + "px";
 }
@@ -6618,9 +6638,7 @@ jQuery.extend( {
 
 	// Add in properties whose names you wish to fix before
 	// setting or getting the value
-	cssProps: {
-		"float": "cssFloat"
-	},
+	cssProps: {},
 
 	// Get and set the style property on a DOM Node
 	style: function( elem, name, value, extra ) {
@@ -6632,7 +6650,7 @@ jQuery.extend( {
 
 		// Make sure that we're working with the right name
 		var ret, type, hooks,
-			origName = jQuery.camelCase( name ),
+			origName = camelCase( name ),
 			isCustomProp = rcustomProp.test( name ),
 			style = elem.style;
 
@@ -6700,7 +6718,7 @@ jQuery.extend( {
 
 	css: function( elem, name, extra, styles ) {
 		var val, num, hooks,
-			origName = jQuery.camelCase( name ),
+			origName = camelCase( name ),
 			isCustomProp = rcustomProp.test( name );
 
 		// Make sure that we're working with the right name. We don't
@@ -6738,8 +6756,8 @@ jQuery.extend( {
 	}
 } );
 
-jQuery.each( [ "height", "width" ], function( i, name ) {
-	jQuery.cssHooks[ name ] = {
+jQuery.each( [ "height", "width" ], function( i, dimension ) {
+	jQuery.cssHooks[ dimension ] = {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
 
@@ -6755,29 +6773,41 @@ jQuery.each( [ "height", "width" ], function( i, name ) {
 					// in IE throws an error.
 					( !elem.getClientRects().length || !elem.getBoundingClientRect().width ) ?
 						swap( elem, cssShow, function() {
-							return getWidthOrHeight( elem, name, extra );
+							return getWidthOrHeight( elem, dimension, extra );
 						} ) :
-						getWidthOrHeight( elem, name, extra );
+						getWidthOrHeight( elem, dimension, extra );
 			}
 		},
 
 		set: function( elem, value, extra ) {
 			var matches,
-				styles = extra && getStyles( elem ),
-				subtract = extra && augmentWidthOrHeight(
+				styles = getStyles( elem ),
+				isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+				subtract = extra && boxModelAdjustment(
 					elem,
-					name,
+					dimension,
 					extra,
-					jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+					isBorderBox,
 					styles
 				);
+
+			// Account for unreliable border-box dimensions by comparing offset* to computed and
+			// faking a content-box to get border and padding (gh-3699)
+			if ( isBorderBox && support.scrollboxSize() === styles.position ) {
+				subtract -= Math.ceil(
+					elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
+					parseFloat( styles[ dimension ] ) -
+					boxModelAdjustment( elem, dimension, "border", false, styles ) -
+					0.5
+				);
+			}
 
 			// Convert to pixels if value adjustment is needed
 			if ( subtract && ( matches = rcssNum.exec( value ) ) &&
 				( matches[ 3 ] || "px" ) !== "px" ) {
 
-				elem.style[ name ] = value;
-				value = jQuery.css( elem, name );
+				elem.style[ dimension ] = value;
+				value = jQuery.css( elem, dimension );
 			}
 
 			return setPositiveNumber( elem, value, subtract );
@@ -6821,7 +6851,7 @@ jQuery.each( {
 		}
 	};
 
-	if ( !rmargin.test( prefix ) ) {
+	if ( prefix !== "margin" ) {
 		jQuery.cssHooks[ prefix + suffix ].set = setPositiveNumber;
 	}
 } );
@@ -6992,7 +7022,7 @@ function createFxNow() {
 	window.setTimeout( function() {
 		fxNow = undefined;
 	} );
-	return ( fxNow = jQuery.now() );
+	return ( fxNow = Date.now() );
 }
 
 // Generate parameters to create a standard animation
@@ -7096,9 +7126,10 @@ function defaultPrefilter( elem, props, opts ) {
 	// Restrict "overflow" and "display" styles during box animations
 	if ( isBox && elem.nodeType === 1 ) {
 
-		// Support: IE <=9 - 11, Edge 12 - 13
+		// Support: IE <=9 - 11, Edge 12 - 15
 		// Record all 3 overflow attributes because IE does not infer the shorthand
-		// from identically-valued overflowX and overflowY
+		// from identically-valued overflowX and overflowY and Edge just mirrors
+		// the overflowX value there.
 		opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
 
 		// Identify a display type, preferring old show/hide data over the CSS cascade
@@ -7206,7 +7237,7 @@ function propFilter( props, specialEasing ) {
 
 	// camelCase, specialEasing and expand cssHook pass
 	for ( index in props ) {
-		name = jQuery.camelCase( index );
+		name = camelCase( index );
 		easing = specialEasing[ name ];
 		value = props[ index ];
 		if ( Array.isArray( value ) ) {
@@ -7331,9 +7362,9 @@ function Animation( elem, properties, options ) {
 	for ( ; index < length; index++ ) {
 		result = Animation.prefilters[ index ].call( animation, elem, props, animation.opts );
 		if ( result ) {
-			if ( jQuery.isFunction( result.stop ) ) {
+			if ( isFunction( result.stop ) ) {
 				jQuery._queueHooks( animation.elem, animation.opts.queue ).stop =
-					jQuery.proxy( result.stop, result );
+					result.stop.bind( result );
 			}
 			return result;
 		}
@@ -7341,7 +7372,7 @@ function Animation( elem, properties, options ) {
 
 	jQuery.map( props, createTween, animation );
 
-	if ( jQuery.isFunction( animation.opts.start ) ) {
+	if ( isFunction( animation.opts.start ) ) {
 		animation.opts.start.call( elem, animation );
 	}
 
@@ -7374,7 +7405,7 @@ jQuery.Animation = jQuery.extend( Animation, {
 	},
 
 	tweener: function( props, callback ) {
-		if ( jQuery.isFunction( props ) ) {
+		if ( isFunction( props ) ) {
 			callback = props;
 			props = [ "*" ];
 		} else {
@@ -7406,9 +7437,9 @@ jQuery.Animation = jQuery.extend( Animation, {
 jQuery.speed = function( speed, easing, fn ) {
 	var opt = speed && typeof speed === "object" ? jQuery.extend( {}, speed ) : {
 		complete: fn || !fn && easing ||
-			jQuery.isFunction( speed ) && speed,
+			isFunction( speed ) && speed,
 		duration: speed,
-		easing: fn && easing || easing && !jQuery.isFunction( easing ) && easing
+		easing: fn && easing || easing && !isFunction( easing ) && easing
 	};
 
 	// Go to the end state if fx are off
@@ -7435,7 +7466,7 @@ jQuery.speed = function( speed, easing, fn ) {
 	opt.old = opt.complete;
 
 	opt.complete = function() {
-		if ( jQuery.isFunction( opt.old ) ) {
+		if ( isFunction( opt.old ) ) {
 			opt.old.call( this );
 		}
 
@@ -7599,7 +7630,7 @@ jQuery.fx.tick = function() {
 		i = 0,
 		timers = jQuery.timers;
 
-	fxNow = jQuery.now();
+	fxNow = Date.now();
 
 	for ( ; i < timers.length; i++ ) {
 		timer = timers[ i ];
@@ -7952,7 +7983,7 @@ jQuery.each( [
 
 
 	// Strip and collapse whitespace according to HTML spec
-	// https://html.spec.whatwg.org/multipage/infrastructure.html#strip-and-collapse-whitespace
+	// https://infra.spec.whatwg.org/#strip-and-collapse-ascii-whitespace
 	function stripAndCollapse( value ) {
 		var tokens = value.match( rnothtmlwhite ) || [];
 		return tokens.join( " " );
@@ -7963,20 +7994,30 @@ function getClass( elem ) {
 	return elem.getAttribute && elem.getAttribute( "class" ) || "";
 }
 
+function classesToArray( value ) {
+	if ( Array.isArray( value ) ) {
+		return value;
+	}
+	if ( typeof value === "string" ) {
+		return value.match( rnothtmlwhite ) || [];
+	}
+	return [];
+}
+
 jQuery.fn.extend( {
 	addClass: function( value ) {
 		var classes, elem, cur, curValue, clazz, j, finalValue,
 			i = 0;
 
-		if ( jQuery.isFunction( value ) ) {
+		if ( isFunction( value ) ) {
 			return this.each( function( j ) {
 				jQuery( this ).addClass( value.call( this, j, getClass( this ) ) );
 			} );
 		}
 
-		if ( typeof value === "string" && value ) {
-			classes = value.match( rnothtmlwhite ) || [];
+		classes = classesToArray( value );
 
+		if ( classes.length ) {
 			while ( ( elem = this[ i++ ] ) ) {
 				curValue = getClass( elem );
 				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
@@ -8005,7 +8046,7 @@ jQuery.fn.extend( {
 		var classes, elem, cur, curValue, clazz, j, finalValue,
 			i = 0;
 
-		if ( jQuery.isFunction( value ) ) {
+		if ( isFunction( value ) ) {
 			return this.each( function( j ) {
 				jQuery( this ).removeClass( value.call( this, j, getClass( this ) ) );
 			} );
@@ -8015,9 +8056,9 @@ jQuery.fn.extend( {
 			return this.attr( "class", "" );
 		}
 
-		if ( typeof value === "string" && value ) {
-			classes = value.match( rnothtmlwhite ) || [];
+		classes = classesToArray( value );
 
+		if ( classes.length ) {
 			while ( ( elem = this[ i++ ] ) ) {
 				curValue = getClass( elem );
 
@@ -8047,13 +8088,14 @@ jQuery.fn.extend( {
 	},
 
 	toggleClass: function( value, stateVal ) {
-		var type = typeof value;
+		var type = typeof value,
+			isValidValue = type === "string" || Array.isArray( value );
 
-		if ( typeof stateVal === "boolean" && type === "string" ) {
+		if ( typeof stateVal === "boolean" && isValidValue ) {
 			return stateVal ? this.addClass( value ) : this.removeClass( value );
 		}
 
-		if ( jQuery.isFunction( value ) ) {
+		if ( isFunction( value ) ) {
 			return this.each( function( i ) {
 				jQuery( this ).toggleClass(
 					value.call( this, i, getClass( this ), stateVal ),
@@ -8065,12 +8107,12 @@ jQuery.fn.extend( {
 		return this.each( function() {
 			var className, i, self, classNames;
 
-			if ( type === "string" ) {
+			if ( isValidValue ) {
 
 				// Toggle individual class names
 				i = 0;
 				self = jQuery( this );
-				classNames = value.match( rnothtmlwhite ) || [];
+				classNames = classesToArray( value );
 
 				while ( ( className = classNames[ i++ ] ) ) {
 
@@ -8129,7 +8171,7 @@ var rreturn = /\r/g;
 
 jQuery.fn.extend( {
 	val: function( value ) {
-		var hooks, ret, isFunction,
+		var hooks, ret, valueIsFunction,
 			elem = this[ 0 ];
 
 		if ( !arguments.length ) {
@@ -8158,7 +8200,7 @@ jQuery.fn.extend( {
 			return;
 		}
 
-		isFunction = jQuery.isFunction( value );
+		valueIsFunction = isFunction( value );
 
 		return this.each( function( i ) {
 			var val;
@@ -8167,7 +8209,7 @@ jQuery.fn.extend( {
 				return;
 			}
 
-			if ( isFunction ) {
+			if ( valueIsFunction ) {
 				val = value.call( this, i, jQuery( this ).val() );
 			} else {
 				val = value;
@@ -8309,18 +8351,24 @@ jQuery.each( [ "radio", "checkbox" ], function() {
 // Return jQuery for attributes-only inclusion
 
 
-var rfocusMorph = /^(?:focusinfocus|focusoutblur)$/;
+support.focusin = "onfocusin" in window;
+
+
+var rfocusMorph = /^(?:focusinfocus|focusoutblur)$/,
+	stopPropagationCallback = function( e ) {
+		e.stopPropagation();
+	};
 
 jQuery.extend( jQuery.event, {
 
 	trigger: function( event, data, elem, onlyHandlers ) {
 
-		var i, cur, tmp, bubbleType, ontype, handle, special,
+		var i, cur, tmp, bubbleType, ontype, handle, special, lastElement,
 			eventPath = [ elem || document ],
 			type = hasOwn.call( event, "type" ) ? event.type : event,
 			namespaces = hasOwn.call( event, "namespace" ) ? event.namespace.split( "." ) : [];
 
-		cur = tmp = elem = elem || document;
+		cur = lastElement = tmp = elem = elem || document;
 
 		// Don't do events on text and comment nodes
 		if ( elem.nodeType === 3 || elem.nodeType === 8 ) {
@@ -8372,7 +8420,7 @@ jQuery.extend( jQuery.event, {
 
 		// Determine event propagation path in advance, per W3C events spec (#9951)
 		// Bubble up to document, then to window; watch for a global ownerDocument var (#9724)
-		if ( !onlyHandlers && !special.noBubble && !jQuery.isWindow( elem ) ) {
+		if ( !onlyHandlers && !special.noBubble && !isWindow( elem ) ) {
 
 			bubbleType = special.delegateType || type;
 			if ( !rfocusMorph.test( bubbleType + type ) ) {
@@ -8392,7 +8440,7 @@ jQuery.extend( jQuery.event, {
 		// Fire handlers on the event path
 		i = 0;
 		while ( ( cur = eventPath[ i++ ] ) && !event.isPropagationStopped() ) {
-
+			lastElement = cur;
 			event.type = i > 1 ?
 				bubbleType :
 				special.bindType || type;
@@ -8424,7 +8472,7 @@ jQuery.extend( jQuery.event, {
 
 				// Call a native DOM method on the target with the same name as the event.
 				// Don't do default actions on window, that's where global variables be (#6170)
-				if ( ontype && jQuery.isFunction( elem[ type ] ) && !jQuery.isWindow( elem ) ) {
+				if ( ontype && isFunction( elem[ type ] ) && !isWindow( elem ) ) {
 
 					// Don't re-trigger an onFOO event when we call its FOO() method
 					tmp = elem[ ontype ];
@@ -8435,7 +8483,17 @@ jQuery.extend( jQuery.event, {
 
 					// Prevent re-triggering of the same event, since we already bubbled it above
 					jQuery.event.triggered = type;
+
+					if ( event.isPropagationStopped() ) {
+						lastElement.addEventListener( type, stopPropagationCallback );
+					}
+
 					elem[ type ]();
+
+					if ( event.isPropagationStopped() ) {
+						lastElement.removeEventListener( type, stopPropagationCallback );
+					}
+
 					jQuery.event.triggered = undefined;
 
 					if ( tmp ) {
@@ -8481,31 +8539,6 @@ jQuery.fn.extend( {
 } );
 
 
-jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
-	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
-	function( i, name ) {
-
-	// Handle event binding
-	jQuery.fn[ name ] = function( data, fn ) {
-		return arguments.length > 0 ?
-			this.on( name, null, data, fn ) :
-			this.trigger( name );
-	};
-} );
-
-jQuery.fn.extend( {
-	hover: function( fnOver, fnOut ) {
-		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
-	}
-} );
-
-
-
-
-support.focusin = "onfocusin" in window;
-
-
 // Support: Firefox <=44
 // Firefox doesn't have focus(in | out) events
 // Related ticket - https://bugzilla.mozilla.org/show_bug.cgi?id=687787
@@ -8549,7 +8582,7 @@ if ( !support.focusin ) {
 }
 var location = window.location;
 
-var nonce = jQuery.now();
+var nonce = Date.now();
 
 var rquery = ( /\?/ );
 
@@ -8607,7 +8640,7 @@ function buildParams( prefix, obj, traditional, add ) {
 			}
 		} );
 
-	} else if ( !traditional && jQuery.type( obj ) === "object" ) {
+	} else if ( !traditional && toType( obj ) === "object" ) {
 
 		// Serialize object item.
 		for ( name in obj ) {
@@ -8629,7 +8662,7 @@ jQuery.param = function( a, traditional ) {
 		add = function( key, valueOrFunction ) {
 
 			// If value is a function, invoke it and use its return value
-			var value = jQuery.isFunction( valueOrFunction ) ?
+			var value = isFunction( valueOrFunction ) ?
 				valueOrFunction() :
 				valueOrFunction;
 
@@ -8747,7 +8780,7 @@ function addToPrefiltersOrTransports( structure ) {
 			i = 0,
 			dataTypes = dataTypeExpression.toLowerCase().match( rnothtmlwhite ) || [];
 
-		if ( jQuery.isFunction( func ) ) {
+		if ( isFunction( func ) ) {
 
 			// For each dataType in the dataTypeExpression
 			while ( ( dataType = dataTypes[ i++ ] ) ) {
@@ -9219,7 +9252,7 @@ jQuery.extend( {
 		if ( s.crossDomain == null ) {
 			urlAnchor = document.createElement( "a" );
 
-			// Support: IE <=8 - 11, Edge 12 - 13
+			// Support: IE <=8 - 11, Edge 12 - 15
 			// IE throws exception on accessing the href property if url is malformed,
 			// e.g. http://example.com:80x/
 			try {
@@ -9277,8 +9310,8 @@ jQuery.extend( {
 			// Remember the hash so we can put it back
 			uncached = s.url.slice( cacheURL.length );
 
-			// If data is available, append data to url
-			if ( s.data ) {
+			// If data is available and should be processed, append data to url
+			if ( s.data && ( s.processData || typeof s.data === "string" ) ) {
 				cacheURL += ( rquery.test( cacheURL ) ? "&" : "?" ) + s.data;
 
 				// #9682: remove data so that it's not used in an eventual retry
@@ -9515,7 +9548,7 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
 	jQuery[ method ] = function( url, data, callback, type ) {
 
 		// Shift arguments if data argument was omitted
-		if ( jQuery.isFunction( data ) ) {
+		if ( isFunction( data ) ) {
 			type = type || callback;
 			callback = data;
 			data = undefined;
@@ -9553,7 +9586,7 @@ jQuery.fn.extend( {
 		var wrap;
 
 		if ( this[ 0 ] ) {
-			if ( jQuery.isFunction( html ) ) {
+			if ( isFunction( html ) ) {
 				html = html.call( this[ 0 ] );
 			}
 
@@ -9579,7 +9612,7 @@ jQuery.fn.extend( {
 	},
 
 	wrapInner: function( html ) {
-		if ( jQuery.isFunction( html ) ) {
+		if ( isFunction( html ) ) {
 			return this.each( function( i ) {
 				jQuery( this ).wrapInner( html.call( this, i ) );
 			} );
@@ -9599,10 +9632,10 @@ jQuery.fn.extend( {
 	},
 
 	wrap: function( html ) {
-		var isFunction = jQuery.isFunction( html );
+		var htmlIsFunction = isFunction( html );
 
 		return this.each( function( i ) {
-			jQuery( this ).wrapAll( isFunction ? html.call( this, i ) : html );
+			jQuery( this ).wrapAll( htmlIsFunction ? html.call( this, i ) : html );
 		} );
 	},
 
@@ -9694,7 +9727,8 @@ jQuery.ajaxTransport( function( options ) {
 					return function() {
 						if ( callback ) {
 							callback = errorCallback = xhr.onload =
-								xhr.onerror = xhr.onabort = xhr.onreadystatechange = null;
+								xhr.onerror = xhr.onabort = xhr.ontimeout =
+									xhr.onreadystatechange = null;
 
 							if ( type === "abort" ) {
 								xhr.abort();
@@ -9734,7 +9768,7 @@ jQuery.ajaxTransport( function( options ) {
 
 				// Listen to events
 				xhr.onload = callback();
-				errorCallback = xhr.onerror = callback( "error" );
+				errorCallback = xhr.onerror = xhr.ontimeout = callback( "error" );
 
 				// Support: IE 9 only
 				// Use onreadystatechange to replace onabort
@@ -9888,7 +9922,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 	if ( jsonProp || s.dataTypes[ 0 ] === "jsonp" ) {
 
 		// Get callback name, remembering preexisting value associated with it
-		callbackName = s.jsonpCallback = jQuery.isFunction( s.jsonpCallback ) ?
+		callbackName = s.jsonpCallback = isFunction( s.jsonpCallback ) ?
 			s.jsonpCallback() :
 			s.jsonpCallback;
 
@@ -9939,7 +9973,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 			}
 
 			// Call if it was a function and we have a response
-			if ( responseContainer && jQuery.isFunction( overwritten ) ) {
+			if ( responseContainer && isFunction( overwritten ) ) {
 				overwritten( responseContainer[ 0 ] );
 			}
 
@@ -10031,7 +10065,7 @@ jQuery.fn.load = function( url, params, callback ) {
 	}
 
 	// If it's a function
-	if ( jQuery.isFunction( params ) ) {
+	if ( isFunction( params ) ) {
 
 		// We assume that it's the callback
 		callback = params;
@@ -10139,7 +10173,7 @@ jQuery.offset = {
 			curLeft = parseFloat( curCSSLeft ) || 0;
 		}
 
-		if ( jQuery.isFunction( options ) ) {
+		if ( isFunction( options ) ) {
 
 			// Use jQuery.extend here to allow modification of coordinates argument (gh-1848)
 			options = options.call( elem, i, jQuery.extend( {}, curOffset ) );
@@ -10162,6 +10196,8 @@ jQuery.offset = {
 };
 
 jQuery.fn.extend( {
+
+	// offset() relates an element's border box to the document origin
 	offset: function( options ) {
 
 		// Preserve chaining for setter
@@ -10173,7 +10209,7 @@ jQuery.fn.extend( {
 				} );
 		}
 
-		var doc, docElem, rect, win,
+		var rect, win,
 			elem = this[ 0 ];
 
 		if ( !elem ) {
@@ -10188,50 +10224,52 @@ jQuery.fn.extend( {
 			return { top: 0, left: 0 };
 		}
 
+		// Get document-relative position by adding viewport scroll to viewport-relative gBCR
 		rect = elem.getBoundingClientRect();
-
-		doc = elem.ownerDocument;
-		docElem = doc.documentElement;
-		win = doc.defaultView;
-
+		win = elem.ownerDocument.defaultView;
 		return {
-			top: rect.top + win.pageYOffset - docElem.clientTop,
-			left: rect.left + win.pageXOffset - docElem.clientLeft
+			top: rect.top + win.pageYOffset,
+			left: rect.left + win.pageXOffset
 		};
 	},
 
+	// position() relates an element's margin box to its offset parent's padding box
+	// This corresponds to the behavior of CSS absolute positioning
 	position: function() {
 		if ( !this[ 0 ] ) {
 			return;
 		}
 
-		var offsetParent, offset,
+		var offsetParent, offset, doc,
 			elem = this[ 0 ],
 			parentOffset = { top: 0, left: 0 };
 
-		// Fixed elements are offset from window (parentOffset = {top:0, left: 0},
-		// because it is its only offset parent
+		// position:fixed elements are offset from the viewport, which itself always has zero offset
 		if ( jQuery.css( elem, "position" ) === "fixed" ) {
 
-			// Assume getBoundingClientRect is there when computed position is fixed
+			// Assume position:fixed implies availability of getBoundingClientRect
 			offset = elem.getBoundingClientRect();
 
 		} else {
-
-			// Get *real* offsetParent
-			offsetParent = this.offsetParent();
-
-			// Get correct offsets
 			offset = this.offset();
-			if ( !nodeName( offsetParent[ 0 ], "html" ) ) {
-				parentOffset = offsetParent.offset();
-			}
 
-			// Add offsetParent borders
-			parentOffset = {
-				top: parentOffset.top + jQuery.css( offsetParent[ 0 ], "borderTopWidth", true ),
-				left: parentOffset.left + jQuery.css( offsetParent[ 0 ], "borderLeftWidth", true )
-			};
+			// Account for the *real* offset parent, which can be the document or its root element
+			// when a statically positioned element is identified
+			doc = elem.ownerDocument;
+			offsetParent = elem.offsetParent || doc.documentElement;
+			while ( offsetParent &&
+				( offsetParent === doc.body || offsetParent === doc.documentElement ) &&
+				jQuery.css( offsetParent, "position" ) === "static" ) {
+
+				offsetParent = offsetParent.parentNode;
+			}
+			if ( offsetParent && offsetParent !== elem && offsetParent.nodeType === 1 ) {
+
+				// Incorporate borders into its offset, since they are outside its content origin
+				parentOffset = jQuery( offsetParent ).offset();
+				parentOffset.top += jQuery.css( offsetParent, "borderTopWidth", true );
+				parentOffset.left += jQuery.css( offsetParent, "borderLeftWidth", true );
+			}
 		}
 
 		// Subtract parent offsets and element margins
@@ -10273,7 +10311,7 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 
 			// Coalesce documents and windows
 			var win;
-			if ( jQuery.isWindow( elem ) ) {
+			if ( isWindow( elem ) ) {
 				win = elem;
 			} else if ( elem.nodeType === 9 ) {
 				win = elem.defaultView;
@@ -10331,7 +10369,7 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 			return access( this, function( elem, type, value ) {
 				var doc;
 
-				if ( jQuery.isWindow( elem ) ) {
+				if ( isWindow( elem ) ) {
 
 					// $( window ).outerWidth/Height return w/h including scrollbars (gh-1729)
 					return funcName.indexOf( "outer" ) === 0 ?
@@ -10365,6 +10403,28 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 } );
 
 
+jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
+	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
+	function( i, name ) {
+
+	// Handle event binding
+	jQuery.fn[ name ] = function( data, fn ) {
+		return arguments.length > 0 ?
+			this.on( name, null, data, fn ) :
+			this.trigger( name );
+	};
+} );
+
+jQuery.fn.extend( {
+	hover: function( fnOver, fnOut ) {
+		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
+	}
+} );
+
+
+
+
 jQuery.fn.extend( {
 
 	bind: function( types, data, fn ) {
@@ -10386,6 +10446,37 @@ jQuery.fn.extend( {
 	}
 } );
 
+// Bind a function to a context, optionally partially applying any
+// arguments.
+// jQuery.proxy is deprecated to promote standards (specifically Function#bind)
+// However, it is not slated for removal any time soon
+jQuery.proxy = function( fn, context ) {
+	var tmp, args, proxy;
+
+	if ( typeof context === "string" ) {
+		tmp = fn[ context ];
+		context = fn;
+		fn = tmp;
+	}
+
+	// Quick check to determine if target is callable, in the spec
+	// this throws a TypeError, but we will just return undefined.
+	if ( !isFunction( fn ) ) {
+		return undefined;
+	}
+
+	// Simulated bind
+	args = slice.call( arguments, 2 );
+	proxy = function() {
+		return fn.apply( context || this, args.concat( slice.call( arguments ) ) );
+	};
+
+	// Set the guid of unique handler to the same of original handler, so it can be removed
+	proxy.guid = fn.guid = fn.guid || jQuery.guid++;
+
+	return proxy;
+};
+
 jQuery.holdReady = function( hold ) {
 	if ( hold ) {
 		jQuery.readyWait++;
@@ -10396,6 +10487,26 @@ jQuery.holdReady = function( hold ) {
 jQuery.isArray = Array.isArray;
 jQuery.parseJSON = JSON.parse;
 jQuery.nodeName = nodeName;
+jQuery.isFunction = isFunction;
+jQuery.isWindow = isWindow;
+jQuery.camelCase = camelCase;
+jQuery.type = toType;
+
+jQuery.now = Date.now;
+
+jQuery.isNumeric = function( obj ) {
+
+	// As of jQuery 3.0, isNumeric is limited to
+	// strings and numbers (primitives or objects)
+	// that can be coerced to finite numbers (gh-2662)
+	var type = jQuery.type( obj );
+	return ( type === "number" || type === "string" ) &&
+
+		// parseFloat NaNs numeric-cast false positives ("")
+		// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
+		// subtraction forces infinities to NaN
+		!isNaN( obj - parseFloat( obj ) );
+};
 
 
 
@@ -10475,7 +10586,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _handlebars = __webpack_require__(49);
+var _handlebars = __webpack_require__(50);
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
@@ -10487,17 +10598,21 @@ var _AtmosphereManager = __webpack_require__(14);
 
 var _AtmosphereManager2 = _interopRequireDefault(_AtmosphereManager);
 
-var _TrackManager = __webpack_require__(20);
+var _TrackManager = __webpack_require__(21);
 
 var _TrackManager2 = _interopRequireDefault(_TrackManager);
 
-var _Sidebar = __webpack_require__(19);
+var _Sidebar = __webpack_require__(20);
 
 var _Sidebar2 = _interopRequireDefault(_Sidebar);
 
-var _PersistenceManager = __webpack_require__(18);
+var _PersistenceManager = __webpack_require__(19);
 
 var _PersistenceManager2 = _interopRequireDefault(_PersistenceManager);
+
+var _DragManager = __webpack_require__(17);
+
+var _DragManager2 = _interopRequireDefault(_DragManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10523,19 +10638,38 @@ var GlobalVars = function () {
         this.trackManager = new _TrackManager2.default();
         this.dataManager = new _DataManager2.default();
         this.sidebar = new _Sidebar2.default();
+        this.dragManager = new _DragManager2.default();
 
         if (this.storageAvailable('localStorage')) {
             this.pm = new _PersistenceManager2.default();
         }
+
+        this.events();
+
+        // Ensure only working controls show on browsers without
+        //  pointer event support
+        if (!window.PointerEvent) {
+            // Pointer events aren't supported
+            (0, _jquery2.default)('html').addClass('no-pointer-events');
+        }
     }
 
-    /*
-        From:
-        https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
-    */
-
-
     _createClass(GlobalVars, [{
+        key: 'events',
+        value: function events() {
+            // Update PersistenceManager's model of the lock checkbox on click
+            this.$autoplayCheckbox.on('click', function (e) {
+                g.pm.storeAutoplayCheckboxState(this.$autoplayCheckbox.is(':checked'));
+                e.stopPropagation();
+            }.bind(this));
+        }
+
+        /*
+            From:
+            https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+        */
+
+    }, {
         key: 'storageAvailable',
         value: function storageAvailable(type) {
             try {
@@ -10607,6 +10741,11 @@ var GlobalVars = function () {
         key: 'clamp',
         value: function clamp(min, number, max) {
             return Math.min(Math.max(number, min), max);
+        }
+    }, {
+        key: 'setAutoplayCheckboxState',
+        value: function setAutoplayCheckboxState(isChecked) {
+            this.$autoplayCheckbox.prop('checked', isChecked);
         }
     }]);
 
@@ -10709,15 +10848,15 @@ var _exception = __webpack_require__(3);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(38);
+var _helpers = __webpack_require__(39);
 
-var _decorators = __webpack_require__(36);
+var _decorators = __webpack_require__(37);
 
-var _logger = __webpack_require__(46);
+var _logger = __webpack_require__(47);
 
 var _logger2 = _interopRequireDefault(_logger);
 
-var VERSION = '4.0.10';
+var VERSION = '4.0.11';
 exports.VERSION = VERSION;
 var COMPILER_REVISION = 7;
 
@@ -10798,7 +10937,7 @@ var log = _logger2['default'].log;
 exports.log = log;
 exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL2Jhc2UuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7cUJBQTRDLFNBQVM7O3lCQUMvQixhQUFhOzs7O3VCQUNFLFdBQVc7OzBCQUNSLGNBQWM7O3NCQUNuQyxVQUFVOzs7O0FBRXRCLElBQU0sT0FBTyxHQUFHLFFBQVEsQ0FBQzs7QUFDekIsSUFBTSxpQkFBaUIsR0FBRyxDQUFDLENBQUM7OztBQUU1QixJQUFNLGdCQUFnQixHQUFHO0FBQzlCLEdBQUMsRUFBRSxhQUFhO0FBQ2hCLEdBQUMsRUFBRSxlQUFlO0FBQ2xCLEdBQUMsRUFBRSxlQUFlO0FBQ2xCLEdBQUMsRUFBRSxVQUFVO0FBQ2IsR0FBQyxFQUFFLGtCQUFrQjtBQUNyQixHQUFDLEVBQUUsaUJBQWlCO0FBQ3BCLEdBQUMsRUFBRSxVQUFVO0NBQ2QsQ0FBQzs7O0FBRUYsSUFBTSxVQUFVLEdBQUcsaUJBQWlCLENBQUM7O0FBRTlCLFNBQVMscUJBQXFCLENBQUMsT0FBTyxFQUFFLFFBQVEsRUFBRSxVQUFVLEVBQUU7QUFDbkUsTUFBSSxDQUFDLE9BQU8sR0FBRyxPQUFPLElBQUksRUFBRSxDQUFDO0FBQzdCLE1BQUksQ0FBQyxRQUFRLEdBQUcsUUFBUSxJQUFJLEVBQUUsQ0FBQztBQUMvQixNQUFJLENBQUMsVUFBVSxHQUFHLFVBQVUsSUFBSSxFQUFFLENBQUM7O0FBRW5DLGtDQUF1QixJQUFJLENBQUMsQ0FBQztBQUM3Qix3Q0FBMEIsSUFBSSxDQUFDLENBQUM7Q0FDakM7O0FBRUQscUJBQXFCLENBQUMsU0FBUyxHQUFHO0FBQ2hDLGFBQVcsRUFBRSxxQkFBcUI7O0FBRWxDLFFBQU0scUJBQVE7QUFDZCxLQUFHLEVBQUUsb0JBQU8sR0FBRzs7QUFFZixnQkFBYyxFQUFFLHdCQUFTLElBQUksRUFBRSxFQUFFLEVBQUU7QUFDakMsUUFBSSxnQkFBUyxJQUFJLENBQUMsSUFBSSxDQUFDLEtBQUssVUFBVSxFQUFFO0FBQ3RDLFVBQUksRUFBRSxFQUFFO0FBQUUsY0FBTSwyQkFBYyx5Q0FBeUMsQ0FBQyxDQUFDO09BQUU7QUFDM0Usb0JBQU8sSUFBSSxDQUFDLE9BQU8sRUFBRSxJQUFJLENBQUMsQ0FBQztLQUM1QixNQUFNO0FBQ0wsVUFBSSxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMsR0FBRyxFQUFFLENBQUM7S0FDekI7R0FDRjtBQUNELGtCQUFnQixFQUFFLDBCQUFTLElBQUksRUFBRTtBQUMvQixXQUFPLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLENBQUM7R0FDM0I7O0FBRUQsaUJBQWUsRUFBRSx5QkFBUyxJQUFJLEVBQUUsT0FBTyxFQUFFO0FBQ3ZDLFFBQUksZ0JBQVMsSUFBSSxDQUFDLElBQUksQ0FBQyxLQUFLLFVBQVUsRUFBRTtBQUN0QyxvQkFBTyxJQUFJLENBQUMsUUFBUSxFQUFFLElBQUksQ0FBQyxDQUFDO0tBQzdCLE1BQU07QUFDTCxVQUFJLE9BQU8sT0FBTyxLQUFLLFdBQVcsRUFBRTtBQUNsQyxjQUFNLHlFQUEwRCxJQUFJLG9CQUFpQixDQUFDO09BQ3ZGO0FBQ0QsVUFBSSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsR0FBRyxPQUFPLENBQUM7S0FDL0I7R0FDRjtBQUNELG1CQUFpQixFQUFFLDJCQUFTLElBQUksRUFBRTtBQUNoQyxXQUFPLElBQUksQ0FBQyxRQUFRLENBQUMsSUFBSSxDQUFDLENBQUM7R0FDNUI7O0FBRUQsbUJBQWlCLEVBQUUsMkJBQVMsSUFBSSxFQUFFLEVBQUUsRUFBRTtBQUNwQyxRQUFJLGdCQUFTLElBQUksQ0FBQyxJQUFJLENBQUMsS0FBSyxVQUFVLEVBQUU7QUFDdEMsVUFBSSxFQUFFLEVBQUU7QUFBRSxjQUFNLDJCQUFjLDRDQUE0QyxDQUFDLENBQUM7T0FBRTtBQUM5RSxvQkFBTyxJQUFJLENBQUMsVUFBVSxFQUFFLElBQUksQ0FBQyxDQUFDO0tBQy9CLE1BQU07QUFDTCxVQUFJLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxHQUFHLEVBQUUsQ0FBQztLQUM1QjtHQUNGO0FBQ0QscUJBQW1CLEVBQUUsNkJBQVMsSUFBSSxFQUFFO0FBQ2xDLFdBQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsQ0FBQztHQUM5QjtDQUNGLENBQUM7O0FBRUssSUFBSSxHQUFHLEdBQUcsb0JBQU8sR0FBRyxDQUFDOzs7UUFFcEIsV0FBVztRQUFFLE1BQU0iLCJmaWxlIjoiYmFzZS5qcyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7Y3JlYXRlRnJhbWUsIGV4dGVuZCwgdG9TdHJpbmd9IGZyb20gJy4vdXRpbHMnO1xuaW1wb3J0IEV4Y2VwdGlvbiBmcm9tICcuL2V4Y2VwdGlvbic7XG5pbXBvcnQge3JlZ2lzdGVyRGVmYXVsdEhlbHBlcnN9IGZyb20gJy4vaGVscGVycyc7XG5pbXBvcnQge3JlZ2lzdGVyRGVmYXVsdERlY29yYXRvcnN9IGZyb20gJy4vZGVjb3JhdG9ycyc7XG5pbXBvcnQgbG9nZ2VyIGZyb20gJy4vbG9nZ2VyJztcblxuZXhwb3J0IGNvbnN0IFZFUlNJT04gPSAnNC4wLjEwJztcbmV4cG9ydCBjb25zdCBDT01QSUxFUl9SRVZJU0lPTiA9IDc7XG5cbmV4cG9ydCBjb25zdCBSRVZJU0lPTl9DSEFOR0VTID0ge1xuICAxOiAnPD0gMS4wLnJjLjInLCAvLyAxLjAucmMuMiBpcyBhY3R1YWxseSByZXYyIGJ1dCBkb2Vzbid0IHJlcG9ydCBpdFxuICAyOiAnPT0gMS4wLjAtcmMuMycsXG4gIDM6ICc9PSAxLjAuMC1yYy40JyxcbiAgNDogJz09IDEueC54JyxcbiAgNTogJz09IDIuMC4wLWFscGhhLngnLFxuICA2OiAnPj0gMi4wLjAtYmV0YS4xJyxcbiAgNzogJz49IDQuMC4wJ1xufTtcblxuY29uc3Qgb2JqZWN0VHlwZSA9ICdbb2JqZWN0IE9iamVjdF0nO1xuXG5leHBvcnQgZnVuY3Rpb24gSGFuZGxlYmFyc0Vudmlyb25tZW50KGhlbHBlcnMsIHBhcnRpYWxzLCBkZWNvcmF0b3JzKSB7XG4gIHRoaXMuaGVscGVycyA9IGhlbHBlcnMgfHwge307XG4gIHRoaXMucGFydGlhbHMgPSBwYXJ0aWFscyB8fCB7fTtcbiAgdGhpcy5kZWNvcmF0b3JzID0gZGVjb3JhdG9ycyB8fCB7fTtcblxuICByZWdpc3RlckRlZmF1bHRIZWxwZXJzKHRoaXMpO1xuICByZWdpc3RlckRlZmF1bHREZWNvcmF0b3JzKHRoaXMpO1xufVxuXG5IYW5kbGViYXJzRW52aXJvbm1lbnQucHJvdG90eXBlID0ge1xuICBjb25zdHJ1Y3RvcjogSGFuZGxlYmFyc0Vudmlyb25tZW50LFxuXG4gIGxvZ2dlcjogbG9nZ2VyLFxuICBsb2c6IGxvZ2dlci5sb2csXG5cbiAgcmVnaXN0ZXJIZWxwZXI6IGZ1bmN0aW9uKG5hbWUsIGZuKSB7XG4gICAgaWYgKHRvU3RyaW5nLmNhbGwobmFtZSkgPT09IG9iamVjdFR5cGUpIHtcbiAgICAgIGlmIChmbikgeyB0aHJvdyBuZXcgRXhjZXB0aW9uKCdBcmcgbm90IHN1cHBvcnRlZCB3aXRoIG11bHRpcGxlIGhlbHBlcnMnKTsgfVxuICAgICAgZXh0ZW5kKHRoaXMuaGVscGVycywgbmFtZSk7XG4gICAgfSBlbHNlIHtcbiAgICAgIHRoaXMuaGVscGVyc1tuYW1lXSA9IGZuO1xuICAgIH1cbiAgfSxcbiAgdW5yZWdpc3RlckhlbHBlcjogZnVuY3Rpb24obmFtZSkge1xuICAgIGRlbGV0ZSB0aGlzLmhlbHBlcnNbbmFtZV07XG4gIH0sXG5cbiAgcmVnaXN0ZXJQYXJ0aWFsOiBmdW5jdGlvbihuYW1lLCBwYXJ0aWFsKSB7XG4gICAgaWYgKHRvU3RyaW5nLmNhbGwobmFtZSkgPT09IG9iamVjdFR5cGUpIHtcbiAgICAgIGV4dGVuZCh0aGlzLnBhcnRpYWxzLCBuYW1lKTtcbiAgICB9IGVsc2Uge1xuICAgICAgaWYgKHR5cGVvZiBwYXJ0aWFsID09PSAndW5kZWZpbmVkJykge1xuICAgICAgICB0aHJvdyBuZXcgRXhjZXB0aW9uKGBBdHRlbXB0aW5nIHRvIHJlZ2lzdGVyIGEgcGFydGlhbCBjYWxsZWQgXCIke25hbWV9XCIgYXMgdW5kZWZpbmVkYCk7XG4gICAgICB9XG4gICAgICB0aGlzLnBhcnRpYWxzW25hbWVdID0gcGFydGlhbDtcbiAgICB9XG4gIH0sXG4gIHVucmVnaXN0ZXJQYXJ0aWFsOiBmdW5jdGlvbihuYW1lKSB7XG4gICAgZGVsZXRlIHRoaXMucGFydGlhbHNbbmFtZV07XG4gIH0sXG5cbiAgcmVnaXN0ZXJEZWNvcmF0b3I6IGZ1bmN0aW9uKG5hbWUsIGZuKSB7XG4gICAgaWYgKHRvU3RyaW5nLmNhbGwobmFtZSkgPT09IG9iamVjdFR5cGUpIHtcbiAgICAgIGlmIChmbikgeyB0aHJvdyBuZXcgRXhjZXB0aW9uKCdBcmcgbm90IHN1cHBvcnRlZCB3aXRoIG11bHRpcGxlIGRlY29yYXRvcnMnKTsgfVxuICAgICAgZXh0ZW5kKHRoaXMuZGVjb3JhdG9ycywgbmFtZSk7XG4gICAgfSBlbHNlIHtcbiAgICAgIHRoaXMuZGVjb3JhdG9yc1tuYW1lXSA9IGZuO1xuICAgIH1cbiAgfSxcbiAgdW5yZWdpc3RlckRlY29yYXRvcjogZnVuY3Rpb24obmFtZSkge1xuICAgIGRlbGV0ZSB0aGlzLmRlY29yYXRvcnNbbmFtZV07XG4gIH1cbn07XG5cbmV4cG9ydCBsZXQgbG9nID0gbG9nZ2VyLmxvZztcblxuZXhwb3J0IHtjcmVhdGVGcmFtZSwgbG9nZ2VyfTtcbiJdfQ==
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL2Jhc2UuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7cUJBQTRDLFNBQVM7O3lCQUMvQixhQUFhOzs7O3VCQUNFLFdBQVc7OzBCQUNSLGNBQWM7O3NCQUNuQyxVQUFVOzs7O0FBRXRCLElBQU0sT0FBTyxHQUFHLFFBQVEsQ0FBQzs7QUFDekIsSUFBTSxpQkFBaUIsR0FBRyxDQUFDLENBQUM7OztBQUU1QixJQUFNLGdCQUFnQixHQUFHO0FBQzlCLEdBQUMsRUFBRSxhQUFhO0FBQ2hCLEdBQUMsRUFBRSxlQUFlO0FBQ2xCLEdBQUMsRUFBRSxlQUFlO0FBQ2xCLEdBQUMsRUFBRSxVQUFVO0FBQ2IsR0FBQyxFQUFFLGtCQUFrQjtBQUNyQixHQUFDLEVBQUUsaUJBQWlCO0FBQ3BCLEdBQUMsRUFBRSxVQUFVO0NBQ2QsQ0FBQzs7O0FBRUYsSUFBTSxVQUFVLEdBQUcsaUJBQWlCLENBQUM7O0FBRTlCLFNBQVMscUJBQXFCLENBQUMsT0FBTyxFQUFFLFFBQVEsRUFBRSxVQUFVLEVBQUU7QUFDbkUsTUFBSSxDQUFDLE9BQU8sR0FBRyxPQUFPLElBQUksRUFBRSxDQUFDO0FBQzdCLE1BQUksQ0FBQyxRQUFRLEdBQUcsUUFBUSxJQUFJLEVBQUUsQ0FBQztBQUMvQixNQUFJLENBQUMsVUFBVSxHQUFHLFVBQVUsSUFBSSxFQUFFLENBQUM7O0FBRW5DLGtDQUF1QixJQUFJLENBQUMsQ0FBQztBQUM3Qix3Q0FBMEIsSUFBSSxDQUFDLENBQUM7Q0FDakM7O0FBRUQscUJBQXFCLENBQUMsU0FBUyxHQUFHO0FBQ2hDLGFBQVcsRUFBRSxxQkFBcUI7O0FBRWxDLFFBQU0scUJBQVE7QUFDZCxLQUFHLEVBQUUsb0JBQU8sR0FBRzs7QUFFZixnQkFBYyxFQUFFLHdCQUFTLElBQUksRUFBRSxFQUFFLEVBQUU7QUFDakMsUUFBSSxnQkFBUyxJQUFJLENBQUMsSUFBSSxDQUFDLEtBQUssVUFBVSxFQUFFO0FBQ3RDLFVBQUksRUFBRSxFQUFFO0FBQUUsY0FBTSwyQkFBYyx5Q0FBeUMsQ0FBQyxDQUFDO09BQUU7QUFDM0Usb0JBQU8sSUFBSSxDQUFDLE9BQU8sRUFBRSxJQUFJLENBQUMsQ0FBQztLQUM1QixNQUFNO0FBQ0wsVUFBSSxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMsR0FBRyxFQUFFLENBQUM7S0FDekI7R0FDRjtBQUNELGtCQUFnQixFQUFFLDBCQUFTLElBQUksRUFBRTtBQUMvQixXQUFPLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLENBQUM7R0FDM0I7O0FBRUQsaUJBQWUsRUFBRSx5QkFBUyxJQUFJLEVBQUUsT0FBTyxFQUFFO0FBQ3ZDLFFBQUksZ0JBQVMsSUFBSSxDQUFDLElBQUksQ0FBQyxLQUFLLFVBQVUsRUFBRTtBQUN0QyxvQkFBTyxJQUFJLENBQUMsUUFBUSxFQUFFLElBQUksQ0FBQyxDQUFDO0tBQzdCLE1BQU07QUFDTCxVQUFJLE9BQU8sT0FBTyxLQUFLLFdBQVcsRUFBRTtBQUNsQyxjQUFNLHlFQUEwRCxJQUFJLG9CQUFpQixDQUFDO09BQ3ZGO0FBQ0QsVUFBSSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsR0FBRyxPQUFPLENBQUM7S0FDL0I7R0FDRjtBQUNELG1CQUFpQixFQUFFLDJCQUFTLElBQUksRUFBRTtBQUNoQyxXQUFPLElBQUksQ0FBQyxRQUFRLENBQUMsSUFBSSxDQUFDLENBQUM7R0FDNUI7O0FBRUQsbUJBQWlCLEVBQUUsMkJBQVMsSUFBSSxFQUFFLEVBQUUsRUFBRTtBQUNwQyxRQUFJLGdCQUFTLElBQUksQ0FBQyxJQUFJLENBQUMsS0FBSyxVQUFVLEVBQUU7QUFDdEMsVUFBSSxFQUFFLEVBQUU7QUFBRSxjQUFNLDJCQUFjLDRDQUE0QyxDQUFDLENBQUM7T0FBRTtBQUM5RSxvQkFBTyxJQUFJLENBQUMsVUFBVSxFQUFFLElBQUksQ0FBQyxDQUFDO0tBQy9CLE1BQU07QUFDTCxVQUFJLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxHQUFHLEVBQUUsQ0FBQztLQUM1QjtHQUNGO0FBQ0QscUJBQW1CLEVBQUUsNkJBQVMsSUFBSSxFQUFFO0FBQ2xDLFdBQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsQ0FBQztHQUM5QjtDQUNGLENBQUM7O0FBRUssSUFBSSxHQUFHLEdBQUcsb0JBQU8sR0FBRyxDQUFDOzs7UUFFcEIsV0FBVztRQUFFLE1BQU0iLCJmaWxlIjoiYmFzZS5qcyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7Y3JlYXRlRnJhbWUsIGV4dGVuZCwgdG9TdHJpbmd9IGZyb20gJy4vdXRpbHMnO1xuaW1wb3J0IEV4Y2VwdGlvbiBmcm9tICcuL2V4Y2VwdGlvbic7XG5pbXBvcnQge3JlZ2lzdGVyRGVmYXVsdEhlbHBlcnN9IGZyb20gJy4vaGVscGVycyc7XG5pbXBvcnQge3JlZ2lzdGVyRGVmYXVsdERlY29yYXRvcnN9IGZyb20gJy4vZGVjb3JhdG9ycyc7XG5pbXBvcnQgbG9nZ2VyIGZyb20gJy4vbG9nZ2VyJztcblxuZXhwb3J0IGNvbnN0IFZFUlNJT04gPSAnNC4wLjExJztcbmV4cG9ydCBjb25zdCBDT01QSUxFUl9SRVZJU0lPTiA9IDc7XG5cbmV4cG9ydCBjb25zdCBSRVZJU0lPTl9DSEFOR0VTID0ge1xuICAxOiAnPD0gMS4wLnJjLjInLCAvLyAxLjAucmMuMiBpcyBhY3R1YWxseSByZXYyIGJ1dCBkb2Vzbid0IHJlcG9ydCBpdFxuICAyOiAnPT0gMS4wLjAtcmMuMycsXG4gIDM6ICc9PSAxLjAuMC1yYy40JyxcbiAgNDogJz09IDEueC54JyxcbiAgNTogJz09IDIuMC4wLWFscGhhLngnLFxuICA2OiAnPj0gMi4wLjAtYmV0YS4xJyxcbiAgNzogJz49IDQuMC4wJ1xufTtcblxuY29uc3Qgb2JqZWN0VHlwZSA9ICdbb2JqZWN0IE9iamVjdF0nO1xuXG5leHBvcnQgZnVuY3Rpb24gSGFuZGxlYmFyc0Vudmlyb25tZW50KGhlbHBlcnMsIHBhcnRpYWxzLCBkZWNvcmF0b3JzKSB7XG4gIHRoaXMuaGVscGVycyA9IGhlbHBlcnMgfHwge307XG4gIHRoaXMucGFydGlhbHMgPSBwYXJ0aWFscyB8fCB7fTtcbiAgdGhpcy5kZWNvcmF0b3JzID0gZGVjb3JhdG9ycyB8fCB7fTtcblxuICByZWdpc3RlckRlZmF1bHRIZWxwZXJzKHRoaXMpO1xuICByZWdpc3RlckRlZmF1bHREZWNvcmF0b3JzKHRoaXMpO1xufVxuXG5IYW5kbGViYXJzRW52aXJvbm1lbnQucHJvdG90eXBlID0ge1xuICBjb25zdHJ1Y3RvcjogSGFuZGxlYmFyc0Vudmlyb25tZW50LFxuXG4gIGxvZ2dlcjogbG9nZ2VyLFxuICBsb2c6IGxvZ2dlci5sb2csXG5cbiAgcmVnaXN0ZXJIZWxwZXI6IGZ1bmN0aW9uKG5hbWUsIGZuKSB7XG4gICAgaWYgKHRvU3RyaW5nLmNhbGwobmFtZSkgPT09IG9iamVjdFR5cGUpIHtcbiAgICAgIGlmIChmbikgeyB0aHJvdyBuZXcgRXhjZXB0aW9uKCdBcmcgbm90IHN1cHBvcnRlZCB3aXRoIG11bHRpcGxlIGhlbHBlcnMnKTsgfVxuICAgICAgZXh0ZW5kKHRoaXMuaGVscGVycywgbmFtZSk7XG4gICAgfSBlbHNlIHtcbiAgICAgIHRoaXMuaGVscGVyc1tuYW1lXSA9IGZuO1xuICAgIH1cbiAgfSxcbiAgdW5yZWdpc3RlckhlbHBlcjogZnVuY3Rpb24obmFtZSkge1xuICAgIGRlbGV0ZSB0aGlzLmhlbHBlcnNbbmFtZV07XG4gIH0sXG5cbiAgcmVnaXN0ZXJQYXJ0aWFsOiBmdW5jdGlvbihuYW1lLCBwYXJ0aWFsKSB7XG4gICAgaWYgKHRvU3RyaW5nLmNhbGwobmFtZSkgPT09IG9iamVjdFR5cGUpIHtcbiAgICAgIGV4dGVuZCh0aGlzLnBhcnRpYWxzLCBuYW1lKTtcbiAgICB9IGVsc2Uge1xuICAgICAgaWYgKHR5cGVvZiBwYXJ0aWFsID09PSAndW5kZWZpbmVkJykge1xuICAgICAgICB0aHJvdyBuZXcgRXhjZXB0aW9uKGBBdHRlbXB0aW5nIHRvIHJlZ2lzdGVyIGEgcGFydGlhbCBjYWxsZWQgXCIke25hbWV9XCIgYXMgdW5kZWZpbmVkYCk7XG4gICAgICB9XG4gICAgICB0aGlzLnBhcnRpYWxzW25hbWVdID0gcGFydGlhbDtcbiAgICB9XG4gIH0sXG4gIHVucmVnaXN0ZXJQYXJ0aWFsOiBmdW5jdGlvbihuYW1lKSB7XG4gICAgZGVsZXRlIHRoaXMucGFydGlhbHNbbmFtZV07XG4gIH0sXG5cbiAgcmVnaXN0ZXJEZWNvcmF0b3I6IGZ1bmN0aW9uKG5hbWUsIGZuKSB7XG4gICAgaWYgKHRvU3RyaW5nLmNhbGwobmFtZSkgPT09IG9iamVjdFR5cGUpIHtcbiAgICAgIGlmIChmbikgeyB0aHJvdyBuZXcgRXhjZXB0aW9uKCdBcmcgbm90IHN1cHBvcnRlZCB3aXRoIG11bHRpcGxlIGRlY29yYXRvcnMnKTsgfVxuICAgICAgZXh0ZW5kKHRoaXMuZGVjb3JhdG9ycywgbmFtZSk7XG4gICAgfSBlbHNlIHtcbiAgICAgIHRoaXMuZGVjb3JhdG9yc1tuYW1lXSA9IGZuO1xuICAgIH1cbiAgfSxcbiAgdW5yZWdpc3RlckRlY29yYXRvcjogZnVuY3Rpb24obmFtZSkge1xuICAgIGRlbGV0ZSB0aGlzLmRlY29yYXRvcnNbbmFtZV07XG4gIH1cbn07XG5cbmV4cG9ydCBsZXQgbG9nID0gbG9nZ2VyLmxvZztcblxuZXhwb3J0IHtjcmVhdGVGcmFtZSwgbG9nZ2VyfTtcbiJdfQ==
 
 
 /***/ }),
@@ -10971,7 +11110,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(24);
+__webpack_require__(25);
 
 var Track = function () {
 
@@ -11006,7 +11145,14 @@ var Track = function () {
         value: function createElement() {
             var trackHTML = this.template(this.data); // convert object to HTML
             // Add to tracklist
-            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.trackManager.$list).show('fast');
+            var $trackHTML = (0, _jquery2.default)(trackHTML).hide().prependTo(_GlobalVars.g.trackManager.$list);
+
+            // Show track if it belongs to current atmosphere
+            //  Without this check all tracks are displayed when loading from localstorage
+            //  rather than only those belonging to the active atmosphere
+            if (this.atmosphere == _GlobalVars.g.atmosphereManager.activeAtmosphere) {
+                $trackHTML.show('fast');
+            }
 
             // Play and Stop buttons
             this.$playBtn = $trackHTML.find(".btn--play");
@@ -11031,8 +11177,8 @@ var Track = function () {
                 this.updateVolume();
                 _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
-            $trackHTML.find(".btn--mute" // mute button
-            ).on('click', function () {
+            $trackHTML.find(".btn--mute") // mute button
+            .on('click', function () {
                 this.toggleMute();
             }.bind(this));
 
@@ -11043,6 +11189,45 @@ var Track = function () {
                     _GlobalVars.g.searchBar.appendToSearchBar($element.text());
                 });
             });
+
+            // TODO:
+
+            // TODO: mousedown touchstart
+            var btnDrag = $trackHTML[0].getElementsByClassName("btn--drag")[0];
+            btnDrag.addEventListener("pointerdown", function (e) {
+                _GlobalVars.g.dragManager.startDraggingTrack(this, e);
+                // e.preventDefault();
+                // TODO:
+            }.bind(this), { passive: false });
+            // $trackHTML.find(".btn--drag").on("pointerdown", function(e) {
+            //     console.log(e);
+            //     g.dragManager.startDraggingTrack(this, e);
+            //     e.preventDefault();
+            // }.bind(this));
+
+            $trackHTML.on('pointerenter', function () {
+                if (_GlobalVars.g.dragManager.draggingTrack && _GlobalVars.g.dragManager.draggingTrack != this) {
+                    this.$trackHTML.addClass('section--show-drop-zone');
+                }
+            }.bind(this)).on('pointerleave', function () {
+                this.$trackHTML.removeClass('section--show-drop-zone');
+            }.bind(this));
+
+            // TODO: mouseup
+            $trackHTML.on("pointerup", function () {
+                if (_GlobalVars.g.dragManager.draggingTrack) {
+                    this.$trackHTML.after(_GlobalVars.g.dragManager.draggingTrack.$trackHTML);
+                    this.$trackHTML.removeClass('section--show-drop-zone');
+                }
+            }.bind(this));
+
+            // Reorder buttons
+            $trackHTML.find('.btn--reorder-up').click(function () {
+                _GlobalVars.g.dragManager.moveSection(this, 'up', false);
+            }.bind(this));
+            $trackHTML.find('.btn--reorder-down').click(function () {
+                _GlobalVars.g.dragManager.moveSection(this, 'down', false);
+            }.bind(this));
 
             this.$trackHTML = $trackHTML; // cache jquery object
         }
@@ -11217,7 +11402,7 @@ exports['default'] = function (Handlebars) {
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL25vLWNvbmZsaWN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7O3FCQUNlLFVBQVMsVUFBVSxFQUFFOztBQUVsQyxNQUFJLElBQUksR0FBRyxPQUFPLE1BQU0sS0FBSyxXQUFXLEdBQUcsTUFBTSxHQUFHLE1BQU07TUFDdEQsV0FBVyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUM7O0FBRWxDLFlBQVUsQ0FBQyxVQUFVLEdBQUcsWUFBVztBQUNqQyxRQUFJLElBQUksQ0FBQyxVQUFVLEtBQUssVUFBVSxFQUFFO0FBQ2xDLFVBQUksQ0FBQyxVQUFVLEdBQUcsV0FBVyxDQUFDO0tBQy9CO0FBQ0QsV0FBTyxVQUFVLENBQUM7R0FDbkIsQ0FBQztDQUNIIiwiZmlsZSI6Im5vLWNvbmZsaWN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFsIHdpbmRvdyAqL1xuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24oSGFuZGxlYmFycykge1xuICAvKiBpc3RhbmJ1bCBpZ25vcmUgbmV4dCAqL1xuICBsZXQgcm9vdCA9IHR5cGVvZiBnbG9iYWwgIT09ICd1bmRlZmluZWQnID8gZ2xvYmFsIDogd2luZG93LFxuICAgICAgJEhhbmRsZWJhcnMgPSByb290LkhhbmRsZWJhcnM7XG4gIC8qIGlzdGFuYnVsIGlnbm9yZSBuZXh0ICovXG4gIEhhbmRsZWJhcnMubm9Db25mbGljdCA9IGZ1bmN0aW9uKCkge1xuICAgIGlmIChyb290LkhhbmRsZWJhcnMgPT09IEhhbmRsZWJhcnMpIHtcbiAgICAgIHJvb3QuSGFuZGxlYmFycyA9ICRIYW5kbGViYXJzO1xuICAgIH1cbiAgICByZXR1cm4gSGFuZGxlYmFycztcbiAgfTtcbn1cbiJdfQ==
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51)))
 
 /***/ }),
 /* 10 */
@@ -11471,8 +11656,8 @@ var SearchBar = function () {
             _GlobalVars.g.dataManager.search(this.$input.val(), // search using current contents of search bar input
             { '_id': 1 }, // only need the id fields of the returned results
             this.update // call this.update() with the results upon async completion
-            .bind(this // make sure this.update() is running in the correct context
-            ));
+            .bind(this) // make sure this.update() is running in the correct context
+            );
         }
 
         /*
@@ -11591,7 +11776,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _GlobalVars.g.searchBar = new _SearchBar2.default();
 _GlobalVars.g.about = new _About2.default();
-_GlobalVars.g.pm.loadAtmospheres();
+
+if (_GlobalVars.g.pm) {
+    _GlobalVars.g.pm.loadFromStorage();
+}
 
 /***/ }),
 /* 13 */
@@ -11614,7 +11802,7 @@ var _Track = __webpack_require__(7);
 
 var _Track2 = _interopRequireDefault(_Track);
 
-var _OneShot = __webpack_require__(17);
+var _OneShot = __webpack_require__(18);
 
 var _OneShot2 = _interopRequireDefault(_OneShot);
 
@@ -11628,7 +11816,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(21);
+__webpack_require__(22);
 
 var Atmosphere = function () {
     function Atmosphere(atmosphereData, id, ignoreAutoplay) {
@@ -11673,7 +11861,7 @@ var Atmosphere = function () {
             var atmosphereHTML = Handlebars.templates['atmosphere.hbs'](this.data);
 
             // Add to tracklist
-            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).prependTo(_GlobalVars.g.atmosphereManager.$list).hide();
+            var $atmosphereHTML = (0, _jquery2.default)(atmosphereHTML).appendTo(_GlobalVars.g.atmosphereManager.$list).hide();
 
             // Hack that corrects the jQuery 'snapping' visual bug
             //  $atmosphereHTML.height() returns an unreliable result if called here, but it's fine 0ms later
@@ -11699,6 +11887,41 @@ var Atmosphere = function () {
                 that.stop();
             });
             $stopBtn.hide();
+
+            // TODO:
+
+            // TODO: mousedown touchstart
+            $atmosphereHTML.find(".btn--drag").on("pointerdown", function (e) {
+                _GlobalVars.g.dragManager.startDraggingAtmosphere(this, e);
+            }.bind(this));
+
+            $atmosphereHTML.hover(function () {
+                if (_GlobalVars.g.dragManager.draggingAtmosphere && _GlobalVars.g.dragManager.draggingAtmosphere != this) {
+                    this.$atmosphereHTML.addClass('section--show-drop-zone');
+                }
+            }.bind(this), function () {
+                this.$atmosphereHTML.removeClass('section--show-drop-zone');
+            }.bind(this));
+
+            // TODO: mouseup
+            $atmosphereHTML.on("pointerup", function () {
+                if (_GlobalVars.g.dragManager.draggingAtmosphere) {
+                    // TODO: move draggingAtmosphere's position in the g.am's array
+                    _GlobalVars.g.atmosphereManager.insertDraggingAtmosphereAtPosition(_GlobalVars.g.atmosphereManager.getPositionInArray(this));
+                    this.$atmosphereHTML.after(_GlobalVars.g.dragManager.draggingAtmosphere.$atmosphereHTML);
+                    this.$atmosphereHTML.removeClass('section--show-drop-zone');
+                }
+            }.bind(this));
+
+            // Reorder buttons
+            $atmosphereHTML.find('.btn--reorder-up').click(function (e) {
+                _GlobalVars.g.dragManager.moveSection(this, 'up', true);
+                e.stopPropagation();
+            }.bind(this));
+            $atmosphereHTML.find('.btn--reorder-down').click(function (e) {
+                _GlobalVars.g.dragManager.moveSection(this, 'down', true);
+                e.stopPropagation();
+            }.bind(this));
 
             this.$atmosphereHTML = $atmosphereHTML; // Cache reference to the newly-added DOM element
         }
@@ -11974,7 +12197,7 @@ var Atmosphere = function () {
             if (_GlobalVars.g.atmosphereManager.activeAtmosphere == this) {
                 _GlobalVars.g.atmosphereManager.activeAtmosphere = null;
             }
-            _GlobalVars.g.atmosphereManager.atmospheres[this.id] = null; //TODO: replace with splicing to avoid wasted array spaces
+            _GlobalVars.g.atmosphereManager.removeAtmosphereFromArray(this);
             // Update localStorage
             _GlobalVars.g.pm.storeAtmospheres();
         }
@@ -12040,6 +12263,7 @@ var AtmosphereManager = function () {
 
         this.$newAtmosphereBtn = (0, _jquery2.default)('#newAtmosphereBtn');
         this.$list = (0, _jquery2.default)("#atmosphereList"); // The div containing all atmospheres
+        this.$volumeSlider = (0, _jquery2.default)('.volume__range-global'); // Global volume slider, affects this.volume
 
         this.events();
     }
@@ -12137,7 +12361,7 @@ var AtmosphereManager = function () {
             this.activeAtmosphere = null;
         }
 
-        // Called when enter is pressed in the search bar, while a track is highlighted.
+        // Called when enter is pressed in the search bar, while a track is highlighted
 
     }, {
         key: 'addTrack',
@@ -12164,15 +12388,13 @@ var AtmosphereManager = function () {
     }, {
         key: 'rigVolumeControls',
         value: function rigVolumeControls() {
-            var that = this;
             var $muteBtn = (0, _jquery2.default)(".volume__mute-btn-global");
             $muteBtn.on('click', function () {
-                that.toggleMute();
-            });
-            var $volumeSlider = (0, _jquery2.default)('.volume__range-global');
-            $volumeSlider.on('input', function () {
-                that.updateGlobalVolume($volumeSlider.val());
-            });
+                this.toggleMute();
+            }.bind(this));
+            this.$volumeSlider.on('input', function () {
+                this.updateGlobalVolume(this.$volumeSlider.val());
+            }.bind(this));
         }
     }, {
         key: 'toggleMute',
@@ -12185,6 +12407,7 @@ var AtmosphereManager = function () {
         value: function updateGlobalVolume(newVolume) {
             this.volume = newVolume;
             this.updateAllVolumes();
+            _GlobalVars.g.pm.storeGlobalVolume(newVolume);
         }
     }, {
         key: 'updateAllVolumes',
@@ -12204,6 +12427,72 @@ var AtmosphereManager = function () {
                 this.$editingTitle = null;
                 _GlobalVars.g.pm.storeAtmospheres();
             }
+        }
+    }, {
+        key: 'removeAtmosphereFromArray',
+        value: function removeAtmosphereFromArray(atmosphere) {
+            var indexOfAtmosphere = this.getPositionInArray(atmosphere);
+            this.atmospheres.splice(indexOfAtmosphere, 1);
+        }
+
+        // Returns the integer position of the passed-in atmosphere
+
+    }, {
+        key: 'getPositionInArray',
+        value: function getPositionInArray(atmosphere) {
+            var indexOfAtmosphere = this.atmospheres.indexOf(atmosphere);
+            if (indexOfAtmosphere < 0) {
+                // Atmosphere was not found in the array
+                console.error('AtmosphereManager.js:getPositionInArray(): Atmosphere not found');
+            }
+            return indexOfAtmosphere;
+        }
+
+        // Inserts the atmosphere that is currently being dragged (if there is one)
+        //  at the given position in this class's array
+
+    }, {
+        key: 'insertDraggingAtmosphereAtPosition',
+        value: function insertDraggingAtmosphereAtPosition(insertIndex) {
+            // Find current index of atmosphere that is being dragged
+            var indexOfDragging = this.atmospheres.indexOf(_GlobalVars.g.dragManager.draggingAtmosphere);
+            if (indexOfDragging < 0) {
+                // Atmosphere was not found in the array
+                console.error('AtmosphereManager.js:insertDraggingAtmosphereAfter(): Dragging atmosphere not found.');
+                return;
+            }
+            this.moveAtmosphereAtPosition(indexOfDragging, insertIndex);
+        }
+
+        // Moves the atmosphere at the first given position to the second
+        //  given position.
+
+    }, {
+        key: 'moveAtmosphereAtPosition',
+        value: function moveAtmosphereAtPosition(currentIndex, insertIndex) {
+            // Remove atmosphere that is being moved from 'atmospheres' array
+            var movingAtmosphere = this.atmospheres.splice(currentIndex, 1)[0];
+            // Return it to the array at its new position
+            this.atmospheres.splice(insertIndex, 0, movingAtmosphere);
+            // Update localStorage
+            _GlobalVars.g.pm.storeAtmospheres();
+        }
+
+        // Takes an atmosphere object and a positive or negative integer
+        //  and moves the atmosphere the number of positions and in the
+        //  direction specified by the integer.
+
+    }, {
+        key: 'modifyAtmospherePosition',
+        value: function modifyAtmospherePosition(atmosphere, modification) {
+            // Get current position of atmosphere
+            var currentPosition = this.getPositionInArray(atmosphere);
+            // Modify that by the passed in value
+            var newPosition = currentPosition + modification;
+            // Ensure the new position is within the bounds of the array
+            newPosition = _GlobalVars.g.clamp(0, newPosition, this.atmospheres.length - 1);
+            // Finally, insert back into the array at its new position
+            this.moveAtmosphereAtPosition(currentPosition, newPosition);
         }
     }]);
 
@@ -12375,7 +12664,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-__webpack_require__(23);
+__webpack_require__(24);
 
 var DataManager = function () {
 
@@ -12498,6 +12787,201 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _GlobalVars = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// The distance that the drag icon appears from the cursor while being dragged
+var DRAG_ICON_OFFSET = {
+    x: 30,
+    y: 30
+};
+
+var DragManager = function () {
+
+    /*
+        Responsible for as much of the drag and drop functionality as
+            can be excised from the other classes they interact with.
+    */
+
+    function DragManager() {
+        _classCallCheck(this, DragManager);
+
+        this.events();
+        // The mini version of the track that follows the mouse when dragging
+        this.$dragIcon = (0, _jquery2.default)('.drag-icon');
+        this.draggingTrack = null; // Track that is currently being dragged, or null if there isn't one
+        this.draggingAtmosphere = null; // Atmosphere that is currently being dragged, or null if there isn't one
+    }
+
+    _createClass(DragManager, [{
+        key: 'events',
+        value: function events() {
+            // Cache references to drop zones
+            //  (areas at the top of each section where tracks can be dropped
+            //  to insert them into the first position)
+            this.$sidebarDropZone = (0, _jquery2.default)('.drag-drop-zone--sidebar');
+            this.$mainDropZone = (0, _jquery2.default)('.drag-drop-zone--main');
+            this.$bothDropZones = this.$sidebarDropZone.add(this.$mainDropZone);
+
+            (0, _jquery2.default)('html').on('pointermove', function (e) {
+                // Check if drag icon's position needs to be updated on mousemove
+                if (this.draggingTrack || this.draggingAtmosphere) {
+                    this.updateDragIconLocation(e);
+                    // Stop text from being highlighted
+                    e.preventDefault();
+                }
+            }.bind(this))
+            // TODO: mouseup touchend
+            .on('pointerup', function () {
+                // Stop dragging any applicable tracks or atmospheres
+                this.stopDraggingTrack();
+                this.stopDraggingAtmosphere();
+                // TODO: refactor
+                (0, _jquery2.default)('.section--show-drop-zone').removeClass('section--show-drop-zone');
+                (0, _jquery2.default)('.drag-drop-zone--expanded').removeClass('drag-drop-zone--expanded');
+            }.bind(this));
+
+            this.$mainDropZone
+            // TODO: mouseenter
+            .on('pointerenter', function () {
+                // If dragging tracks, expand drop zone
+                if (this.draggingTrack) {
+                    this.$mainDropZone.addClass('drag-drop-zone--expanded');
+                }
+            }.bind(this))
+            // TODO: mouseup touchend
+            .on('pointerup', function () {
+                // Insert track at first position
+                if (this.draggingTrack) {
+                    this.$mainDropZone.after(this.draggingTrack.$trackHTML);
+                    this.$mainDropZone.removeClass('drag-drop-zone--expanded');
+                }
+            }.bind(this));
+
+            this.$sidebarDropZone
+            // TODO: mouseenter
+            .on('pointerenter', function () {
+                // If dragging atmospheres, expand drop zone
+                if (this.draggingAtmosphere) {
+                    this.$sidebarDropZone.addClass('drag-drop-zone--expanded');
+                }
+            }.bind(this))
+            // TODO: mouseup touchend
+            .on('pointerup', function () {
+                // Insert atmosphere at first position
+                if (this.draggingAtmosphere) {
+                    _GlobalVars.g.atmosphereManager.insertDraggingAtmosphereAtPosition(0); // Update g.atmosphereManager's array
+                    this.$sidebarDropZone.after(this.draggingAtmosphere.$atmosphereHTML);
+                    this.$sidebarDropZone.removeClass('drag-drop-zone--expanded');
+                }
+            }.bind(this));
+
+            // Make sure drop zones are not expanded on mouseleave
+            // TODO: mouseleave (pointerout?)
+            this.$bothDropZones.on('pointerleave', function () {
+                this.$bothDropZones.removeClass('drag-drop-zone--expanded');
+            }.bind(this));
+        }
+    }, {
+        key: 'startDraggingTrack',
+        value: function startDraggingTrack(track, e) {
+            this.$dragIcon.show();
+            this.draggingTrack = track;
+            track.$trackHTML.slideUp();
+            this.updateDragIconLocation(e);
+        }
+    }, {
+        key: 'stopDraggingTrack',
+        value: function stopDraggingTrack() {
+            this.$dragIcon.hide();
+            if (this.draggingTrack) {
+                this.draggingTrack.$trackHTML.slideDown();
+                this.draggingTrack = null;
+            }
+        }
+    }, {
+        key: 'startDraggingAtmosphere',
+        value: function startDraggingAtmosphere(atmosphere, e) {
+            this.$dragIcon.addClass('drag-icon--atmosphere');
+            this.$dragIcon.show();
+            this.draggingAtmosphere = atmosphere;
+            atmosphere.$atmosphereHTML.slideUp();
+            this.updateDragIconLocation(e);
+        }
+    }, {
+        key: 'stopDraggingAtmosphere',
+        value: function stopDraggingAtmosphere() {
+            this.$dragIcon.hide();
+            this.$dragIcon.removeClass('drag-icon--atmosphere');
+            if (this.draggingAtmosphere) {
+                this.draggingAtmosphere.$atmosphereHTML.slideDown();
+                this.draggingAtmosphere = null;
+            }
+        }
+
+        // Updates the drag icon's location to be relative to the event
+        //  that is causing the drag.
+
+    }, {
+        key: 'updateDragIconLocation',
+        value: function updateDragIconLocation(e) {
+            this.$dragIcon.offset({
+                top: event.clientY - DRAG_ICON_OFFSET.y,
+                left: event.clientX - DRAG_ICON_OFFSET.x
+            });
+        }
+
+        // Handles the 'reorder' buttons on each section
+        //  section: either the track or atmosphere to be moved
+        //  direction: string: either 'up' or 'down'
+        //  isAtmosphere: boolean value
+
+    }, {
+        key: 'moveSection',
+        value: function moveSection(section, direction, isAtmosphere) {
+            // Store the jQuery object for the section, based on subclass
+            var $html = isAtmosphere ? section.$atmosphereHTML : section.$trackHTML;
+            // Move the object to its new position
+            if (direction == 'up') {
+                $html.prev('.section').before($html);
+            } else if (direction == 'down') {
+                $html.next('.section').after($html);
+            } else {
+                console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
+                return;
+            }
+            // Update AtmosphereManager array for persistance if necessary
+            if (isAtmosphere) {
+                _GlobalVars.g.atmosphereManager.modifyAtmospherePosition(section, direction == 'up' ? -1 : +1);
+            }
+        }
+    }]);
+
+    return DragManager;
+}();
+
+exports.default = DragManager;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12520,7 +13004,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-__webpack_require__(22);
+__webpack_require__(23);
 
 // The different values that "Playing every _ to _ seconds" can hold.
 
@@ -12631,25 +13115,25 @@ var OneShot = function (_Track) {
             }.bind(this));
 
             // Change frequency range minimum by one step
-            this.$trackHTML.find('.oneshot-min.btn--more' // Increase
-            ).on('click', function () {
+            this.$trackHTML.find('.oneshot-min.btn--more') // Increase
+            .on('click', function () {
                 this.changeRange('min', 1);
                 _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
-            this.$trackHTML.find('.oneshot-min.btn--less' // Decrease
-            ).on('click', function () {
+            this.$trackHTML.find('.oneshot-min.btn--less') // Decrease
+            .on('click', function () {
                 this.changeRange('min', -1);
                 _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
 
             // Change frequency range maximum by one step
-            this.$trackHTML.find('.oneshot-max.btn--more' // Increase
-            ).on('click', function () {
+            this.$trackHTML.find('.oneshot-max.btn--more') // Increase
+            .on('click', function () {
                 this.changeRange('max', 1);
                 _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
-            this.$trackHTML.find('.oneshot-max.btn--less' // Decrease
-            ).on('click', function () {
+            this.$trackHTML.find('.oneshot-max.btn--less') // Decrease
+            .on('click', function () {
                 this.changeRange('max', -1);
                 _GlobalVars.g.pm.storeAtmospheres();
             }.bind(this));
@@ -12837,7 +13321,7 @@ var OneShot = function (_Track) {
 exports.default = OneShot;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12857,16 +13341,28 @@ var PersistenceManager = function () {
     function PersistenceManager() {
         _classCallCheck(this, PersistenceManager);
 
-        if (this.storageEmpty()) {
-            // Initialize storage
+        // Initialize any missing storage elements
+        if (!localStorage.getItem('atmospheres')) {
             localStorage.setItem('atmospheres', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('lockCheckbox')) {
+            localStorage.setItem('lockCheckbox', false);
+        }
+        if (!localStorage.getItem('autoplayCheckbox')) {
+            localStorage.setItem('autoplayCheckbox', false);
+        }
+        if (!localStorage.getItem('globalVolume')) {
+            localStorage.setItem('globalVolume', 0.5);
         }
     }
 
     _createClass(PersistenceManager, [{
-        key: 'storageEmpty',
-        value: function storageEmpty() {
-            return !localStorage.getItem('atmospheres');
+        key: 'loadFromStorage',
+        value: function loadFromStorage() {
+            this.loadAtmospheres();
+            this.loadLockCheckboxState();
+            this.loadAutoplayCheckboxState();
+            this.loadGlobalVolume();
         }
 
         /*
@@ -12984,6 +13480,38 @@ var PersistenceManager = function () {
                 }
             }
         }
+    }, {
+        key: 'storeLockCheckboxState',
+        value: function storeLockCheckboxState(newState) {
+            localStorage.setItem('lockCheckbox', newState);
+        }
+    }, {
+        key: 'loadLockCheckboxState',
+        value: function loadLockCheckboxState() {
+            _GlobalVars.g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
+        }
+    }, {
+        key: 'storeAutoplayCheckboxState',
+        value: function storeAutoplayCheckboxState(newState) {
+            localStorage.setItem('autoplayCheckbox', newState);
+        }
+    }, {
+        key: 'loadAutoplayCheckboxState',
+        value: function loadAutoplayCheckboxState() {
+            _GlobalVars.g.setAutoplayCheckboxState(JSON.parse(localStorage.getItem('autoplayCheckbox')));
+        }
+    }, {
+        key: 'storeGlobalVolume',
+        value: function storeGlobalVolume(newVolume) {
+            localStorage.setItem('globalVolume', newVolume);
+        }
+    }, {
+        key: 'loadGlobalVolume',
+        value: function loadGlobalVolume() {
+            var globalVolume = localStorage.getItem('globalVolume');
+            _GlobalVars.g.atmosphereManager.$volumeSlider.val(globalVolume);
+            _GlobalVars.g.atmosphereManager.updateGlobalVolume(globalVolume);
+        }
     }]);
 
     return PersistenceManager;
@@ -12992,7 +13520,7 @@ var PersistenceManager = function () {
 exports.default = PersistenceManager;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13035,7 +13563,7 @@ var Sidebar = function () {
         key: "events",
         value: function events() {
             // Deselect active atmosphere on sidebar background click
-            this.$HTML.on('click', function () {
+            this.$HTML.on('click', function (e) {
                 _GlobalVars.g.atmosphereManager.deselectActiveAtmosphere();
             }.bind(this));
 
@@ -13049,10 +13577,22 @@ var Sidebar = function () {
             (0, _jquery2.default)(".navbar__hide").click(function () {
                 this.hide(true);
             }.bind(this));
+
+            // Update PersistenceManager's model of the lock checkbox on click
+            this.$lockCheckbox.on('click', function (e) {
+                _GlobalVars.g.pm.storeLockCheckboxState(this.$lockCheckbox.is(':checked'));
+                e.stopPropagation();
+            }.bind(this));
+
+            // Stop lock checkbox click events from propagating and deselecting
+            //  currently active atmosphere
+            this.$lockCheckbox.parent().on('click', function (e) {
+                e.stopPropagation();
+            });
         }
 
         /*
-            Apply the 'mobile-hidden' class to the sidebar,
+            Apply the 'sidebar--hidden' class to the sidebar,
             and the 'full-width' class to the main content div
         */
 
@@ -13062,9 +13602,14 @@ var Sidebar = function () {
             if (!ignoreLockBox && this.$lockCheckbox.is(':checked')) {
                 return;
             }
-            this.$HTML.toggleClass("mobile-hidden"); // TODO: refactor 'mobile-hidden' to just 'hidden'?
-            this.$footerHTML.toggleClass("mobile-hidden");
+            this.$HTML.toggleClass("sidebar--hidden");
+            this.$footerHTML.toggleClass("sidebar--hidden");
             this.$mainContent.toggleClass("full-width");
+        }
+    }, {
+        key: "setLockCheckboxState",
+        value: function setLockCheckboxState(isChecked) {
+            this.$lockCheckbox.prop('checked', isChecked);
         }
     }]);
 
@@ -13074,7 +13619,7 @@ var Sidebar = function () {
 exports.default = Sidebar;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13108,7 +13653,7 @@ function TrackManager() {
 exports.default = TrackManager;
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13120,12 +13665,12 @@ exports.default = TrackManager;
   templates['atmosphere.hbs'] = template({ "compiler": [7, ">= 4.0.0"], "main": function main(container, depth0, helpers, partials, data) {
       var helper;
 
-      return "<div class=\"section section--atmosphere\">\r\n\r\n  <div class=\"section__heading\">\r\n      <h4 class=\"section__heading__title\">\r\n        <span class=\"section__heading__title__text\">" + container.escapeExpression((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        <span class=\"atmosphere__rename\">\r\n          <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\r\n        </span>\r\n      </h4>\r\n      <div class=\"btn btn--delete btn--medium\">\r\n        <div class=\"btn__inner\">\r\n          <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n        </div>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"section__body\">\r\n    <div class=\"wrapper\">\r\n      <div class=\"section__flex\">\r\n\r\n        <div class=\"volume section__flex__item\">\r\n          <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n          <label class=\"control control--custom control--checkbox volume__mute\">\r\n            <input type=\"checkbox\" class=\"btn--mute\">\r\n            <div class=\"control__indicator control__indicator--medium\"></div>\r\n            <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n            <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n          </label>\r\n        </div>\r\n        <div class=\"section__flex__item\">\r\n          <div class=\"btn-pair\">\r\n            <div class=\"atmosphere__replace btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Replace</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n            <div class=\"atmosphere__add btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Add</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n                <i class=\"fa fa-plus btn__bottom-right\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n\r\n          <div class=\"btn btn--stop btn--rounded btn--medium\">\r\n            <div class=\"btn__inner\">\r\n              <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>";
+      return "<div class=\"section section--atmosphere\">\r\n\r\n  <div class=\"section__heading\">\r\n      <h4 class=\"section__heading__title\">\r\n        <span class=\"section__heading__title__text\">" + container.escapeExpression((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        <span class=\"atmosphere__rename\">\r\n          <i class=\"fa fa-pencil-alt\" aria-hidden=\"true\"></i>\r\n        </span>\r\n      </h4>\r\n      <div class=\"btn btn--delete btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n      <div class=\"btn btn--reorder btn--reorder-up btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-arrow-up\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n      <div class=\"btn btn--reorder btn--reorder-down btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n      <div class=\"btn btn--drag btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-arrows-alt-v\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"section__body\">\r\n    <div class=\"wrapper\">\r\n      <div class=\"section__flex\">\r\n\r\n        <div class=\"volume section__flex__item\">\r\n          <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n          <label class=\"control control--custom control--checkbox volume__mute\">\r\n            <input type=\"checkbox\" class=\"btn--mute\">\r\n            <div class=\"control__indicator control__indicator--medium\"></div>\r\n            <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n            <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n          </label>\r\n        </div>\r\n        <div class=\"section__flex__item\">\r\n          <div class=\"btn-pair\">\r\n            <div class=\"atmosphere__replace btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Replace</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n            <div class=\"atmosphere__add btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Add</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n                <i class=\"fa fa-plus btn__bottom-right\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n\r\n          <div class=\"btn btn--stop btn--rounded btn--medium\">\r\n            <div class=\"btn__inner\">\r\n              <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13154,12 +13699,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            \r\n            <div class=\"section__flex section__flex--spacing section__flex--wrap\">\r\n                <div class=\"section__flex__item section__flex__item--grow progress\">\r\n                    <div class=\"progress__bar\"></div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--yellow btn--medium-text section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <span>Play Once</span>\r\n                    </div>\r\n                </div>\r\n                <div class=\"section__flex__item\">\r\n                    <!-- TODO: disabled/enabled -->\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle-o\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--reorder btn--reorder-up btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrow-up\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--reorder btn--reorder-down btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrows-alt\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            \r\n            <div class=\"section__flex section__flex--spacing section__flex--wrap\">\r\n                <div class=\"section__flex__item section__flex__item--grow progress\">\r\n                    <div class=\"progress__bar\"></div>\r\n                </div>\r\n\r\n                <span class=\"section__flex__item\"><span class=\"oneshot-play-text\">Play</span> every</span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-min\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-min-label\">MIN</span>\r\n                    <span>to</span>\r\n                </span>\r\n                <div class=\"btn-pair btn-pair--inline section__flex__item\">\r\n                    <div class=\"btn--more btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-plus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--less btn btn--rounded btn--medium oneshot-max\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-minus\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <span class=\"section__flex__item\">\r\n                    <span class=\"oneshot-max-label\">MAX</span>\r\n                    <span>seconds</span>\r\n                </span>\r\n\r\n            </div>\r\n\r\n            <div class=\"section__flex section__flex--spacing\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <div class=\"btn--play btn btn--rounded btn--yellow btn--medium-text section__flex__item\">\r\n                    <div class=\"btn__inner\">\r\n                        <span>Play Once</span>\r\n                    </div>\r\n                </div>\r\n                <div class=\"section__flex__item\">\r\n                    <div class=\"btn--start btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play-circle\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop-circle\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13180,12 +13725,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"wrapper\">\r\n        <span class=\"type-circle\"></span>\r\n        " + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "\r\n        <span class=\"tags tags--float-right\">\r\n" + ((stack1 = helpers.each.call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "each", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "        </span>\r\n    </div>\r\n</li>";
+      return "<li class=\"" + alias4((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "type", "hash": {}, "data": data }) : helper)) + "\" data-db-id=\"" + alias4((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "_id", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"wrapper\">\r\n        <span class=\"type-circle\"></span>\r\n        <span class=\"search-container__results__name\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        <span class=\"tags tags--float-right\">\r\n" + ((stack1 = helpers.each.call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "each", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "        </span>\r\n    </div>\r\n</li>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13214,13 +13759,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           alias3 = "function",
           alias4 = container.escapeExpression;
 
-      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-close\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            <div class=\"section__flex\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <!-- TODO: disabled/enabled -->\r\n                <div class=\"section__flex__item\">\r\n                    <div class=\"btn--play btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+      return "<div class=\"section section--track\" data-atmosphere=\"" + alias4((helper = (helper = helpers.atmosphereId || (depth0 != null ? depth0.atmosphereId : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "atmosphereId", "hash": {}, "data": data }) : helper)) + "\">\r\n    <div class=\"section__heading\">\r\n        <h4 class=\"section__heading__title\">\r\n            <span class=\"section__heading__title__text\">" + alias4((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2, (typeof helper === "undefined" ? "undefined" : _typeof(helper)) === alias3 ? helper.call(alias1, { "name": "name", "hash": {}, "data": data }) : helper)) + "</span>\r\n        </h4>\r\n        <div class=\"btn btn--delete btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--reorder btn--reorder-up btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrow-up\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--reorder btn--reorder-down btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n        <div class=\"btn btn--drag btn--medium btn--inverted btn--header\">\r\n            <div class=\"btn__inner\">\r\n            <i class=\"fa fa-arrows-alt\" aria-hidden=\"true\"></i>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"section__body\">\r\n        <div class=\"wrapper\">\r\n" + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.source : depth0, { "name": "if", "hash": {}, "fn": container.program(1, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + ((stack1 = helpers["if"].call(alias1, depth0 != null ? depth0.tags : depth0, { "name": "if", "hash": {}, "fn": container.program(3, data, 0), "inverse": container.noop, "data": data })) != null ? stack1 : "") + "            <div class=\"section__flex\">\r\n                <div class=\"volume section__flex__item\">\r\n                    <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n                    <label class=\"control control--checkbox control--custom volume__mute\">\r\n                        <input type=\"checkbox\" class=\"btn--mute\">\r\n                        <div class=\"control__indicator control__indicator--medium\"></div>\r\n                        <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n                        <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n                    </label>\r\n                </div>\r\n                <!-- TODO: disabled/enabled -->\r\n                <div class=\"section__flex__item\">\r\n                    <div class=\"btn--play btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"btn--stop btn btn--rounded btn--medium\">\r\n                        <div class=\"btn__inner\">\r\n                            <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
     }, "useData": true });
 })();
 
 /***/ }),
-/* 25 */,
-/* 26 */
+/* 26 */,
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13231,7 +13776,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(27);
+var _handlebarsRuntime = __webpack_require__(28);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -13241,11 +13786,11 @@ var _handlebarsCompilerAst = __webpack_require__(8);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(28);
+var _handlebarsCompilerBase = __webpack_require__(29);
 
-var _handlebarsCompilerCompiler = __webpack_require__(30);
+var _handlebarsCompilerCompiler = __webpack_require__(31);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(32);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(33);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -13292,7 +13837,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13314,7 +13859,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(48);
+var _handlebarsSafeString = __webpack_require__(49);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -13326,7 +13871,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(47);
+var _handlebarsRuntime = __webpack_require__(48);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -13365,7 +13910,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13381,15 +13926,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(33);
+var _parser = __webpack_require__(34);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(35);
+var _whitespaceControl = __webpack_require__(36);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(31);
+var _helpers = __webpack_require__(32);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -13420,7 +13965,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13593,7 +14138,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14173,7 +14718,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14410,7 +14955,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14429,7 +14974,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(29);
+var _codeGen = __webpack_require__(30);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -15545,7 +16090,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16291,7 +16836,7 @@ module.exports = exports["default"];
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16484,7 +17029,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16712,7 +17257,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16724,7 +17269,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(37);
+var _decoratorsInline = __webpack_require__(38);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -16735,7 +17280,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16771,7 +17316,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16783,31 +17328,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(39);
+var _helpersBlockHelperMissing = __webpack_require__(40);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(40);
+var _helpersEach = __webpack_require__(41);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(41);
+var _helpersHelperMissing = __webpack_require__(42);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(42);
+var _helpersIf = __webpack_require__(43);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(43);
+var _helpersLog = __webpack_require__(44);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(44);
+var _helpersLookup = __webpack_require__(45);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(45);
+var _helpersWith = __webpack_require__(46);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -16824,7 +17369,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16870,7 +17415,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16971,7 +17516,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17003,7 +17548,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17039,7 +17584,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17072,7 +17617,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17091,7 +17636,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17131,7 +17676,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17185,7 +17730,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17499,7 +18044,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17521,7 +18066,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // USAGE:
@@ -17530,9 +18075,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(26)['default'];
+var handlebars = __webpack_require__(27)['default'];
 
-var printer = __webpack_require__(34);
+var printer = __webpack_require__(35);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -17552,7 +18097,7 @@ if ("function" !== 'undefined' && (void 0)) {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 var g;

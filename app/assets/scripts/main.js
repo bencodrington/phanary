@@ -4,4 +4,7 @@ import About from './modules/About';
 
 g.searchBar = new SearchBar();
 g.about = new About();
-g.pm.loadAtmospheres();
+
+if (g.pm) {
+    g.pm.loadFromStorage();
+}

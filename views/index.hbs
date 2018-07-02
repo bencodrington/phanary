@@ -3,7 +3,7 @@
 <div class="about about--closed">
   <div class="btn btn--medium btn--rounded btn--yellow about__close">
     <div class="btn__inner">
-      <i class="fa fa-close"></i>
+      <i class="fa fa-times"></i>
     </div>
   </div>
   <div class="wrapper wrapper--top-margin wrapper--bottom-margin">
@@ -80,7 +80,9 @@
         <div class="search-container__search-controls">
           <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="'rain', 'one-shot', 'tavern atmosphere', etc.">
           <div id="searchBarClearBtn" class="btn search-container__addon">
-            x
+            <div class="btn__inner">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
           </div>
           <div class="search-container__addon search-container__addon--inverted tooltip">
             <span class="tooltiptext tooltiptext--bottom">Autoplay</span>
@@ -123,8 +125,11 @@
     </label>
   </div>
 
-  <div class="wrapper wrapper--top-margin wrapper--bottom-margin">
-    <h2 class="content-title">Atmospheres</h2>
+  <div class="wrapper wrapper--top-margin wrapper--bottom-margin wrapper--bottom-border wrapper--atmospheres">
+    <div class="drag-drop-zone--top drag-drop-zone--sidebar">
+      <!-- Used for dragging and dropping atmospheres -->
+      <h2 class="content-title">Atmospheres</h2>
+    </div>
     <div id="atmosphereList">
 
       <!-- Atmospheres go here-->
@@ -167,10 +172,13 @@
 
 </div> <!-- /.sidebar -->
 
-<!-- Main Content-->
+<!-- Main Content -->
 <div class="main-content">
-  <div class="wrapper wrapper--top-margin">
-    <h2 class="content-title content-title--inverted">Tracks</h2>
+  <div class="wrapper wrapper--top-margin wrapper--bottom-margin wrapper--bottom-border">
+    <div class="drag-drop-zone--top drag-drop-zone--main">
+      <!-- Used for dragging and dropping tracks -->
+      <h2 class="content-title content-title--inverted">Tracks</h2>
+    </div>
     <div id="trackList">
 
       <!-- Tracks go here -->
@@ -180,7 +188,11 @@
   <img class="watermark" src="/images/svg/watermark_solid.svg">
 </div> <!-- /.main-content -->
 
+<!-- Drag Icon -->
+<div class="drag-icon">
+</div> <!-- /.drag-icon -->
+
 <script src="/scripts/lib/handlebars.runtime.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.3/howler.core.min.js"></script>
-<script src="https://use.fontawesome.com/075d51e5f2.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js" integrity="sha384-xymdQtn1n3lH2wcu0qhcdaOpQwyoarkgLVxC/wZ5q7h9gHtxICrpcaSUfygqZGOe" crossorigin="anonymous"></script>
 <script src="/scripts/main.js"></script>

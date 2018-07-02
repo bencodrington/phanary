@@ -4,7 +4,7 @@
     font-weight: 500;
     cursor: pointer;
     overflow: hidden;
-    transition: all 0.2s ease-out;
+    transition: all 0.1s ease-out;
 
     &:hover {
         background-color: $lighterGrey;
@@ -44,18 +44,63 @@
     }
     
     &--delete {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border-top-right-radius: 5px;
-        height: 100%;
+        margin-right: 0.25rem;
+    }
+
+    &--drag.btn--header {
+        float: right;
+        border: none;
+        background-color: transparent;
+        cursor: move;
+        display: none;
+
+        @mixin atMedium {
+            display: inline-block;
+        }
+    }
+    
+    /* Ensure drag controls don't show if pointer-events aren't supported */
+    html.no-pointer-events &--drag {
+        display: none;
+    }
+
+    &--header {
+        position: relative;
+        display: inline-block;
+        float: right;
+        height: 2.5rem;
+        width: 2rem;
         border: none;
         background-color: transparent;
     }
 
-    &--delete:hover {
+    &--header:hover, .section--track &--header.btn:hover {
         background-color: transparent;
-        color: $offWhite;
+    }
+
+    &--reorder {
+        display: inline-block;
+        top: 0;
+        float: right;
+
+        @mixin atMedium {
+            display: none;
+        }
+    }
+
+    /* Ensure reorder buttons show on browsers without pointer event support */
+    html.no-pointer-events &--reorder {
+        display: inline-block;
+    }
+
+    /* Hide 'up' button on first section */
+    .section:first-child &--reorder-up {
+        display: none;
+    }
+
+    /* Hide 'down' button on last section */
+    .section:last-child &--reorder-down {
+        display: none;
     }
 
     &--rounded {
@@ -88,12 +133,12 @@
         color: $whitePurple;
     }
 
-    &--delete, .section--atmosphere--active .btn--delete {
+    &--header, &--header:hover {
         background-color: transparent;
     }
 
-    &--delete:hover, .section--atmosphere--active .btn--delete:hover {
-        background-color: transparent;
+    &--drag {
+        cursor: ns-resize;
     }
 }
 

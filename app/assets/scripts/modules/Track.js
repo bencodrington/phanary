@@ -32,8 +32,14 @@ class Track {
         // Add to tracklist
         var $trackHTML = $(trackHTML)
             .hide()
-            .prependTo(g.trackManager.$list)
-            .show('fast');
+            .prependTo(g.trackManager.$list);
+
+        // Show track if it belongs to current atmosphere
+        //  Without this check all tracks are displayed when loading from localstorage
+        //  rather than only those belonging to the active atmosphere
+        if (this.atmosphere == g.atmosphereManager.activeAtmosphere) {
+            $trackHTML.show('fast');
+        }
 
         // Play and Stop buttons
         this.$playBtn = $trackHTML.find(".btn--play");
@@ -71,6 +77,48 @@ class Track {
                 g.searchBar.appendToSearchBar($element.text());
             });
         });
+
+        // TODO:
+
+        // TODO: mousedown touchstart
+        var btnDrag = $trackHTML[0].getElementsByClassName("btn--drag")[0];
+        btnDrag.addEventListener("pointerdown", function(e) {
+            g.dragManager.startDraggingTrack(this, e);
+            // e.preventDefault();
+            // TODO:
+        }.bind(this), { passive: false });
+        // $trackHTML.find(".btn--drag").on("pointerdown", function(e) {
+        //     console.log(e);
+        //     g.dragManager.startDraggingTrack(this, e);
+        //     e.preventDefault();
+        // }.bind(this));
+
+        $trackHTML
+        .on('pointerenter', function() {
+            if (g.dragManager.draggingTrack && g.dragManager.draggingTrack != this) {
+                this.$trackHTML.addClass('section--show-drop-zone');
+            }
+        }.bind(this))
+        .on('pointerleave', function() {
+            this.$trackHTML.removeClass('section--show-drop-zone');
+        }.bind(this));
+
+        // TODO: mouseup
+        $trackHTML.on("pointerup", function() {
+            if (g.dragManager.draggingTrack) {
+                this.$trackHTML.after(g.dragManager.draggingTrack.$trackHTML);
+                this.$trackHTML.removeClass('section--show-drop-zone');
+            }
+        }.bind(this));
+
+        // Reorder buttons
+        $trackHTML.find('.btn--reorder-up').click(function() {
+            g.dragManager.moveSection(this, 'up', false);
+        }.bind(this));
+        $trackHTML.find('.btn--reorder-down').click(function() {
+            g.dragManager.moveSection(this, 'down', false);
+        }.bind(this));
+
 
         this.$trackHTML = $trackHTML;   // cache jquery object
     }

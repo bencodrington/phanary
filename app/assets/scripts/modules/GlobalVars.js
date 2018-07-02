@@ -6,6 +6,7 @@ import AtmosphereManager from './AtmosphereManager';
 import TrackManager from './TrackManager';
 import Sidebar from './Sidebar';
 import PersistenceManager from './PersistenceManager';
+import DragManager from './DragManager';
 
 class GlobalVars {
 
@@ -22,14 +23,32 @@ class GlobalVars {
         this.trackPrefix        = "/audio/converted/";
         this.fileTypes          = ['.webm', '.mp3'];
 
-        this.atmosphereManager = new AtmosphereManager();
-        this.trackManager = new TrackManager();
-        this.dataManager = new DataManager();
-        this.sidebar = new Sidebar();
+        this.atmosphereManager  = new AtmosphereManager();
+        this.trackManager       = new TrackManager();
+        this.dataManager        = new DataManager();
+        this.sidebar            = new Sidebar();
+        this.dragManager        = new DragManager();
 
         if (this.storageAvailable('localStorage')) {
             this.pm = new PersistenceManager();
         }
+
+        this.events();
+        
+        // Ensure only working controls show on browsers without
+        //  pointer event support
+        if (!window.PointerEvent) { 
+            // Pointer events aren't supported
+            $('html').addClass('no-pointer-events');
+          }
+    }
+
+    events() {
+        // Update PersistenceManager's model of the lock checkbox on click
+        this.$autoplayCheckbox.on('click', function(e) {
+            g.pm.storeAutoplayCheckboxState(this.$autoplayCheckbox.is(':checked'));
+            e.stopPropagation();
+        }.bind(this));
     }
 
     /*
@@ -95,6 +114,10 @@ class GlobalVars {
     */
     clamp(min, number, max) {
         return Math.min(Math.max(number, min), max);
+    }
+
+    setAutoplayCheckboxState(isChecked) {
+        this.$autoplayCheckbox.prop('checked', isChecked);
     }
 }
 
