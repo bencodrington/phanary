@@ -10,6 +10,8 @@ var trackSchema = new Schema({
   source: String
 }, {collection: 'tracks'});
 
+trackSchema.index({ tags: 'text' });
+
 var TrackModel = mongoose.model('TrackModel', trackSchema);
 
 module.exports.TrackModel = TrackModel;
