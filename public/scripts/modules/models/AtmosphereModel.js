@@ -29,7 +29,7 @@ var atmosphereSchema = new Schema({
   tags: [String]
 }, {collection: 'atmospheres'});
 
-atmosphereSchema.index({ tags: 'text' });
+atmosphereSchema.index({tags: 'text'});
 
 var AtmosphereModel = mongoose.model('AtmosphereModel', atmosphereSchema);
 

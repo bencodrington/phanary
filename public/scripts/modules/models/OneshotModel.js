@@ -10,9 +10,9 @@ var oneshotSchema = new Schema({
   samples: [sampleSchema],
   tags: [String],
   source: String
-}, { collection: 'oneshots' });
+}, {collection: 'oneshots'});
 
-oneshotSchema.index({ tags: 'text' });
+oneshotSchema.index({tags: 'text'});
 
 var OneshotModel = mongoose.model('OneshotModel', oneshotSchema);
 
