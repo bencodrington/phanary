@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/phanary', {});
+mongoose.connect('mongodb://localhost/phanary', { useNewUrlParser: true, useUnifiedTopology: true });
 
 var TrackModel = require('../public/scripts/modules/models/TrackModel').TrackModel;
 var AtmosphereModel = require('../public/scripts/modules/models/AtmosphereModel').AtmosphereModel;

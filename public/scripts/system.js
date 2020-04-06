@@ -63,12 +63,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 30);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 1:
+/***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10674,17 +10674,32 @@ return jQuery;
 
 /***/ }),
 
-/***/ 30:
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(1);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var timesteps = [0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
+
+exports.default = timesteps;
+
+/***/ }),
+
+/***/ 20:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _OneShotTimesteps = __webpack_require__(4);
+var _OneShotTimesteps = __webpack_require__(2);
 
 var _OneShotTimesteps2 = _interopRequireDefault(_OneShotTimesteps);
 
@@ -11098,21 +11113,6 @@ function invalidateRecord() {
     $saveBtn.show();
     // TODO: prompt an 'are you sure?' alert when attempting to switch before saving
 }
-
-/***/ }),
-
-/***/ 4:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var timesteps = [0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60, 120, 180];
-
-exports.default = timesteps;
 
 /***/ })
 

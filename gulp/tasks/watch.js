@@ -2,36 +2,27 @@ const gulp = require('gulp');
 const browserSync = require('browser-sync').create();
 const compileStyles = require('./styles').compileStyles;
 const compileScripts = require('./scripts').compileScripts;
+const compileTemplates = require('./templates').compileTemplates;
 
-const initBrowserSync = () => {
-    browserSync.init({
-        notify: false,  // supresses notification on updates
-        proxy: "localhost:8080"
-    });
-}
-
-const reloadBrowserSync = () => {
+const reloadBrowserSync = (done) => {
     browserSync.reload();
+    done();
 }
 
 const injectStyles = () => {
-    return gulp.series(compileStyles, () => {
-        return gulp
-            .src('./public/stylesheets/style.css')
-            .pipe(browserSync.stream());
-    });
+    return gulp
+        .src('./public/stylesheets/style.css')
+        .pipe(browserSync.stream());
 };
 
-const refreshScripts = () => {
-    return gulp.series(compileScripts, reloadBrowserSync);
-};
+const refreshScripts = gulp.series(compileScripts, reloadBrowserSync);
 
 const watchViews = () => {
     gulp.watch('./views/**/*.hbs', reloadBrowserSync);
 };
 
 const watchStyles = () => {
-    gulp.watch('./app/assets/styles/**/*.css', injectStyles);
+    gulp.watch('./app/assets/styles/**/*.css', gulp.series(compileStyles, injectStyles));
 };
 
 const watchScripts = () => {
@@ -39,18 +30,19 @@ const watchScripts = () => {
 };
 
 const watchTemplates = () => {
-    gulp.watch('./app/assets/templates/**/*.hbs', () => { gulp.start('templates'); });
+    gulp.watch('./app/assets/templates/**/*.hbs', compileTemplates);
 };
 
 const watchAll = () => {
-    return gulp.series(
-        initBrowserSync,
-        gulp.parallel(
-            watchViews,
-            watchStyles,
-            watchScripts,
-            watchTemplates
-        ),
+    browserSync.init({
+        notify: false,  // supresses notification on updates
+        proxy: "localhost:8080"
+    });
+    return gulp.parallel(
+        watchViews,
+        watchStyles,
+        watchScripts,
+        watchTemplates
     )();
 };
 

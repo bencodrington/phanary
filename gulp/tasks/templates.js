@@ -11,8 +11,12 @@ const compileTemplates = async () => {
     commands.forEach(function (cmd) {
         exec(cmd, function (error, stdout, stderr) {
             console.log("Running: \'" + cmd + "\'");
-            console.log("Output:\n" + stdout);
-            console.log("Error:\n" + stderr);
+            if (stdout) {
+                console.log("Output:\n" + stdout);
+            }
+            if (stderr) {
+                console.log("Error:\n" + stderr);
+            }
         });
     });
 };
