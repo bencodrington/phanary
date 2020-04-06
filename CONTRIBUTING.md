@@ -13,15 +13,27 @@ Please consider submitting **bug reports** and **feature requests** and writing 
 
 # Submitting Changes
 
-1. [Create your own fork](https://help.github.com/articles/fork-a-repo/) of the repository
-2. Skip to **Step 8** if development environment setup is not required
-3. Ensure that you have a recent version of [Node.js](https://nodejs.org/en/download/) installed locally
-4. Download and install [MongoDB 3.4](https://docs.mongodb.com/manual/administration/install-community/) to its own folder
-5. Run `mongod` from the new folder (Note: on Windows, running `./mongod` may be required, or double-clicking `mongod.exe`)
-6. Run `npm install` from within the local clone of the Phanary repo
-7. Run `npm start` from the same directory to connect to MongoDB, and open up a live-updating preview of the site in your browser
-8. Make your changes
-9. Submit a pull request for review
+1. [Create your own fork](https://help.github.com/articles/fork-a-repo/) of the repository.
+2. Clone the repository.
+3. Ensure that you have a recent version of [Node.js](https://nodejs.org/en/download/) installed locally.
+4. From the repository's root folder, run `npm install` to install package dependencies.
+5. Install Handlebars template precompiler: `npm install -g handlebars@^4.7.3`.
+6. If not already installed, install the [Gulp Command Line Utility](https://gulpjs.com/docs/en/getting-started/quick-start).
+7. Set up database:
+    1. Install [MongoDB](mongodb.com) and run it (Note: on Windows, running `./mongod` may be required, or double-clicking `mongod.exe`).
+    2. From the repository's root folder, run the following commands to import the most recent backups of the database (after inserting the correct path to MongoDB for your system, which on Windows should look something like `/c/Program\ Files/MongoDB/Server/4.2/bin/`):
+    ```
+    [/Path/To/MongoDB/Server/4.2/bin/]mongoimport.exe -d phanary -c atmospheres --drop --file db_backups/atmospheres.js
+    [/Path/To/MongoDB/Server/4.2/bin/]mongoimport.exe -d phanary -c tracks --drop --file db_backups/tracks.js
+    [/Path/To/MongoDB/Server/4.2/bin/]mongoimport.exe -d phanary -c oneshots --drop --file db_backups/oneshots.js
+    ```
+    3. Run `[/Path/To/MongoDB/Server/4.2/bin/]mongo 127.0.0.1:27017 phanaryInit.js`  to initialize the 'phanary' database on the currently running instance of `mongod`. This step adds the 'text' indices necessary for searching the database.
+    4. You should see `Phanary Database Initialization complete.` in your console window.
+8. Run `npm start` from the repository's root directory to connect to MongoDB, and open up a live-updating preview of the site in your browser.
+9. Make your changes.
+10. Submit a pull request for review.
+
+> Note: You'll only be able to play tracks and one-shots that have been added to the database and have been processed using the `gulp audio` command. After being processed, output is placed in the `public/audio/converted` directory.
 
 > Note: You can expect a response from a maintainer within 7 days. If you haven’t heard anything by then, feel free to send an email to phanarydev@gmail.com.
 

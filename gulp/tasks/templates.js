@@ -7,12 +7,15 @@ var commands = [
     "handlebars app/assets/templates/oneshot.hbs -f app/assets/scripts/modules/templates/oneshot.js"
 ];
 
-gulp.task('templates', function() {
-    commands.forEach(function(cmd) {
-        exec(cmd, function(error, stdout, stderr) {
+const compileTemplates = async () => {
+    commands.forEach(function (cmd) {
+        exec(cmd, function (error, stdout, stderr) {
             console.log("Running: \'" + cmd + "\'");
             console.log("Output:\n" + stdout);
             console.log("Error:\n" + stderr);
         });
     });
-});
+};
+
+module.exports = { compileTemplates };
+gulp.task('compileTemplates', compileTemplates);

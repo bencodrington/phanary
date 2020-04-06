@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/phanary', {
-  useMongoClient: true
-});
+mongoose.connect('mongodb://localhost/phanary', {});
 var TrackModel = require('../public/scripts/modules/models/TrackModel').TrackModel;
 var AtmosphereModel = require('../public/scripts/modules/models/AtmosphereModel').AtmosphereModel;
 var OneshotModel = require('../public/scripts/modules/models/OneshotModel').OneshotModel;

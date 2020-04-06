@@ -649,7 +649,7 @@ a {
         font-weight: 300;
     }
 
-.search-container__search-bar:-ms-input-placeholder {
+.search-container__search-bar::-moz-placeholder {
         text-shadow: none;
         font-style: italic;
         color: rgba(46,82,102, 0.6);

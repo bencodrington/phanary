@@ -19,7 +19,8 @@ With the focus on speed and usability, Phanary offers features like:
 
 * Issue Tracker: https://github.com/bencodrington/phanary/issues
 * Source Code: https://github.com/bencodrington/phanary
-(More information on how to do this coming soon!)
+
+For details about environment setup, see CONTRIBUTING.md.
 
 ## Support
 

@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import Handlebars from 'handlebars';
 
 import DataManager from './DataManager';
 import AtmosphereManager from './AtmosphereManager';
