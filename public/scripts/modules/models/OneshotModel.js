@@ -12,6 +12,8 @@ var oneshotSchema = new Schema({
   source: String
 }, {collection: 'oneshots'});
 
+oneshotSchema.index({tags: 'text'});
+
 var OneshotModel = mongoose.model('OneshotModel', oneshotSchema);
 
 module.exports.OneshotModel = OneshotModel;
