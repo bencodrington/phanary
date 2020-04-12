@@ -27,8 +27,6 @@ Please consider submitting **bug reports** and **feature requests** and writing 
     [/Path/To/MongoDB/Server/4.2/bin/]mongoimport.exe -d phanary -c tracks --drop --file db_backups/tracks.js
     [/Path/To/MongoDB/Server/4.2/bin/]mongoimport.exe -d phanary -c oneshots --drop --file db_backups/oneshots.js
     ```
-    3. Run `[/Path/To/MongoDB/Server/4.2/bin/]mongo 127.0.0.1:27017 phanaryInit.js`  to initialize the 'phanary' database on the currently running instance of `mongod`. This step adds the 'text' indices necessary for searching the database.
-    4. You should see `Phanary Database Initialization complete.` in your console window.
 8. Run `npm start` from the repository's root directory to connect to MongoDB, and open up a live-updating preview of the site in your browser.
 9. Make your changes.
 10. Submit a pull request for review.
