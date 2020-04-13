@@ -1,13 +1,12 @@
 .sidebar {
-    width: 100%;
+    flex:1;
     transition: width 0.3s ease-out;
     height: 100%;
-    float: left;
-    position: fixed;
-    background-color: $blueberry;
+    border-right: 1px solid $primary01;
     overflow-y: auto;
     overflow-x: visible;
     z-index: 5;
+    position: absolute;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -18,64 +17,6 @@
 
     @mixin atSmall {
         width: 33%;
-    }
-
-    &__footer {
-        width: 100%;
-        transition: all 0.3s ease-out;
-        position: fixed;
-        bottom: 0;
-        padding: 1rem 0;
-        background-color: $blueberry;
-        /*box-shadow: 0 0 10px rgba($deepSea, 0.5);*/
-        border-top: 1px solid $mediumBlue;
-        z-index: 8;
-        max-height: 500px;
-
-        &.sidebar--hidden {
-            max-height: 0;
-            padding: 0;
-        }
-        
-        @mixin atSmall {
-            width: 33%;
-            max-height: 500px;
-
-            &.sidebar--hidden {
-                width: 100%;
-                max-height: 500px;
-                padding: 1rem 0;
-            }
-
-            &.sidebar--hidden &__label {
-                display: inline;
-            }
-
-        }
-
-        &__btn-new {
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        &__btn-new p {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 100%;
-        }
-
-        &__label {
-            display: none;
-            margin-right: .5rem;
-            color: $stormGrey;
-            font-weight: bold;
-        }
-    }
-
-    &__footer__controls {
-        display: flex;
-        align-items: center;
     }
 
     &__lock {
@@ -93,5 +34,18 @@
         @mixin atSmall {
             display: block;
         }
+    }
+
+    &__btn-new {
+        position: fixed !important;
+        bottom: 1rem;
+        left: calc(33% - 3rem);
+    }
+
+    &__btn-new p {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
     }
 }

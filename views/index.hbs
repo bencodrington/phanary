@@ -65,95 +65,111 @@
   </div>
 </div> <!-- /.about -->
 
-<!-- Navbar -->
-<div class="navbar">
-  <div class="wrapper">
-    <div class="navbar__content">
+<div class="main-page">
 
-      <div class="btn btn--yellow btn--rounded btn--medium navbar__hide">
-        <div class="btn__inner">
-          <i class="fa fa-bars" aria-hidden="true"></i>
-        </div>
-      </div>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="wrapper">
+      <div class="navbar__content">
 
-      <div class="search-container">
-        <div class="search-container__search-controls">
-          <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="'rain', 'one-shot', 'tavern atmosphere', etc.">
-          <div id="searchBarClearBtn" class="btn search-container__addon">
-            <div class="btn__inner">
-              <i class="fa fa-times" aria-hidden="true"></i>
-            </div>
-          </div>
-          <div class="search-container__addon search-container__addon--inverted tooltip">
-            <span class="tooltiptext tooltiptext--bottom">Autoplay</span>
-            <div class="search-container__addon__inner">
-              <label class="control control--checkbox">
-                <i class="fa fa-play" aria-hidden="true"></i>
-                <input type="checkbox" checked="checked" id="autoplayCheckbox">
-                <div class="control__indicator"></div>
-              </label>
-            </div>
+        <div class="btn btn--yellow btn--rounded btn--medium navbar__hide">
+          <div class="btn__inner">
+            <i class="fa fa-bars" aria-hidden="true"></i>
           </div>
         </div>
+
+        <div class="search-container">
+          <div class="search-container__search-controls">
+            <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="'rain', 'one-shot', 'tavern atmosphere', etc.">
+            <div id="searchBarClearBtn" class="btn btn--search-container">
+              <div class="btn__inner">
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div class="search-container__addon search-container__addon--inverted tooltip">
+              <span class="tooltiptext tooltiptext--bottom">Autoplay</span>
+              <div class="search-container__addon__inner">
+                <label class="control control--checkbox">
+                  <i class="fa fa-play" aria-hidden="true"></i>
+                  <input type="checkbox" checked="checked" id="autoplayCheckbox">
+                  <div class="control__indicator"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="navbar__brand about__open tooltip">
+          <img src="/images/svg/logo_solid.svg">
+          <span class="navbar__brand__text">Phanary</span>
+          <span class="tooltiptext tooltiptext--display tooltiptext--prewritten tooltiptext--important
+            tooltiptext--bottom tooltiptext--right navbar__brand__popup">About & Quick Start</span>
+        </h2>
+
       </div>
-
-      <h2 class="navbar__brand about__open tooltip">
-        <img src="/images/svg/logo_solid.svg">
-        <span class="navbar__brand__text">Phanary</span>
-        <span class="tooltiptext tooltiptext--display tooltiptext--prewritten tooltiptext--important
-          tooltiptext--bottom tooltiptext--right navbar__brand__popup">About & Quick Start</span>
-      </h2>
-
     </div>
-  </div>
 
-  <ul class="search-container__results" id="searchResults" style="display: none">
-    
-      <!-- Search results go here -->
-
-  </ul>
-</div> <!-- /.navbar -->
-
-<!-- Sidebar -->
-<div class="sidebar">
-
-  <div class="sidebar__lock">
-    <label class="control control--checkbox">
-      <i class="fa fa-lock" aria-hidden="true"></i>
-      <input type="checkbox" id="lockCheckbox">
-      <div class="control__indicator"></div>
-    </label>
-  </div>
-
-  <div class="wrapper wrapper--top-margin wrapper--bottom-margin wrapper--bottom-border wrapper--atmospheres">
-    <div class="drag-drop-zone--top drag-drop-zone--sidebar">
-      <!-- Used for dragging and dropping atmospheres -->
-      <h2 class="content-title">Atmospheres</h2>
-    </div>
-    <div id="atmosphereList">
-
-      <!-- Atmospheres go here-->
+    <ul class="search-container__results" id="searchResults" style="display: none">
       
-    </div>
+        <!-- Search results go here -->
+
+    </ul>
+  </div> <!-- /.navbar -->
+
+  <div class="column-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <div class="sidebar__lock">
+        <label class="control control--checkbox">
+          <i class="fa fa-lock" aria-hidden="true"></i>
+          <input type="checkbox" id="lockCheckbox">
+          <div class="control__indicator"></div>
+        </label>
+      </div>
+
+      <div class="wrapper wrapper--top-margin wrapper--bottom-margin wrapper--bottom-border wrapper--atmospheres">
+        <div class="drag-drop-zone--top drag-drop-zone--sidebar">
+          <!-- Used for dragging and dropping atmospheres -->
+        </div>
+        <div id="atmosphereList">
+
+          <!-- Atmospheres go here-->
+          
+        </div>
+      </div>
+
+      
+      <div id="newAtmosphereBtn" class="btn btn--yellow btn--rounded btn--medium sidebar__btn-new tooltip">
+        <span class="tooltiptext tooltiptext--prewritten">Create custom atmosphere</span>
+        <div class="btn__inner">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </div>
+      </div>
+
+    </div> <!-- /.sidebar -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="wrapper wrapper--top-margin wrapper--bottom-margin wrapper--bottom-border">
+        <div class="drag-drop-zone--top drag-drop-zone--main">
+          <!-- Used for dragging and dropping tracks -->
+        </div>
+        <div id="trackList">
+
+          <!-- Tracks go here -->
+
+        </div>
+      </div>
+      <img class="watermark" src="/images/svg/watermark_solid.svg">
+    </div> <!-- /.main-content -->
   </div>
 
-  <div class="sidebar__footer">
+  <!-- Footer -->
+  <div class="footer">
     <div class="wrapper">
 
-      <div class="sidebar__footer__controls">
-
-        
-        <div id="newAtmosphereBtn" class="btn btn--yellow btn--rounded btn--medium sidebar__footer__btn-new tooltip">
-          <span class="tooltiptext tooltiptext--prewritten">Create custom atmosphere</span>
-          <div class="btn__inner">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-          </div>
-        </div>
-
-        <span class="sidebar__footer__label">
-          Master Volume:
-        </span>
-        
+      <div class="footer__controls">
 
         <div class="volume">
           <input class="volume__range-global" type="range" min="0" max="1" value="1" step="0.05">
@@ -169,24 +185,8 @@
 
     </div>
   </div>
+</div>
 
-</div> <!-- /.sidebar -->
-
-<!-- Main Content -->
-<div class="main-content">
-  <div class="wrapper wrapper--top-margin wrapper--bottom-margin wrapper--bottom-border">
-    <div class="drag-drop-zone--top drag-drop-zone--main">
-      <!-- Used for dragging and dropping tracks -->
-      <h2 class="content-title content-title--inverted">Tracks</h2>
-    </div>
-    <div id="trackList">
-
-      <!-- Tracks go here -->
-
-    </div>
-  </div>
-  <img class="watermark" src="/images/svg/watermark_solid.svg">
-</div> <!-- /.main-content -->
 
 <!-- Drag Icon -->
 <div class="drag-icon">

@@ -1,20 +1,13 @@
 .btn {
-    color: rgba($blueberry, 0.6);
-    background-color: $stormGrey;
+    color: $text-primary;
+    background-color: $primary01;
     font-weight: 500;
     cursor: pointer;
     overflow: hidden;
-    transition: all 0.1s ease-out;
 
     &:hover {
         background-color: $lighterGrey;
         color: $blueberry;
-    }
-
-    &--inverted {
-        background-color: $blueberry;
-        border: 1px solid $stormGrey;
-        color: $stormGrey;
     }
 
     &--yellow.btn--delete:hover {
@@ -53,6 +46,7 @@
         background-color: transparent;
         cursor: move;
         display: none;
+
 
         @mixin atMedium {
             display: inline-block;
@@ -121,6 +115,21 @@
         bottom: 0;
         right: 0;
         transform: scale(.75);
+    }
+    
+    &--search-container {
+        background: transparent;
+        color: $bg01;
+        position: absolute;
+        right: 4.5rem;
+        top: 0;
+        height: 2rem;
+        width: 2rem;
+
+        &:hover {
+            background: transparent;
+            color: $primary03;
+        }
     }
 }
 

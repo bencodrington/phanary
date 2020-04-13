@@ -1,12 +1,9 @@
 .navbar {
-    position: fixed;
-    background-color: $blueberry;
-    border-bottom: 1px solid $mediumBlue;
+    background-color: $primary02;
+    border-bottom: 1px solid $bg01;
     width: 100%;
     padding: .5rem 0;
-    top: 0;
     z-index: 10;
-    /*box-shadow: 0 5px 10px rgba(#000, 0.2);*/
 
     &__content {
         display: flex;

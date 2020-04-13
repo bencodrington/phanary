@@ -1,7 +1,10 @@
 .main-content {
-    width: 100%;
-    float: right;
     transition: width 0.3s ease-out;
+    flex: 2;
+    overflow-y: scroll;
+    position: absolute;
+    height: 100%;
+    right: 0;
 
     @mixin atSmall {
         width: 67%;

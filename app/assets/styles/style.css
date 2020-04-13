@@ -15,7 +15,6 @@
 @import "modules/_btn-group";
 @import "modules/_volume";
 @import "modules/_tooltip";
-@import "modules/_content-title";
 @import "modules/_btn-pair";
 @import "modules/_system";
 @import "modules/_tags";
@@ -25,4 +24,7 @@
 @import "modules/_login";
 @import "modules/_watermark";
 @import "modules/_drag";
+@import "modules/_footer";
+@import "modules/_main-page";
+@import "modules/_column-container";
 @import "modules/animations/_shake";

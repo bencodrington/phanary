@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background-color: $lightBlue;
+    background-color: $bg01;
     font-family: 'Roboto', sans-serif;
     overflow-x: hidden;
 }
