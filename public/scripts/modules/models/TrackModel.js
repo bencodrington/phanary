@@ -4,14 +4,11 @@ var Schema = mongoose.Schema;
 //TODO: refactor 'track' as 'loop'. The name 'track' is left over from before one-shots were added.
 
 var trackSchema = new Schema({
-    name: { type: String, required: true },
-    filename: { type: String, required: true }, // does not include extensions (e.g. 'phanary1' instead of 'phanary1.mp3')
-    tags: [String],
-    source: String
-}, { collection: 'tracks' });
-
-trackSchema.index({ tags: 'text' });
-trackSchema.index({ name: 1 });
+  name: {type: String, required: true},
+  filename: {type: String, required: true}, // does not include extensions (e.g. 'phanary1' instead of 'phanary1.mp3')
+  tags: [String],
+  source: String
+}, {collection: 'tracks'});
 
 var TrackModel = mongoose.model('TrackModel', trackSchema);
 
