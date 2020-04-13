@@ -78,9 +78,18 @@ class DataManager {
             'query': query,
             'selectedInfo': selectedInfo ? selectedInfo : {}
         };
-        $.getJSON('/system/search', params, function(results) {
+        this.queryDB('/system/search', params, function(results) {
             callback(results);
         });
+    }
+
+    queryDB() {
+        // On first call to this function, replace this.queryDB with
+        //  a debounced version of the $.getJSON function, so that
+        //  a request to the database is only made after the user has
+        //  finished typing.
+        this.queryDB = g.debounce($.getJSON, 500);
+        this.queryDB(...arguments);
     }
 
     getData(collection, id, callback) {

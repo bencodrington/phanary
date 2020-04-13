@@ -8,6 +8,7 @@ class SearchBar {
         this.$input     = $("#searchBarInput");     // the search bar textbox itself
         this.$input.focus();                        // start cursor in the searchbar
         this.events();
+        this.previousSearch = "";
     }
 
     events() {
@@ -127,10 +128,15 @@ class SearchBar {
         based on the current contents of the search bar
     */
     filterResults() {
-        if (this.$results == null) {
+        if (this.$results === null) {
             console.error('SearchBar.js: filterResults: No search results. Returning...');
             return;
         }
+        if (this.previousSearch === this.$input.val()) {
+            // Only run search if input value has been updated
+            return;
+        }
+        this.previousSearch = this.$input.val();
         g.dataManager.search(
             this.$input.val(),      // search using current contents of search bar input
             { '_id': 1 },           // only need the id fields of the returned results

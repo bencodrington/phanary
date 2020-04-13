@@ -10842,6 +10842,19 @@ var GlobalVars = function () {
             return Math.min(Math.max(number, min), max);
         }
     }, {
+        key: 'debounce',
+        value: function debounce(callback, delay) {
+            var timeout = void 0;
+            return function () {
+                var context = this;
+                var args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    return callback.apply(context, args);
+                }, delay);
+            };
+        }
+    }, {
         key: 'setAutoplayCheckboxState',
         value: function setAutoplayCheckboxState(isChecked) {
             this.$autoplayCheckbox.prop('checked', isChecked);
@@ -11227,6 +11240,7 @@ var SearchBar = function () {
         this.$input = (0, _jquery2.default)("#searchBarInput"); // the search bar textbox itself
         this.$input.focus(); // start cursor in the searchbar
         this.events();
+        this.previousSearch = "";
     }
 
     _createClass(SearchBar, [{
@@ -11363,10 +11377,15 @@ var SearchBar = function () {
     }, {
         key: "filterResults",
         value: function filterResults() {
-            if (this.$results == null) {
+            if (this.$results === null) {
                 console.error('SearchBar.js: filterResults: No search results. Returning...');
                 return;
             }
+            if (this.previousSearch === this.$input.val()) {
+                // Only run search if input value has been updated
+                return;
+            }
+            this.previousSearch = this.$input.val();
             _GlobalVars.g.dataManager.search(this.$input.val(), // search using current contents of search bar input
             { '_id': 1 }, // only need the id fields of the returned results
             this.update // call this.update() with the results upon async completion
@@ -12468,9 +12487,19 @@ var DataManager = function () {
                 'query': query,
                 'selectedInfo': selectedInfo ? selectedInfo : {}
             };
-            _jquery2.default.getJSON('/system/search', params, function (results) {
+            this.queryDB('/system/search', params, function (results) {
                 callback(results);
             });
+        }
+    }, {
+        key: 'queryDB',
+        value: function queryDB() {
+            // On first call to this function, replace this.queryDB with
+            //  a debounced version of the $.getJSON function, so that
+            //  a request to the database is only made after the user has
+            //  finished typing.
+            this.queryDB = _GlobalVars.g.debounce(_jquery2.default.getJSON, 500);
+            this.queryDB.apply(this, arguments);
         }
     }, {
         key: 'getData',
