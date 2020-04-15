@@ -1,23 +1,25 @@
 .btn {
     color: $text-primary;
     background-color: $primary01;
-    font-weight: 500;
+    border-radius: 4px;
+    display: inline-block;
+    font-family: 'Slabo 27px', 'serif';
+    height: 2rem;
+
+    /* TODO: remove */
     cursor: pointer;
     overflow: hidden;
 
     &:hover {
-        background-color: $lighterGrey;
-        color: $blueberry;
+        background-color: $primary03;
     }
 
-    &--yellow.btn--delete:hover {
-        color: $peru;
-    }
-
-    &--medium {
+    &--square {
         width: 2rem;
         height: 2rem;
     }
+
+    /* TODO: validate and remove the below */
 
     &--medium-text {
         height: 2rem;
@@ -34,10 +36,6 @@
     &--dark:hover {
         background-color: $mediumBlue;
         color: white;
-    }
-    
-    &--delete {
-        margin-right: 0.25rem;
     }
 
     &--drag.btn--header {
@@ -95,10 +93,6 @@
     /* Hide 'down' button on last section */
     .section:last-child &--reorder-down {
         display: none;
-    }
-
-    &--rounded {
-        border-radius: 5px;
     }
 
     &__inner {

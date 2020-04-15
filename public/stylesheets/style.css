@@ -757,24 +757,26 @@ a {
 .btn {
     color: #FFFFFF;
     background-color: #303B44;
-    font-weight: 500;
+    border-radius: 4px;
+    display: inline-block;
+    font-family: 'Slabo 27px', 'serif';
+    height: 2rem;
+
+    /* TODO: remove */
     cursor: pointer;
     overflow: hidden;
 }
 
 .btn:hover {
-        background-color: #AFC2CD;
-        color: #2E5266;
+        background-color: #4A5967;
     }
 
-.btn--yellow.btn--delete:hover {
-        color: #C68343;
-    }
-
-.btn--medium {
+.btn--square {
         width: 2rem;
         height: 2rem;
     }
+
+/* TODO: validate and remove the below */
 
 .btn--medium-text {
         height: 2rem;
@@ -791,10 +793,6 @@ a {
 .btn--dark:hover {
         background-color: #3A6982;
         color: white;
-    }
-
-.btn--delete {
-        margin-right: 0.25rem;
     }
 
 .btn--drag.btn--header {
@@ -861,10 +859,6 @@ html.no-pointer-events .btn--reorder {
 
 .section:last-child .btn--reorder-down {
         display: none;
-    }
-
-.btn--rounded {
-        border-radius: 5px;
     }
 
 .btn__inner {
@@ -998,9 +992,14 @@ html.no-pointer-events .btn--reorder {
 
 .sidebar__btn-new {
         position: fixed !important;
-        bottom: 1rem;
-        left: calc(33% - 3rem);
+        bottom: 5rem; /* 4rem footer height + 1rem padding */
+        left: calc(33% - 3rem); /* right of sidebar - 2rem button width - 1rem padding */
+        background-color: #27B299;
     }
+
+.sidebar__btn-new:hover {
+            background-color: #00D1FF;
+        }
 
 .sidebar__btn-new p {
         position: absolute;
@@ -1959,13 +1958,11 @@ input[type=range]:focus::-moz-range-track {
 
 .footer {
     width: 100%;
-    -webkit-transition: all 0.3s ease-out;
-    transition: all 0.3s ease-out;
     padding: 1rem 0;
     background-color: #14171B;
     border-top: 1px solid #1C2227;
     z-index: 8;
-    max-height: 500px;
+    height: 4rem;
 }
 
 .footer.sidebar--hidden {
@@ -2016,6 +2013,72 @@ input[type=range]:focus::-moz-range-track {
     display: -ms-flexbox;
     display: flex;
 }
+
+.card {
+    border-radius: 4px;
+    display: block;
+    position: relative;
+    background-color: #14171B;
+    margin-bottom: .5rem;
+}
+
+.card__header {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        padding: .5rem;
+    }
+
+.card__header__icon {
+            background-color: #ffffff; /* TODO: replace this with proper icon formatting */
+            width: 2rem;
+            height: 2rem;
+            margin-right: .5rem;
+        }
+
+.card__header__title {
+            color: #FFFFFF;
+            font-family: 'Slabo 27px', serif;
+            font-size: 1.5rem;
+            -webkit-box-flex: 1;
+                -ms-flex: 1;
+                    flex: 1;
+            pointer-events: none;
+        }
+
+.card__header .btn {
+            margin-left: .5rem;
+        }
+
+.card__body {
+        padding: .5rem;
+        padding-top: 0rem;
+    }
+
+.card__body__atmosphere-controls {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+        }
+
+.card__body__atmosphere-controls .btn {
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
+                margin-right: .5rem;
+            }
+
+.card__body__atmosphere-controls .btn:last-child {
+                    margin-right: 0;
+                }
+
+.card--active {
+        -webkit-box-shadow: 0 0 8px #00D1FF;
+                box-shadow: 0 0 8px #00D1FF;
+    }
 
 @-webkit-keyframes shake {
     0%, 50%, 60%, 100% {

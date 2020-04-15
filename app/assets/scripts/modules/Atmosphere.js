@@ -128,7 +128,7 @@ class Atmosphere {
     }
 
     rigTitleEditing($atmosphereHTML) {
-        var $heading = $atmosphereHTML.find(".section__heading");
+        var $heading = $atmosphereHTML.find(".card__header");
         var $title = $heading.find(".section__heading__title");
         var $titleText = $title.find(".section__heading__title__text");
         var $rename = $title.find(".atmosphere__rename");
@@ -369,7 +369,7 @@ class Atmosphere {
     }
 
     getTitle() {
-        var $titleText = this.$atmosphereHTML.find(".section__heading__title__text");
+        var $titleText = this.$atmosphereHTML.find(".card__header__title");
         return $titleText.text();
     }
 }

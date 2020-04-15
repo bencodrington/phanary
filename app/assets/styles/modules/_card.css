@@ -1,0 +1,54 @@
+.card {
+    border-radius: 4px;
+    display: block;
+    position: relative;
+    background-color: $primary02;
+    margin-bottom: .5rem;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        padding: .5rem;
+
+        &__icon {
+            background-color: #ffffff; /* TODO: replace this with proper icon formatting */
+            width: 2rem;
+            height: 2rem;
+            margin-right: .5rem;
+        }
+
+        &__title {
+            color: $text-primary;
+            font-family: 'Slabo 27px', serif;
+            font-size: 1.5rem;
+            flex: 1;
+            pointer-events: none;
+        }
+
+        & .btn {
+            margin-left: .5rem;
+        }
+    }
+
+    &__body {
+        padding: .5rem;
+        padding-top: 0rem;
+
+        &__atmosphere-controls {
+            display: flex;
+
+            & .btn {
+                flex: 1;
+                margin-right: .5rem;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+
+    &--active {
+        box-shadow: 0 0 8px $accent01;
+    }
+}

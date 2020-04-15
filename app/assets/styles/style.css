@@ -27,4 +27,5 @@
 @import "modules/_footer";
 @import "modules/_main-page";
 @import "modules/_column-container";
+@import "modules/_card";
 @import "modules/animations/_shake";

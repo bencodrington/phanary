@@ -11678,7 +11678,7 @@ var Atmosphere = function () {
     }, {
         key: 'rigTitleEditing',
         value: function rigTitleEditing($atmosphereHTML) {
-            var $heading = $atmosphereHTML.find(".section__heading");
+            var $heading = $atmosphereHTML.find(".card__header");
             var $title = $heading.find(".section__heading__title");
             var $titleText = $title.find(".section__heading__title__text");
             var $rename = $title.find(".atmosphere__rename");
@@ -11944,7 +11944,7 @@ var Atmosphere = function () {
     }, {
         key: 'getTitle',
         value: function getTitle() {
-            var $titleText = this.$atmosphereHTML.find(".section__heading__title__text");
+            var $titleText = this.$atmosphereHTML.find(".card__header__title");
             return $titleText.text();
         }
     }]);
@@ -11981,7 +11981,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var activeClass = 'section--atmosphere--active';
+var activeClass = 'card--active';
 
 var AtmosphereManager = function () {
     function AtmosphereManager() {
@@ -13414,7 +13414,7 @@ exports.default = TrackManager;
         return undefined;
       };
 
-      return "<div class=\"section section--atmosphere\">\r\n\r\n  <div class=\"section__heading\">\r\n      <h4 class=\"section__heading__title\">\r\n        <span class=\"section__heading__title__text\">" + container.escapeExpression((helper = (helper = lookupProperty(helpers, "name") || (depth0 != null ? lookupProperty(depth0, "name") : depth0)) != null ? helper : container.hooks.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "name", "hash": {}, "data": data, "loc": { "start": { "line": 5, "column": 52 }, "end": { "line": 5, "column": 60 } } }) : helper)) + "</span>\r\n        <span class=\"atmosphere__rename\">\r\n          <i class=\"fa fa-pencil-alt\" aria-hidden=\"true\"></i>\r\n        </span>\r\n      </h4>\r\n      <div class=\"btn btn--delete btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n      <div class=\"btn btn--reorder btn--reorder-up btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-arrow-up\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n      <div class=\"btn btn--reorder btn--reorder-down btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n      <div class=\"btn btn--drag btn--medium btn--inverted btn--header\">\r\n          <div class=\"btn__inner\">\r\n          <i class=\"fa fa-arrows-alt-v\" aria-hidden=\"true\"></i>\r\n          </div>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"section__body\">\r\n    <div class=\"wrapper\">\r\n      <div class=\"section__flex\">\r\n\r\n        <div class=\"volume section__flex__item\">\r\n          <input type=\"range\" min=\"0\" max=\"1\" value=\"1\" step=\"0.05\">\r\n          <label class=\"control control--custom control--checkbox volume__mute\">\r\n            <input type=\"checkbox\" class=\"btn--mute\">\r\n            <div class=\"control__indicator control__indicator--medium\"></div>\r\n            <div class=\"control--custom__on\"><i class=\"fa fa-volume-off\" aria-hidden=\"true\"></i></div>\r\n            <div class=\"control--custom__off\"><i class=\"fa fa-volume-up\" aria-hidden=\"true\"></i></div>\r\n          </label>\r\n        </div>\r\n        <div class=\"section__flex__item\">\r\n          <div class=\"btn-pair\">\r\n            <div class=\"atmosphere__replace btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Replace</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n            </div>\r\n            <div class=\"atmosphere__add btn btn--rounded btn--medium tooltip\">\r\n              <span class=\"tooltiptext tooltiptext--right tooltiptext--prewritten\">Add</span>\r\n              <div class=\"btn__inner\">\r\n                <i class=\"fa fa-play\" aria-hidden=\"true\"></i>\r\n              </div>\r\n                <i class=\"fa fa-plus btn__bottom-right\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n\r\n          <div class=\"btn btn--stop btn--rounded btn--medium\">\r\n            <div class=\"btn__inner\">\r\n              <i class=\"fa fa-stop\" aria-hidden=\"true\"></i>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>";
+      return "<div class=\"card card--atmosphere\">\r\n  <div class=\"card__header\">\r\n    <div class=\"card__header__icon\">\r\n    </div>\r\n    <span class=\"card__header__title\">" + container.escapeExpression((helper = (helper = lookupProperty(helpers, "name") || (depth0 != null ? lookupProperty(depth0, "name") : depth0)) != null ? helper : container.hooks.helperMissing, typeof helper === "function" ? helper.call(depth0 != null ? depth0 : container.nullContext || {}, { "name": "name", "hash": {}, "data": data, "loc": { "start": { "line": 6, "column": 38 }, "end": { "line": 6, "column": 46 } } }) : helper)) + "</span>\r\n    <div class=\"btn btn--square\">\r\n      <div class=\"btn__inner\">\r\n        <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n      </div>\r\n    </div>\r\n    <div class=\"btn btn--square btn--delete\">\r\n      <div class=\"btn__inner\">\r\n        <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  <div class=\"card__body\">\r\n    <div class=\"card__body__atmosphere-controls\">\r\n      <div class=\"btn\">\r\n        <div class=\"btn__inner\">\r\n          Transition To\r\n        </div>\r\n      </div>\r\n      <div class=\"btn btn--half\">\r\n        <div class=\"btn__inner\">\r\n          Layer On Top\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n\r\n\r\n";
     }, "useData": true });
 })();
 

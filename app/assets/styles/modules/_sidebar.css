@@ -38,8 +38,13 @@
 
     &__btn-new {
         position: fixed !important;
-        bottom: 1rem;
-        left: calc(33% - 3rem);
+        bottom: 5rem; /* 4rem footer height + 1rem padding */
+        left: calc(33% - 3rem); /* right of sidebar - 2rem button width - 1rem padding */
+        background-color: $accent02;
+
+        &:hover {
+            background-color: $accent01;
+        }
     }
 
     &__btn-new p {

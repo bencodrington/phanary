@@ -1,11 +1,10 @@
 .footer {
     width: 100%;
-    transition: all 0.3s ease-out;
     padding: 1rem 0;
     background-color: $primary02;
     border-top: 1px solid $bg01;
     z-index: 8;
-    max-height: 500px;
+    height: 4rem;
 
     &.sidebar--hidden {
         max-height: 0;

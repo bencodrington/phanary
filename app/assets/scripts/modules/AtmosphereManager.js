@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { g } from "./GlobalVars.js";
 import Atmosphere from './Atmosphere';
 
-var activeClass = 'section--atmosphere--active';
+var activeClass = 'card--active';
 
 class AtmosphereManager {
 
