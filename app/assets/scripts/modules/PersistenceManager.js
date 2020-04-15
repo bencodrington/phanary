@@ -8,9 +8,6 @@ class PersistenceManager {
         if (!localStorage.getItem('atmospheres')) {
             localStorage.setItem('atmospheres', JSON.stringify([]));
         }
-        if (!localStorage.getItem('lockCheckbox')) {
-            localStorage.setItem('lockCheckbox', false);
-        }
         if (!localStorage.getItem('autoplayCheckbox')) {
             localStorage.setItem('autoplayCheckbox', false);
         }
@@ -21,7 +18,6 @@ class PersistenceManager {
 
     loadFromStorage() {
         this.loadAtmospheres();
-        this.loadLockCheckboxState();
         this.loadAutoplayCheckboxState();
         this.loadGlobalVolume();
     }
@@ -72,14 +68,6 @@ class PersistenceManager {
         for (let atmosphere of atmospheres) {
             g.atmosphereManager.addAtmosphere(atmosphere, true);
         }
-    }
-
-    storeLockCheckboxState(newState) {
-        localStorage.setItem('lockCheckbox', newState);
-    }
-
-    loadLockCheckboxState() {
-        g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
     }
 
     storeAutoplayCheckboxState(newState) {

@@ -43,7 +43,7 @@ class GlobalVars {
     }
 
     events() {
-        // Update PersistenceManager's model of the lock checkbox on click
+        // Update PersistenceManager's model of the autoplay checkbox on click
         this.$autoplayCheckbox.on('click', function(e) {
             g.pm.storeAutoplayCheckboxState(this.$autoplayCheckbox.is(':checked'));
             e.stopPropagation();

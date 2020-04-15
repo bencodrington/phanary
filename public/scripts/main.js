@@ -10756,7 +10756,7 @@ var GlobalVars = function () {
     _createClass(GlobalVars, [{
         key: 'events',
         value: function events() {
-            // Update PersistenceManager's model of the lock checkbox on click
+            // Update PersistenceManager's model of the autoplay checkbox on click
             this.$autoplayCheckbox.on('click', function (e) {
                 g.pm.storeAutoplayCheckboxState(this.$autoplayCheckbox.is(':checked'));
                 e.stopPropagation();
@@ -13088,9 +13088,6 @@ var PersistenceManager = function () {
         if (!localStorage.getItem('atmospheres')) {
             localStorage.setItem('atmospheres', JSON.stringify([]));
         }
-        if (!localStorage.getItem('lockCheckbox')) {
-            localStorage.setItem('lockCheckbox', false);
-        }
         if (!localStorage.getItem('autoplayCheckbox')) {
             localStorage.setItem('autoplayCheckbox', false);
         }
@@ -13103,7 +13100,6 @@ var PersistenceManager = function () {
         key: 'loadFromStorage',
         value: function loadFromStorage() {
             this.loadAtmospheres();
-            this.loadLockCheckboxState();
             this.loadAutoplayCheckboxState();
             this.loadGlobalVolume();
         }
@@ -13224,16 +13220,6 @@ var PersistenceManager = function () {
             }
         }
     }, {
-        key: 'storeLockCheckboxState',
-        value: function storeLockCheckboxState(newState) {
-            localStorage.setItem('lockCheckbox', newState);
-        }
-    }, {
-        key: 'loadLockCheckboxState',
-        value: function loadLockCheckboxState() {
-            _GlobalVars.g.sidebar.setLockCheckboxState(JSON.parse(localStorage.getItem('lockCheckbox')));
-        }
-    }, {
         key: 'storeAutoplayCheckboxState',
         value: function storeAutoplayCheckboxState(newState) {
             localStorage.setItem('autoplayCheckbox', newState);
@@ -13296,7 +13282,6 @@ var Sidebar = function () {
 
         this.$HTML = (0, _jquery2.default)(".sidebar");
         this.$footerHTML = this.$HTML.find(".sidebar__footer");
-        this.$lockCheckbox = this.$HTML.find("#lockCheckbox");
         this.$mainContent = (0, _jquery2.default)(".main-content");
 
         this.events();
@@ -13320,18 +13305,6 @@ var Sidebar = function () {
             (0, _jquery2.default)(".navbar__hide").click(function () {
                 this.hide(true);
             }.bind(this));
-
-            // Update PersistenceManager's model of the lock checkbox on click
-            this.$lockCheckbox.on('click', function (e) {
-                _GlobalVars.g.pm.storeLockCheckboxState(this.$lockCheckbox.is(':checked'));
-                e.stopPropagation();
-            }.bind(this));
-
-            // Stop lock checkbox click events from propagating and deselecting
-            //  currently active atmosphere
-            this.$lockCheckbox.parent().on('click', function (e) {
-                e.stopPropagation();
-            });
         }
 
         /*
@@ -13341,18 +13314,10 @@ var Sidebar = function () {
 
     }, {
         key: "hide",
-        value: function hide(ignoreLockBox) {
-            if (!ignoreLockBox && this.$lockCheckbox.is(':checked')) {
-                return;
-            }
+        value: function hide() {
             this.$HTML.toggleClass("sidebar--hidden");
             this.$footerHTML.toggleClass("sidebar--hidden");
             this.$mainContent.toggleClass("full-width");
-        }
-    }, {
-        key: "setLockCheckboxState",
-        value: function setLockCheckboxState(isChecked) {
-            this.$lockCheckbox.prop('checked', isChecked);
         }
     }]);
 

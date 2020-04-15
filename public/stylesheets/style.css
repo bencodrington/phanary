@@ -969,27 +969,6 @@ html.no-pointer-events .btn--reorder {
 }
     }
 
-.sidebar__lock {
-        color: #849AA8;
-        position: absolute;
-        top: 4.25rem; /* 3.25 is 2rem: size of 'Phanary' + 0.25rem: extra space for tail of y + 0.5rem * 2: top and bottom padding */
-        right: 18px; /* match the wrapper that contains the atmosphere list */
-        display: none;
-        z-index: 1;
-    }
-
-.sidebar__lock i {
-            -webkit-transition: color 0.3s ease-out;
-            transition: color 0.3s ease-out;
-        }
-
-@media (min-width: 530px) {
-
-.sidebar__lock {
-            display: block
-    }
-    }
-
 .sidebar__btn-new {
         position: fixed !important;
         bottom: 5rem; /* 4rem footer height + 1rem padding */
