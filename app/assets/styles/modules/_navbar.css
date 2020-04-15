@@ -11,6 +11,10 @@
 
     &__hide.btn {
         flex-shrink: 0;
+
+        @mixin atSmall {
+            display: none;
+        }
     }
 
     &__brand {

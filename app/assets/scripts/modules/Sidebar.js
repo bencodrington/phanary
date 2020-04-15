@@ -10,7 +10,6 @@ class Sidebar {
     constructor() {
         this.$HTML          = $(".sidebar");
         this.$footerHTML    = this.$HTML.find(".sidebar__footer");
-        this.$mainContent   = $(".main-content");
 
         this.events();
     }
@@ -29,18 +28,21 @@ class Sidebar {
 
         // Toggle hidden class on sidebar upon when hide button is clicked
         $(".navbar__hide").click(function() {
-            this.hide(true);
+            this.toggleHidden();
         }.bind(this));
     }
 
     /*
-        Apply the 'sidebar--hidden' class to the sidebar,
-        and the 'full-width' class to the main content div
+        Apply the 'sidebar--hidden' class to the sidebar and footer
     */
     hide() {
+        this.$HTML.addClass("sidebar--hidden");
+        this.$footerHTML.addClass("sidebar--hidden");
+    }
+
+    toggleHidden() {
         this.$HTML.toggleClass("sidebar--hidden");
         this.$footerHTML.toggleClass("sidebar--hidden");
-        this.$mainContent.toggleClass("full-width");
     }
 
 }

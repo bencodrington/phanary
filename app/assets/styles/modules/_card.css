@@ -23,10 +23,20 @@
             font-size: 1.5rem;
             flex: 1;
             pointer-events: none;
+
+            /* These make the sidebar animations more smooth
+                by stopping text from wrapping */
+            white-space: nowrap;
+            overflow-x: hidden;
+
         }
 
         & .btn {
             margin-left: .5rem;
+/* 
+            &--reorder {
+                cursor: ns-resize;
+            } */
         }
     }
 

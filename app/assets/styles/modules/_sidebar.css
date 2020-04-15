@@ -1,5 +1,4 @@
 .sidebar {
-    flex:1;
     transition: width 0.3s ease-out;
     height: 100%;
     border-right: 1px solid $primary01;
@@ -7,26 +6,47 @@
     overflow-x: visible;
     z-index: 5;
     position: absolute;
+    background-color: $bg01;
+    width: 100%;
+
     &::-webkit-scrollbar {
         display: none;
-    }
-
-    &.sidebar--hidden {
-        width: 0%;
     }
 
     @mixin atSmall {
         width: 33%;
     }
 
-    &__btn-new {
-        position: fixed !important;
+    &.sidebar--hidden {
+        width: 0%;
+
+        & .sidebar__btn-new {
+            display: none;
+
+            @mixin atSmall {
+                display: inline-block;
+            }
+        }
+
+        @mixin atSmall {
+            width: 33%;
+        }
+    }
+
+    & &__btn-new {
         bottom: 5rem; /* 4rem footer height + 1rem padding */
-        left: calc(33% - 3rem); /* right of sidebar - 2rem button width - 1rem padding */
+        left: auto;
+        right: 1rem;
+        position: fixed;
         background-color: $accent02;
 
         &:hover {
             background-color: $accent01;
+        }
+
+        @mixin atSmall {
+            left: calc(33% - 3rem); /* right of sidebar - 2rem button width - 1rem padding */
+            right: auto;
         }
     }
 

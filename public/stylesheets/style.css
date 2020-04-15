@@ -502,6 +502,13 @@ a {
             flex-shrink: 0;
     }
 
+@media (min-width: 530px) {
+
+.navbar__hide.btn {
+            display: none
+    }
+    }
+
 .navbar__brand {
         display: block;
         color: #F7CE38;
@@ -762,6 +769,11 @@ a {
     font-family: 'Slabo 27px', 'serif';
     height: 2rem;
 
+    /* These make the sidebar animations more smooth
+        by stopping button text from wrapping */
+    white-space: nowrap;
+    overflow-x: hidden;
+
     /* TODO: remove */
     cursor: pointer;
     overflow: hidden;
@@ -830,19 +842,6 @@ html.no-pointer-events .btn--drag {
         background-color: transparent;
     }
 
-.btn--reorder {
-        display: inline-block;
-        top: 0;
-        float: right;
-    }
-
-@media (min-width: 800px) {
-
-.btn--reorder {
-            display: none
-    }
-    }
-
 /* Ensure reorder buttons show on browsers without pointer event support */
 
 html.no-pointer-events .btn--reorder {
@@ -860,6 +859,16 @@ html.no-pointer-events .btn--reorder {
 .section:last-child .btn--reorder-down {
         display: none;
     }
+
+/* &--reorder {
+        display: inline-block;
+        top: 0;
+        float: right;
+
+        @mixin atMedium {
+            display: none;
+        }
+    } */
 
 .btn__inner {
         pointer-events: none;
@@ -894,24 +903,6 @@ html.no-pointer-events .btn--reorder {
             color: #4A5967;
         }
 
-.section--atmosphere .btn {
-    background-color: #442D49;
-    color: #A489BF;
-}
-
-.section--atmosphere .btn:hover {
-        background-color: #A489BF;
-        color: #C7B1D8;
-    }
-
-.section--atmosphere .btn--header, .section--atmosphere .btn--header:hover {
-        background-color: transparent;
-    }
-
-.section--atmosphere .btn--drag {
-        cursor: ns-resize;
-    }
-
 .section--track .btn {
     background-color: #2E5266;
     color: #849AA8;
@@ -941,9 +932,6 @@ html.no-pointer-events .btn--reorder {
 }
 
 .sidebar {
-    -webkit-box-flex:1;
-        -ms-flex:1;
-            flex:1;
     -webkit-transition: width 0.3s ease-out;
     transition: width 0.3s ease-out;
     height: 100%;
@@ -952,14 +940,12 @@ html.no-pointer-events .btn--reorder {
     overflow-x: visible;
     z-index: 5;
     position: absolute;
+    background-color: #1C2227;
+    width: 100%;
 }
 
 .sidebar::-webkit-scrollbar {
         display: none;
-    }
-
-.sidebar.sidebar--hidden {
-        width: 0%;
     }
 
 @media (min-width: 530px) {
@@ -969,16 +955,47 @@ html.no-pointer-events .btn--reorder {
 }
     }
 
-.sidebar__btn-new {
-        position: fixed !important;
+.sidebar.sidebar--hidden {
+        width: 0%;
+    }
+
+.sidebar.sidebar--hidden .sidebar__btn-new {
+            display: none;
+        }
+
+@media (min-width: 530px) {
+
+.sidebar.sidebar--hidden .sidebar__btn-new {
+                display: inline-block
+        }
+    }
+
+@media (min-width: 530px) {
+
+.sidebar.sidebar--hidden {
+            width: 33%
+    }
+    }
+
+.sidebar .sidebar__btn-new {
         bottom: 5rem; /* 4rem footer height + 1rem padding */
-        left: calc(33% - 3rem); /* right of sidebar - 2rem button width - 1rem padding */
+        left: auto;
+        right: 1rem;
+        position: fixed;
         background-color: #27B299;
     }
 
-.sidebar__btn-new:hover {
+.sidebar .sidebar__btn-new:hover {
             background-color: #00D1FF;
         }
+
+@media (min-width: 530px) {
+
+.sidebar .sidebar__btn-new {
+            left: calc(33% - 3rem); /* right of sidebar - 2rem button width - 1rem padding */
+            right: auto
+    }
+    }
 
 .sidebar__btn-new p {
         position: absolute;
@@ -991,9 +1008,7 @@ html.no-pointer-events .btn--reorder {
 .main-content {
     -webkit-transition: width 0.3s ease-out;
     transition: width 0.3s ease-out;
-    -webkit-box-flex: 2;
-        -ms-flex: 2;
-            flex: 2;
+    width: 100%;
     overflow-y: scroll;
     position: absolute;
     height: 100%;
@@ -1005,11 +1020,6 @@ html.no-pointer-events .btn--reorder {
 .main-content {
         width: 67%
 }
-    }
-
-.main-content.full-width {
-        width: 100%;
-        margin-bottom: 4rem;
     }
 
 .control {
@@ -1980,7 +1990,7 @@ input[type=range]:focus::-moz-range-track {
         -ms-flex-direction: column;
             flex-direction: column;
     width: 100vw;
-    height:100vh;
+    height: 100vh;
 }
 
 .column-container {
@@ -2026,10 +2036,20 @@ input[type=range]:focus::-moz-range-track {
                 -ms-flex: 1;
                     flex: 1;
             pointer-events: none;
+
+            /* These make the sidebar animations more smooth
+                by stopping text from wrapping */
+            white-space: nowrap;
+            overflow-x: hidden;
+
         }
 
 .card__header .btn {
             margin-left: .5rem;
+/* 
+            &--reorder {
+                cursor: ns-resize;
+            } */
         }
 
 .card__body {

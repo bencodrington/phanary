@@ -6,6 +6,11 @@
     font-family: 'Slabo 27px', 'serif';
     height: 2rem;
 
+    /* These make the sidebar animations more smooth
+        by stopping button text from wrapping */
+    white-space: nowrap;
+    overflow-x: hidden;
+
     /* TODO: remove */
     cursor: pointer;
     overflow: hidden;
@@ -70,7 +75,7 @@
         background-color: transparent;
     }
 
-    &--reorder {
+    /* &--reorder {
         display: inline-block;
         top: 0;
         float: right;
@@ -78,7 +83,7 @@
         @mixin atMedium {
             display: none;
         }
-    }
+    } */
 
     /* Ensure reorder buttons show on browsers without pointer event support */
     html.no-pointer-events &--reorder {
@@ -124,24 +129,6 @@
             background: transparent;
             color: $primary03;
         }
-    }
-}
-
-.section--atmosphere .btn {
-    background-color: $darkPurple;
-    color: $lightPurple;
-
-    &:hover {
-        background-color: $lightPurple;
-        color: $whitePurple;
-    }
-
-    &--header, &--header:hover {
-        background-color: transparent;
-    }
-
-    &--drag {
-        cursor: ns-resize;
     }
 }
 
