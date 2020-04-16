@@ -465,6 +465,10 @@ body {
     overflow-x: hidden;
 }
 
+body::-webkit-scrollbar {
+        display: none;
+    }
+
 img {
     max-width: 100%;
     height: auto;
@@ -486,15 +490,27 @@ a {
     background-color: #14171B;
     border-bottom: 1px solid #1C2227;
     width: 100%;
-    padding: .5rem 0;
     z-index: 10;
+    height: 4rem;
+    position: fixed;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
 
 }
 
 .navbar__content {
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        padding: .5rem;
+        height: 100%;
     }
 
 .navbar__hide.btn {
@@ -788,6 +804,24 @@ a {
         height: 2rem;
     }
 
+/* Ensure reorder buttons show on browsers without pointer event support */
+
+html.no-pointer-events .btn--reorder {
+        display: inline-block;
+    }
+
+/* Hide 'up' button on first card */
+
+.card:first-child .btn--reorder-up {
+        display: none;
+    }
+
+/* Hide 'down' button on last card */
+
+.card:last-child .btn--reorder-down {
+        display: none;
+    }
+
 /* TODO: validate and remove the below */
 
 .btn--medium-text {
@@ -841,34 +875,6 @@ html.no-pointer-events .btn--drag {
 .btn--header:hover, .section--track .btn--header.btn:hover {
         background-color: transparent;
     }
-
-/* Ensure reorder buttons show on browsers without pointer event support */
-
-html.no-pointer-events .btn--reorder {
-        display: inline-block;
-    }
-
-/* Hide 'up' button on first section */
-
-.section:first-child .btn--reorder-up {
-        display: none;
-    }
-
-/* Hide 'down' button on last section */
-
-.section:last-child .btn--reorder-down {
-        display: none;
-    }
-
-/* &--reorder {
-        display: inline-block;
-        top: 0;
-        float: right;
-
-        @mixin atMedium {
-            display: none;
-        }
-    } */
 
 .btn__inner {
         pointer-events: none;
@@ -940,9 +946,13 @@ html.no-pointer-events .btn--reorder {
     overflow-x: visible;
     z-index: 5;
     position: absolute;
+    top: 0;
     background-color: #1C2227;
     width: 100%;
+    margin-top: 5rem;
 }
+
+/* 4rem navbar height + 1rem padding */
 
 .sidebar::-webkit-scrollbar {
         display: none;
@@ -1011,9 +1021,15 @@ html.no-pointer-events .btn--reorder {
     width: 100%;
     overflow-y: scroll;
     position: absolute;
+    top: 0;
     height: 100%;
+    margin-top: 5rem; /* 4rem navbar height + 1rem padding */
     right: 0;
 }
+
+.main-content::-webkit-scrollbar {
+        display: none;
+    }
 
 @media (min-width: 530px) {
 
@@ -1952,6 +1968,8 @@ input[type=range]:focus::-moz-range-track {
     border-top: 1px solid #1C2227;
     z-index: 8;
     height: 4rem;
+    position: fixed;
+    bottom: 0;
 }
 
 .footer.sidebar--hidden {
@@ -1981,28 +1999,6 @@ input[type=range]:focus::-moz-range-track {
                 align-items: center;
     }
 
-.main-page {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-}
-
-.column-container {
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
-    position:relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-}
-
 .card {
     border-radius: 4px;
     display: block;
@@ -2019,6 +2015,7 @@ input[type=range]:focus::-moz-range-track {
             -ms-flex-align: center;
                 align-items: center;
         padding: .5rem;
+
     }
 
 .card__header__icon {
@@ -2040,17 +2037,31 @@ input[type=range]:focus::-moz-range-track {
             /* These make the sidebar animations more smooth
                 by stopping text from wrapping */
             white-space: nowrap;
-            overflow-x: hidden;
+            overflow: hidden;
 
         }
 
 .card__header .btn {
             margin-left: .5rem;
-/* 
-            &--reorder {
-                cursor: ns-resize;
-            } */
         }
+
+.card__header .btn--drag {
+                display: none;
+            }
+
+@media (min-width: 530px) {
+
+.card__header .btn--drag {
+                    display: inline-block
+            }
+    }
+
+@media (min-width: 530px) {
+
+.card__header .btn--reorder {
+                    display: none
+            }
+    }
 
 .card__body {
         padding: .5rem;

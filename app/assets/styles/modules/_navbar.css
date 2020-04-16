@@ -2,11 +2,17 @@
     background-color: $primary02;
     border-bottom: 1px solid $bg01;
     width: 100%;
-    padding: .5rem 0;
     z-index: 10;
+    height: 4rem;
+    position: fixed;
+    display: flex;
 
     &__content {
+        flex: 1;
         display: flex;
+        align-items: center;
+        padding: .5rem;
+        height: 100%;
     }
 
     &__hide.btn {

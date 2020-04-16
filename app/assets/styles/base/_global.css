@@ -3,6 +3,10 @@ body {
     background-color: $bg01;
     font-family: 'Roboto', sans-serif;
     overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 img {

@@ -142,9 +142,9 @@ class DragManager {
         var $html = isAtmosphere ? section.$atmosphereHTML : section.$trackHTML;
         // Move the object to its new position
         if (direction == 'up') {
-            $html.prev('.section').before($html);
+            $html.prev('.card').before($html);
         } else if (direction == 'down') {
-            $html.next('.section').after($html);
+            $html.next('.card').after($html);
         } else {
             console.error('DragManager.js:moveSection: invalid direction provided: "' + direction + '"');
             return;

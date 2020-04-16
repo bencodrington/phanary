@@ -27,17 +27,28 @@
             /* These make the sidebar animations more smooth
                 by stopping text from wrapping */
             white-space: nowrap;
-            overflow-x: hidden;
+            overflow: hidden;
 
         }
 
         & .btn {
             margin-left: .5rem;
-/* 
+
+            &--drag {
+                display: none;
+                
+                @mixin atSmall {
+                    display: inline-block;
+                }
+            }
+
             &--reorder {
-                cursor: ns-resize;
-            } */
+                @mixin atSmall {
+                    display: none;
+                }
+            }
         }
+
     }
 
     &__body {

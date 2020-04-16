@@ -24,6 +24,21 @@
         height: 2rem;
     }
 
+    /* Ensure reorder buttons show on browsers without pointer event support */
+    html.no-pointer-events &--reorder {
+        display: inline-block;
+    }
+
+    /* Hide 'up' button on first card */
+    .card:first-child &--reorder-up {
+        display: none;
+    }
+
+    /* Hide 'down' button on last card */
+    .card:last-child &--reorder-down {
+        display: none;
+    }
+
     /* TODO: validate and remove the below */
 
     &--medium-text {
@@ -73,31 +88,6 @@
 
     &--header:hover, .section--track &--header.btn:hover {
         background-color: transparent;
-    }
-
-    /* &--reorder {
-        display: inline-block;
-        top: 0;
-        float: right;
-
-        @mixin atMedium {
-            display: none;
-        }
-    } */
-
-    /* Ensure reorder buttons show on browsers without pointer event support */
-    html.no-pointer-events &--reorder {
-        display: inline-block;
-    }
-
-    /* Hide 'up' button on first section */
-    .section:first-child &--reorder-up {
-        display: none;
-    }
-
-    /* Hide 'down' button on last section */
-    .section:last-child &--reorder-down {
-        display: none;
     }
 
     &__inner {
