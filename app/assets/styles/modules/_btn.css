@@ -106,20 +106,6 @@
         transform: scale(.75);
     }
     
-    &--search-container {
-        background: transparent;
-        color: $bg01;
-        position: absolute;
-        right: 4.5rem;
-        top: 0;
-        height: 2rem;
-        width: 2rem;
-
-        &:hover {
-            background: transparent;
-            color: $primary03;
-        }
-    }
 }
 
 .section--track .btn {

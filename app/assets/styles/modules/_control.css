@@ -17,19 +17,9 @@
         left: 0;
         width: 20px;
         height: 20px;
-        background: $offWhite;
+        background: $text-primary;
         transition: all 0.3s ease-out;
         border-radius: 2px;
-    }
-
-    &__indicator--medium {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 5px;
-    }
-
-    &:hover {
-        color: white;
     }
 
     /* Hover and focus states */
@@ -66,7 +56,7 @@
         width: 3px;
         height: 8px;
         transform: rotate(45deg);
-        border: solid $coconut;
+        border: solid $bg01;
         border-width: 0 2px 2px 0;
     }
 

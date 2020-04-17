@@ -6,12 +6,12 @@
     height: 4rem;
     position: fixed;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .5rem;
 
     &__content {
         flex: 1;
-        display: flex;
-        align-items: center;
-        padding: .5rem;
         height: 100%;
     }
 
@@ -20,6 +20,34 @@
 
         @mixin atSmall {
             display: none;
+        }
+    }
+
+    &__autoplay {
+        height: 2rem;
+        background-color: $primary01;
+        border-radius: 4px;
+        padding: 0 .5rem;
+        position: relative;
+        color: $text-primary;
+        cursor: pointer;
+
+        & .control {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &:hover {
+            background-color: $primary03;
+        }
+    }
+
+    &__info {
+        cursor: help;
+
+        @mixin atSmall {
+            margin-right: .5rem;
         }
     }
 
@@ -32,15 +60,16 @@
         float: right;
         box-sizing: content-box;
         flex-shrink: 0;
-        cursor: help;
 
         & img {
             float: left;
             height: 2rem;
             width: auto;
+            margin: 0 0.5rem 0 0;
+            display: none;
 
             @mixin atSmall {
-                margin: 0 0.5rem 0 0;
+                display: block;
             }
         }
 
