@@ -6,6 +6,7 @@
     top: 0;
     height: 100%;
     padding-top: 5rem; /* 4rem navbar height + 1rem padding */
+    padding-bottom: 5rem; /* 4rem footer height + 1rem padding */
     right: 0;
 
     &::-webkit-scrollbar {

@@ -10,6 +10,7 @@
     background-color: $bg01;
     width: 100%;
     padding-top: 5rem; /* 4rem navbar height + 1rem padding */
+    padding-bottom: 5rem; /* 4rem footer height + 1rem padding */
 
     &::-webkit-scrollbar {
         display: none;
