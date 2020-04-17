@@ -9,7 +9,7 @@
     top: 0;
     background-color: $bg01;
     width: 100%;
-    margin-top: 5rem; /* 4rem navbar height + 1rem padding */
+    padding-top: 5rem; /* 4rem navbar height + 1rem padding */
 
     &::-webkit-scrollbar {
         display: none;

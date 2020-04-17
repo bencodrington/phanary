@@ -5,7 +5,7 @@
     height: 2rem;
     width: 100%;
 
-    @mixin atMedium {
+    @mixin atSmall {
         width: 50%;
     }
 

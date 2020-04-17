@@ -518,7 +518,7 @@ a {
             flex-shrink: 0;
     }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .navbar__hide.btn {
             display: none
@@ -550,7 +550,7 @@ a {
         cursor: help;
     }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .navbar__info {
             margin-right: .5rem
@@ -579,7 +579,7 @@ a {
             display: none;
         }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .navbar__brand img {
                 display: block
@@ -591,7 +591,7 @@ a {
             display: none;
         }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .navbar__brand__text {
                 display: inline
@@ -945,7 +945,7 @@ html.no-pointer-events .btn--drag {
     top: 0;
     background-color: #1C2227;
     width: 100%;
-    margin-top: 5rem;
+    padding-top: 5rem;
 }
 
 /* 4rem navbar height + 1rem padding */
@@ -954,7 +954,7 @@ html.no-pointer-events .btn--drag {
         display: none;
     }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .sidebar {
         width: 33%
@@ -969,14 +969,14 @@ html.no-pointer-events .btn--drag {
             display: none;
         }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .sidebar.sidebar--hidden .sidebar__btn-new {
                 display: inline-block
         }
     }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .sidebar.sidebar--hidden {
             width: 33%
@@ -995,7 +995,7 @@ html.no-pointer-events .btn--drag {
             background-color: #00D1FF;
         }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .sidebar .sidebar__btn-new {
             left: calc(33% - 3rem); /* right of sidebar - 2rem button width - 1rem padding */
@@ -1019,7 +1019,7 @@ html.no-pointer-events .btn--drag {
     position: absolute;
     top: 0;
     height: 100%;
-    margin-top: 5rem; /* 4rem navbar height + 1rem padding */
+    padding-top: 5rem; /* 4rem navbar height + 1rem padding */
     right: 0;
 }
 
@@ -1027,7 +1027,7 @@ html.no-pointer-events .btn--drag {
         display: none;
     }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .main-content {
         width: 67%
@@ -1892,7 +1892,7 @@ input[type=range]:focus::-moz-range-track {
 
 }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .watermark {
         width: 44%
@@ -1963,7 +1963,7 @@ input[type=range]:focus::-moz-range-track {
         padding: 0;
     }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .footer {
         max-height: 500px
@@ -2035,14 +2035,14 @@ input[type=range]:focus::-moz-range-track {
                 display: none;
             }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .card__header .btn--drag {
                     display: inline-block
             }
     }
 
-@media (min-width: 530px) {
+@media (min-width: 800px) {
 
 .card__header .btn--reorder {
                     display: none
