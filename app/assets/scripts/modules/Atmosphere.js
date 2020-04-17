@@ -59,7 +59,7 @@ class Atmosphere {
         this.rigVolumeControls($atmosphereHTML);
         
         var $delBtn = $atmosphereHTML.find(".btn--delete");
-        var $stopBtn = this.$stopBtn = $atmosphereHTML.find(".btn--stop");
+        var $stopBtn = this.$stopBtn = $atmosphereHTML.find(".atmosphere__stop");
         
         var that = this;
         $delBtn.on('click', function(event) {

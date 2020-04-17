@@ -2067,7 +2067,11 @@ input[type=range]:focus::-moz-range-track {
                 margin-right: .5rem;
             }
 
-.card__body__atmosphere-controls .btn:last-child {
+.card__body__atmosphere-controls .btn:nth-child(2) {
+                    margin-right: 0;
+                }
+
+.card__body__atmosphere-controls .btn.atmosphere__stop {
                     margin-right: 0;
                 }
 
