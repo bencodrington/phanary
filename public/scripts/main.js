@@ -12005,8 +12005,9 @@ var AtmosphereManager = function () {
         key: 'events',
         value: function events() {
             // Rig new atmosphere button to call newAtmosphere();
-            this.$newAtmosphereBtn.on('click', function () {
+            this.$newAtmosphereBtn.on('click', function (event) {
                 this.newAtmosphere();
+                event.stopPropagation();
             }.bind(this));
 
             // Stop editing title upon mouse click outside the title
@@ -12068,7 +12069,7 @@ var AtmosphereManager = function () {
     }, {
         key: 'setActiveAtmosphere',
         value: function setActiveAtmosphere(atmosphere) {
-            if (this.activeAtmosphere == atmosphere) {
+            if (this.activeAtmosphere === atmosphere) {
                 return;
             }
 
@@ -12108,8 +12109,6 @@ var AtmosphereManager = function () {
     }, {
         key: 'switchTo',
         value: function switchTo(atmosphere) {
-            console.log("Switching to ");
-            console.log(atmosphere);
             this.atmospheres.forEach(function (current) {
                 if (current) {
                     if (current == atmosphere) {

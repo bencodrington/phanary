@@ -24,8 +24,9 @@ class AtmosphereManager {
 
     events() {
         // Rig new atmosphere button to call newAtmosphere();
-        this.$newAtmosphereBtn.on('click', function() {
+        this.$newAtmosphereBtn.on('click', function(event) {
             this.newAtmosphere();
+            event.stopPropagation();
         }.bind(this));
 
         // Stop editing title upon mouse click outside the title
@@ -79,7 +80,7 @@ class AtmosphereManager {
     }
 
     setActiveAtmosphere(atmosphere) {
-        if (this.activeAtmosphere == atmosphere) {
+        if (this.activeAtmosphere === atmosphere) {
             return;
         }
 

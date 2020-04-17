@@ -945,10 +945,11 @@ html.no-pointer-events .btn--drag {
     top: 0;
     background-color: #1C2227;
     width: 100%;
-    padding-top: 5rem;
+    padding-top: 5rem; /* 4rem navbar height + 1rem padding */
+    padding-bottom: 5rem;
 }
 
-/* 4rem navbar height + 1rem padding */
+/* 4rem footer height + 1rem padding */
 
 .sidebar::-webkit-scrollbar {
         display: none;
@@ -1020,6 +1021,7 @@ html.no-pointer-events .btn--drag {
     top: 0;
     height: 100%;
     padding-top: 5rem; /* 4rem navbar height + 1rem padding */
+    padding-bottom: 5rem; /* 4rem footer height + 1rem padding */
     right: 0;
 }
 
