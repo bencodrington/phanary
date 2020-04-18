@@ -22,7 +22,11 @@
         display: none;
 
         @mixin atSmall {
-            display: inline-block;
+            display: block;
+        }
+
+        &:nth-child(2) {
+            flex: 0 0 25%;
         }
     }
 

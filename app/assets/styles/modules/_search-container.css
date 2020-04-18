@@ -1,8 +1,11 @@
 .search-container {
     display: flex;
-    flex: 8 0;
+    flex: 1 0 50%;
     margin: 0 .5rem;
-    max-width: 640px;
+
+    @mixin atSmall {
+        flex-grow: 0;
+    }
 
     &__search-controls {
         height: 2rem;

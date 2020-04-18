@@ -525,9 +525,15 @@ a {
 @media (min-width: 800px) {
 
 .navbar .flex__spacer {
-            display: inline-block
+            display: block
     }
     }
+
+.navbar .flex__spacer:nth-child(2) {
+            -webkit-box-flex: 0;
+                -ms-flex: 0 0 25%;
+                    flex: 0 0 25%;
+        }
 
 .navbar__autoplay {
         height: 2rem;
@@ -635,13 +641,22 @@ a {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-flex: 8;
-        -ms-flex: 8 0;
-            flex: 8 0;
+    -webkit-box-flex: 1;
+        -ms-flex: 1 0 50%;
+            flex: 1 0 50%;
     margin: 0 .5rem;
-    max-width: 640px;
 
 }
+
+@media (min-width: 800px) {
+
+.search-container {
+        -webkit-box-flex: 0;
+            -ms-flex-positive: 0;
+                flex-grow: 0
+
+}
+    }
 
 .search-container__search-controls {
         height: 2rem;
@@ -1914,40 +1929,45 @@ input[type=range]:focus::-moz-range-thumb {
 
 .footer {
     width: 100%;
-    padding: 1rem 0;
     background-color: #14171B;
     border-top: 1px solid #1C2227;
     z-index: 8;
     height: 4rem;
     position: fixed;
     bottom: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    padding: 0 .5rem;
+
 }
+
+.footer .flex__spacer {
+        display: none;
+    }
 
 .footer.sidebar--hidden {
         max-height: 0;
-        padding: 0;
     }
 
 @media (min-width: 800px) {
 
-.footer {
-        max-height: 500px
-}
+        .footer .flex__spacer {
+            display: block;
+        }
+        
+        .footer .volume {
+            -webkit-box-flex: 0;
+                -ms-flex: 0 0 50%;
+                    flex: 0 0 50%;
+        }
 
         .footer.sidebar--hidden {
             width: 100%;
-            max-height: 500px;
-            padding: 1rem 0;
         }
-    }
-
-.footer__controls {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
     }
 
 .card {
