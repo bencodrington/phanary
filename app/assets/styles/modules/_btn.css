@@ -25,6 +25,16 @@
         height: 2rem;
     }
 
+    &--transparent {
+        background-color: transparent;
+        color: $text-secondary;
+
+        &:hover {
+            background-color: transparent;
+            color: $text-primary;
+        }
+    }
+
     /* Ensure reorder buttons show on browsers without pointer event support */
     html.no-pointer-events &--reorder {
         display: inline-block;

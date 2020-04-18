@@ -35,5 +35,6 @@ $primary01: #303B44;
 $primary02: #14171B;
 $primary03: #4A5967;
 $text-primary: #FFFFFF;
+$text-secondary: rgba($text-primary, .5);
 $bg01: #1C2227;
 $mute: #E85757;

@@ -817,6 +817,16 @@ a {
         height: 2rem;
     }
 
+.btn--transparent {
+        background-color: transparent;
+        color: rgba(255,255,255, .5);
+    }
+
+.btn--transparent:hover {
+            background-color: transparent;
+            color: #FFFFFF;
+        }
+
 /* Ensure reorder buttons show on browsers without pointer event support */
 
 html.no-pointer-events .btn--reorder {
@@ -2024,6 +2034,7 @@ input[type=range]:focus::-moz-range-track {
             pointer-events: none;
             -ms-flex-negative: 1;
                 flex-shrink: 1;
+            min-width: 1rem;
 
             /* These make the sidebar animations more smooth
                 by stopping text from wrapping */
@@ -2032,8 +2043,8 @@ input[type=range]:focus::-moz-range-track {
 
         }
 
-.card__header__rename {
-            color: #FFFFFF;
+.card__header .card__header__rename.btn {
+            margin-left: 0;
         }
 
 .card__header__spacer {

@@ -24,6 +24,7 @@
             font-size: 1.5rem;
             pointer-events: none;
             flex-shrink: 1;
+            min-width: 1rem;
 
             /* These make the sidebar animations more smooth
                 by stopping text from wrapping */
@@ -32,8 +33,8 @@
 
         }
 
-        &__rename {
-            color: $text-primary;
+        & .card__header__rename.btn {
+            margin-left: 0;
         }
 
         &__spacer {
