@@ -15,20 +15,29 @@
             width: 2rem;
             height: 2rem;
             margin-right: .5rem;
+            flex-shrink: 0;
         }
 
         &__title {
             color: $text-primary;
             font-family: 'Slabo 27px', serif;
             font-size: 1.5rem;
-            flex: 1;
             pointer-events: none;
+            flex-shrink: 1;
 
             /* These make the sidebar animations more smooth
                 by stopping text from wrapping */
             white-space: nowrap;
             overflow: hidden;
 
+        }
+
+        &__rename {
+            color: $text-primary;
+        }
+
+        &__spacer {
+            flex: 1;
         }
 
         & .btn {

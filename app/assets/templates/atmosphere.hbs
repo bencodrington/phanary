@@ -1,10 +1,17 @@
 <div class="card card--atmosphere">
+
   <div class="card__header">
     <div class="card__header__icon">
       {{!-- TODO: card icon --}}
     </div>
     <span class="card__header__title">{{name}}</span>
     {{!-- TODO: rename icon --}}
+    <div class="btn card__header__rename btn--square">
+      <div class="btn__inner">
+        <i class="fa fa-pencil-alt" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="card__header__spacer"></div>
     {{!-- TODO: reorder button icons for mobile --}}
     <div class="btn btn--reorder btn--reorder-up btn--square">
       <div class="btn__inner">
@@ -28,7 +35,9 @@
       </div>
     </div>
   </div>
+
   <div class="card__body">
+
     <div class="card__body__atmosphere-controls">
       {{!-- TODO: transition button icon --}}
       <div class="btn atmosphere__replace">
@@ -49,8 +58,10 @@
         </div>
       </div>
     </div>
+
     {{!-- TODO: volume controls --}}
   </div>
+
 </div>
 
 {{!-- TODO: remove below --}}

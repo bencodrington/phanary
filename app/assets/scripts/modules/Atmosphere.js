@@ -129,9 +129,9 @@ class Atmosphere {
 
     rigTitleEditing($atmosphereHTML) {
         var $heading = $atmosphereHTML.find(".card__header");
-        var $title = $heading.find(".section__heading__title");
-        var $titleText = $title.find(".section__heading__title__text");
-        var $rename = $title.find(".atmosphere__rename");
+        var $titleText = $heading.find(".card__header__title");
+        var $rename = $heading.find(".card__header__rename");
+
 
         var that = this;
         
