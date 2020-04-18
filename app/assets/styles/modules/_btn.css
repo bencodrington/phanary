@@ -6,6 +6,7 @@
     font-family: 'Slabo 27px', 'serif';
     height: 2rem;
     flex-shrink: 0;
+    user-select: none;
 
     /* These make the sidebar animations more smooth
         by stopping button text from wrapping */
