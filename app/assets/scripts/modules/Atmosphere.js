@@ -199,8 +199,8 @@ class Atmosphere {
                 g.pm.storeAtmospheres();
             }
         });
-        var $muteBtn = $atmosphereHTML.find(".btn--mute");
-        $muteBtn.on('click', function() {
+        var $muteCheckbox = $atmosphereHTML.find(".volume__mute input[type=checkbox]");
+        $muteCheckbox.on('change', function(event) {
             that.toggleMute();
         });
     }

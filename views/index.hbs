@@ -74,6 +74,8 @@
     </div>
   </div>
 
+  <div class="flex__spacer"></div>
+
   <div class="search-container">
     <div class="search-container__search-controls">
       <input type="text" autofocus class="search-container__search-bar" id="searchBarInput" placeholder="'rain', 'one-shot', 'tavern atmosphere', etc.">
@@ -85,13 +87,15 @@
     </div>
     <div class="navbar__autoplay tooltip">
       <span class="tooltiptext tooltiptext--bottom">Autoplay</span>
-      <label class="control control--checkbox">
+      <label class="checkbox">
         <i class="fa fa-play" aria-hidden="true"></i>
         <input type="checkbox" checked="checked" id="autoplayCheckbox">
-        <div class="control__indicator"></div>
+        <div class="checkbox__indicator"></div>
       </label>
     </div>
   </div>
+
+  <div class="flex__spacer"></div>
 
   <div class="btn btn--square navbar__info about__open tooltip">
     <div class="btn__inner">
@@ -161,11 +165,11 @@
 
       <div class="volume">
         <input class="volume__range-global" type="range" min="0" max="1" value="1" step="0.05">
-        <label class="control control--custom control--checkbox volume__mute">
+        <label class="checkbox volume__mute">
           <input type="checkbox" class="volume__mute-btn-global">
-          <div class="control__indicator control__indicator--medium"></div>
-          <div class="control--custom__on"><i class="fa fa-volume-off" aria-hidden="true"></i></div>
-          <div class="control--custom__off"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
+          <div class="checkbox__indicator checkbox__indicator--medium"></div>
+          <div class="checkbox--custom__on"><i class="fa fa-volume-off" aria-hidden="true"></i></div>
+          <div class="checkbox--custom__off"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
         </label>
       </div>
 

@@ -1,20 +1,15 @@
 .volume {
-    flex: 10;
+    flex: 1;
     display: flex;
     align-content: center;
+    align-items: center;
 
     & input[type=range] {
-        flex: 100;
+        flex: 1;
         margin-right: 10px;
     }
 
-    &__mute {
-        display: inline-block;
-        float: right;
-    }
-
-    &--spacing {
-        padding-top: 10px;
-        margin-right: 2px;
+    &__mute .checkbox__on {
+        color: $mute;
     }
 }

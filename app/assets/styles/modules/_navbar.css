@@ -10,11 +10,6 @@
     justify-content: center;
     padding: .5rem;
 
-    &__content {
-        flex: 1;
-        height: 100%;
-    }
-
     &__hide.btn {
         flex-shrink: 0;
 
@@ -23,23 +18,19 @@
         }
     }
 
+    & .flex__spacer {
+        display: none;
+
+        @mixin atSmall {
+            display: inline-block;
+        }
+    }
+
     &__autoplay {
         height: 2rem;
-        background-color: $primary01;
-        border-radius: 4px;
-        padding: 0 .5rem;
-        position: relative;
-        color: $text-primary;
-        cursor: pointer;
 
-        & .control {
-            position: relative;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        &:hover {
-            background-color: $primary03;
+        & .checkbox__indicator {
+            border-radius: 0 4px 4px 0;
         }
     }
 

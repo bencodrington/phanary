@@ -9,7 +9,7 @@
 @import "modules/_btn";
 @import "modules/_sidebar";
 @import "modules/_main-content";
-@import "modules/_control";
+@import "modules/_checkbox";
 @import "modules/_section";
 @import "modules/_range";
 @import "modules/_btn-group";
@@ -26,4 +26,5 @@
 @import "modules/_drag";
 @import "modules/_footer";
 @import "modules/_card";
+@import "modules/_flex";
 @import "modules/animations/_shake";

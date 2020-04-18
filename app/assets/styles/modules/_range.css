@@ -1,57 +1,58 @@
 input[type=range] {
     -webkit-appearance: none;
-    margin: 10px 0;
+    height: 2rem;
     width: 100%;
     background-color: transparent;
     cursor: pointer;
 
     &::-webkit-slider-runnable-track {
         width: 100%;
-        height: 4px;
-        background-color: $offWhite;
+        height: .5rem;
+        background-color: $primary03;
         border: none;
-        border-radius: 3px;
+        border-radius: .5rem;
     }
 
     &::-moz-range-track {
         width: 100%;
-        height: 4px;
-        background-color: $offWhite;
+        height: .5rem;
+        background-color: $primary03;
         border: none;
-        border-radius: 3px;
+        border-radius: .5rem;
     }
 
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        border: none;
-        height: 16px;
-        width: 16px;
+        height: 1rem;
+        width: 1rem;
+        border: 1px solid $text-primary;
         border-radius: 50%;
-        background: $phanary;
-        margin-top: -6px;
+        background: $primary01;
+        margin-top: -.25rem;
         z-index: 2;
+        
     }
 
     &::-moz-range-thumb {
         -webkit-appearance: none;
-        border: none;
-        height: 16px;
-        width: 16px;
+        height: 1rem;
+        width: 1rem;
+        border: 1px solid $text-primary;
         border-radius: 50%;
-        background: $phanary;
-        margin-top: -6px;
+        background: $primary01;
+        margin-top: -.25rem;
         z-index: 2;
     }
 
     &:focus {
         outline: 0;
 
-        &::-webkit-slider-runnable-track {
-            background-color: $blond;
+        &::-webkit-slider-thumb {
+            border-color: $accent01;
         }
 
-        &::-moz-range-track {
-            background-color: $blond;
+        &::-moz-range-thumb {
+            border-color: $accent01;
         }
 
     }

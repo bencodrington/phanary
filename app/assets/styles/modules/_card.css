@@ -37,10 +37,6 @@
             margin-left: 0;
         }
 
-        &__spacer {
-            flex: 1;
-        }
-
         & .btn {
             margin-left: .5rem;
 
@@ -67,6 +63,7 @@
 
         &__atmosphere-controls {
             display: flex;
+            margin-bottom: .5rem;
 
             & .btn {
                 flex: 1;
