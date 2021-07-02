@@ -1,9 +1,0 @@
-.content-title {
-    font-family: 'Slabo 27px', serif;
-    font-weight: bold;
-    color: $lighterGrey;
-
-    &--inverted {
-        color: $blueberry;
-    }
-}
