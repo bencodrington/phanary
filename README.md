@@ -1,10 +1,13 @@
+# Update July 2021
+
+Phanary has been replaced by [TurboBard](https://github.com/bencodrington/turbo-bard) ([Live site](http://turbobard.com/)).
+The code and README in this repository should be considered invalid and outdated.
+
 # Phanary
 
 Phanary is a lightning-fast fantasy RPG audio solution.
 Running completely in-browser, it's a free app for desktop and mobile that excels at finding and playing atmospheric music and sound effects for games like D&D and Pathfinder.
 Phanary is meant to be used in a Game Master's preparation and improvisation, and to be quick and streamlined enough to smoothly handle the party going somewhere unexpected.
-
-**Try it now** at: http://phanary.com
 
 ## Features
 
