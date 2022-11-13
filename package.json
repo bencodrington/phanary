@@ -37,6 +37,6 @@
     "postcss-mixins": "^6.0.0",
     "postcss-nested": "^2.0.2",
     "postcss-simple-vars": "^4.0.0",
-    "webpack": "^2.5.1"
+    "webpack": "^5.75.0"
   }
 }
